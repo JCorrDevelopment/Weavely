@@ -10,5 +10,7 @@
 #   universal: false
 
 -e file:.
-std-utils @ git+https://github.com/JCorrDevelopment/std-utils@5c1d89efbf7ae2b323225ed83292e79e718a7022
+std-utils @ git+https://github.com/JCorrDevelopment/std-utils@439dbc1ad70ddf77b254d91adbda204e4e571b58
+    # via simple-text-renderer
+typing-extensions==4.12.2
     # via simple-text-renderer

@@ -19,11 +19,13 @@ mypy-extensions==1.0.0
     # via mypy
 packaging==24.2
     # via pytest
+pip==24.3.1
 pluggy==1.5.0
     # via pytest
 pytest==8.3.4
-ruff==0.8.2
-std-utils @ git+https://github.com/JCorrDevelopment/std-utils@5c1d89efbf7ae2b323225ed83292e79e718a7022
+ruff==0.8.3
+std-utils @ git+https://github.com/JCorrDevelopment/std-utils@439dbc1ad70ddf77b254d91adbda204e4e571b58
     # via simple-text-renderer
 typing-extensions==4.12.2
     # via mypy
+    # via simple-text-renderer
