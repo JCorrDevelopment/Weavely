@@ -21,7 +21,10 @@ dev-dependencies = [
     "ruff>=0.8.2",
     "mypy>=1.13.0",
     "pytest>=8.3.4",
-    "pip>=24.3.1",  # Required for pycharm because of a bug with RyeCharm plugin
+    # Required for pycharm because of a bug with RyeCharm plugin
+    "pip>=24.3.1",
+    "pdoc3>=0.11.5",
+    "pdoc>=15.0.1",
 ]
 
 [tool.rye.scripts]
@@ -34,11 +37,13 @@ lint = { chain = ["lint:ruff-format", "lint:ruff", "lint:mypy"] }
 "lint:ruff-format" = "ruff format --check"
 "lint:ruff" = "ruff check"
 "lint:mypy" = "mypy ."
-pre-commit = { chain = ["format", "lint", "test"] }
+pre-commit = { chain = ["format", "lint", "test", "docs"] }
 "test:pytest" = "pytest ."
 test = { chain = ["test:pytest"] }
 setup = { chain = ["setup:install"] }
 "setup:install" = "rye sync"
+docs = { chain = ["docs:pdoc"] }
+"docs:pdoc" = {cmd = "pdoc ./src/simple_text_renderer -o ./html/ --docformat google", env = {STD_UTILS__UNDEFINED__DOC_GENERATING = "1"}}
 
 [tool.ruff]
 line-length = 120

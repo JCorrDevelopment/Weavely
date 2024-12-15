@@ -18,7 +18,7 @@ class FormatterProtocol[TData: Data](Protocol):
         """
         Format the block data according to the formatter rules.
 
-        Arguments:
+        Args:
             data (TData): Data object to format.
 
         Returns:
@@ -40,7 +40,7 @@ class BaseFormatter[TData: Data](FormatterProtocol[TData], abc.ABC):
         """
         Format the block data according to the formatter rules.
 
-        Arguments:
+        Args:
             data (TData): Data object to format.
 
         Returns:

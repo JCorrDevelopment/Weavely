@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import IO, TYPE_CHECKING
 
-from simple_text_renderer.file.mixins import WithPlainTextMixin
+from .mixins import WithPlainTextMixin
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -21,13 +21,14 @@ class BaseFile:
 
     Blocks are stored inside the file object as a dictionary where the key is the block name and the value is the
     block object itself. This allows to simple block reference, as well as it guarantees block insertion order.
-
-    Parameters:
-        renderer (BaseRenderer): Renderer object to render the file.
-        encoding (str): Encoding of the file content. Default is UTF-8.
     """
 
     def __init__(self, renderer: BaseRenderer, *, encoding: str = "utf-8") -> None:
+        """
+        Args:
+            renderer (BaseRenderer): Renderer object to render the file.
+            encoding (str): Encoding of the file content. Default is UTF-8.
+        """  # noqa: D205
         self._blocks: dict[str, BaseBlock[Data]] = {}
         self._renderer = renderer
         self._encoding = encoding
@@ -47,7 +48,7 @@ class BaseFile:
         Add a new block to current file.
 
         Args:
-            block: New block instance to add.
+            block (BaseBlock[Data]): New block instance to add.
 
         Returns:
             str: Name of the block in the file.
@@ -84,7 +85,7 @@ class BaseFile:
         Render the file as a stream.
 
         Returns:
-            IO: Rendered file content.
+            IO[bytes]: Rendered file content.
         """
         self.format()
         return self._renderer.as_stream(self)
@@ -102,8 +103,8 @@ class BaseFile:
 
 
 class SimpleFile(
-    BaseFile,
     WithPlainTextMixin,
+    BaseFile,
 ):
     """
     Simple file representation.

@@ -30,7 +30,7 @@ class TxtRenderer(BaseRenderer):
         """
         Convert the provided file object into a string descring all the data.
 
-        Parameters:
+        Args:
             file (BaseFile): File object to render.
 
         Returns:
@@ -47,7 +47,7 @@ class TxtRenderer(BaseRenderer):
         """
         Convert the provided file object into a stream.
 
-        Parameters:
+        Args:
             file (BaseFile): File object to render.
 
         Returns:
@@ -65,7 +65,7 @@ class TxtRenderer(BaseRenderer):
         """
         Convert provided file object into an arbitrary stream.
 
-        Parameters:
+        Args:
             file (BaseFile): file object to render.
             stream (IO[T]): the stream to write the rendered data to.
 
@@ -84,7 +84,7 @@ class TxtRenderer(BaseRenderer):
         """
         Write the message to the stream.
 
-        Parameters:
+        Args:
             stream (io.IOBase): a stream to write the message to. May be any IOBase subclass.
             message (str): the message to write.
             encoding (str): the encoding to use when writing the message. Defaults to "utf-8".
@@ -107,7 +107,7 @@ class TxtRenderer(BaseRenderer):
         """
         Save the rendered file to the specified path.
 
-        Parameters:
+        Args:
             file (BaseFile): File object to render.
             path (Path | str): Path to save the rendered file.
         """

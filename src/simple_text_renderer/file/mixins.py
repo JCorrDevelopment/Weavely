@@ -20,7 +20,17 @@ class StdFileProtocol(Protocol):
 
     _blocks: dict[str, TBaseBlock]
 
-    def add_block(self, block: TBaseBlock) -> str: ...  # noqa: D102 - Interface only, no need for docstring
+    def add_block(self, block: TBaseBlock) -> str:
+        """
+        Add a new block to current file.
+
+        Args:
+            block (BaseBlock[Data]): New block instance to add.
+
+        Returns:
+            str: Name of the block in the file.
+        """
+        ...
 
 
 class WithPlainTextMixin(StdFileProtocol):
@@ -32,7 +42,7 @@ class WithPlainTextMixin(StdFileProtocol):
         """
         Add a text to a file as a plain text block.
 
-        Parameters:
+        Args:
             text (str): Text to add to the file.
             name (str | None): Optional name of the block. Used to reference the block in the file. If None, the block
                 will generate it based on the class name and some randomized suffix.

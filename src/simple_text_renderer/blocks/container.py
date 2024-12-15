@@ -3,7 +3,7 @@ from __future__ import annotations
 import dataclasses
 from typing import TYPE_CHECKING, Any, Self
 
-from simple_text_renderer.blocks.base import BaseBlock, Data, TBaseBlock
+from .base import BaseBlock, Data, TBaseBlock
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -23,6 +23,11 @@ class ContainerData(Data):
     """
 
     blocks: dict[str, BaseBlock[Data]] = dataclasses.field(default_factory=dict[str, BaseBlock[Data]])
+    """
+    Dictionary representing blocks in the container.
+
+    Key is the name of the block, when value is the block itself.
+    """
 
 
 class Container(BaseBlock[ContainerData]):
@@ -41,10 +46,11 @@ class Container(BaseBlock[ContainerData]):
         Create a container block by provided blocks.
 
         Args:
-            name: name of the block. Used to reference the block in the file. If None, the block
+            name (str): name of the block. Used to reference the block in the file. If None, the block
                 will generate it based on the class name and some randomized suffix.
-            formatters: Collection of formatters that can be applied to the data object.
-            blocks: Blocks to add to the container.
+            formatters (Sequence[FormatterProtocol[ContainerData]]): Collection of formatters that can be applied to the
+                data object.
+            blocks (Sequence[TBaseBlock]): Blocks to add to the container.
             kwargs: Not required. Specified for the seek of good code practices.
 
         Returns:

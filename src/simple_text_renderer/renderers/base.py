@@ -23,7 +23,7 @@ class BaseRenderer(abc.ABC):
         """
         Render the file in a correct format into a string.
 
-        Parameters:
+        Args:
             file: File object to render.
 
         Returns:
@@ -35,7 +35,7 @@ class BaseRenderer(abc.ABC):
         """
         Render the file in a correct format into a stream.
 
-        Parameters:
+        Args:
             file: File object to render.
         """
 
@@ -44,7 +44,7 @@ class BaseRenderer(abc.ABC):
         """
         Render the file in a correct format and write it to the specified path.
 
-        Parameters:
+        Args:
             file: File object to render.
             path: Path to write the file.
         """
