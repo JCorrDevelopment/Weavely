@@ -21,6 +21,9 @@ class TxtRenderer(BaseRenderer):
 
     This renderer is used to render the data object into a string or a stream of bytes, which can be written
     as a plain .txt file.
+
+    Args:
+        delimiter (str): Delimiter to use between blocks. Default is newline.
     """
 
     def __init__(self, *, delimiter: str = "\n") -> None:
@@ -28,7 +31,7 @@ class TxtRenderer(BaseRenderer):
 
     def as_str(self, file: BaseFile) -> str:
         """
-        Convert the provided file object into a string descring all the data.
+        Convert the provided file object into a string describing all the data.
 
         Args:
             file (BaseFile): File object to render.
