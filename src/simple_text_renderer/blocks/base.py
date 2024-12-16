@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from simple_text_renderer.formatters.base import FormatterProtocol
+    from simple_text_renderer.renderers.mixins import RendererProtocol
 
 
 @dataclasses.dataclass(slots=True)
@@ -38,19 +39,26 @@ class BaseBlock(Generic[TData], abc.ABC):
     """
 
     def __init__(
-        self, data: TData, name: str | None = None, formatters: Sequence[FormatterProtocol[TData]] = ()
+        self,
+        data: TData,
+        name: str | None = None,
+        formatters: Sequence[FormatterProtocol[TData]] = (),
+        renderer: RendererProtocol[TData] | None = None,
     ) -> None:
         """
         Args:
             data (TData): Data object containing any arbitrary data that block can operate on. Specific data type must
                 be defined in the inherited class.
-            formatters (Collection[FormatterProtocol[TData]]): Collection of formatters that can be applied to the
-                data object.
             name (str | None): Optional name of the block. Used to reference the block in the file. If None, the block
                 will generate it based on the class name and some randomized suffix.
+            formatters (Sequence[FormatterProtocol[TData]]): Collection of formatters that can be applied to the
+                data object. Will be applied in the order they are provided.
+            renderer (RendererProtocol[TData] | None): Renderer object to render the block into a specific format.
+                If None, the block will use the default renderer provided by the file renderer implementation.
         """  # noqa: D205
         self._data = data
         self._formatters = formatters
+        self._renderer = renderer
         self._name: Final[str] = name or random_string(prefix=self.__class__.__name__)
 
     @classmethod
@@ -60,15 +68,18 @@ class BaseBlock(Generic[TData], abc.ABC):
         *,
         name: str | None = None,
         formatters: Sequence[FormatterProtocol[TData]] = (),
+        renderer: RendererProtocol[TData] | None = None,
         **kwargs: Any,  # noqa: ANN401
     ) -> Self:
         """
         Create a new block instance by provided input values.
 
         Args:
-            name: Optional name of the block. Used to reference the block in the file. If None, the block
+            name (str | None): Optional name of the block. Used to reference the block in the file. If None, the block
                 will generate it based on the class name and some randomized suffix.
-            formatters: Collection of formatters that can be applied to the data object.
+            formatters (Sequence[FormatterProtocol[TData]]): Collection of formatters that can be applied
+                to the data object.
+            renderer (RendererProtocol[TData] | None): Renderer object to render the block into a specific format.
             kwargs: arbitrary keyword arguments to specify the block content. See specific block implementation for
                 details.
 
@@ -96,6 +107,16 @@ class BaseBlock(Generic[TData], abc.ABC):
         """
         return self._data
 
+    @property
+    def renderer(self) -> RendererProtocol[TData] | None:
+        """
+        Guaranteed read-only access to the block renderer.
+
+        Returns:
+            RendererProtocol[TData] | None: Renderer object of the block.
+        """
+        return self._renderer
+
     def format(self, *, inplace: bool = True) -> Self:
         """
         Apply all specified formatters to the block.
@@ -121,3 +142,4 @@ class BaseBlock(Generic[TData], abc.ABC):
 
 
 type TBaseBlock = BaseBlock
+"""Type alias for the BaseBlock class to use in type hints."""

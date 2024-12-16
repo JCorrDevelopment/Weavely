@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
 
     from simple_text_renderer.blocks.base import BaseBlock, Data
-    from simple_text_renderer.renderers.base import BaseRenderer
+    from simple_text_renderer.renderers.base import FileRendererBase
 
 
 class BaseFile:
@@ -23,10 +23,10 @@ class BaseFile:
     block object itself. This allows to simple block reference, as well as it guarantees block insertion order.
     """
 
-    def __init__(self, renderer: BaseRenderer, *, encoding: str = "utf-8") -> None:
+    def __init__(self, renderer: FileRendererBase, *, encoding: str = "utf-8") -> None:
         """
         Args:
-            renderer (BaseRenderer): Renderer object to render the file.
+            renderer (FileRendererBase): Renderer object to render the file.
             encoding (str): Encoding of the file content. Default is UTF-8.
         """  # noqa: D205
         self._blocks: dict[str, BaseBlock[Data]] = {}

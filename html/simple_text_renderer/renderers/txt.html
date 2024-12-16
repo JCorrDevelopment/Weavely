@@ -31,19 +31,19 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#TxtRenderer">TxtRenderer</a>
+                    <a class="class" href="#TxtFileRenderer">TxtFileRenderer</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#TxtRenderer.__init__">TxtRenderer</a>
+                                <a class="function" href="#TxtFileRenderer.__init__">TxtFileRenderer</a>
                         </li>
                         <li>
-                                <a class="function" href="#TxtRenderer.as_str">as_str</a>
+                                <a class="function" href="#TxtFileRenderer.as_str">as_str</a>
                         </li>
                         <li>
-                                <a class="function" href="#TxtRenderer.as_stream">as_stream</a>
+                                <a class="function" href="#TxtFileRenderer.as_stream">as_stream</a>
                         </li>
                         <li>
-                                <a class="function" href="#TxtRenderer.to_file">to_file</a>
+                                <a class="function" href="#TxtFileRenderer.to_file">to_file</a>
                         </li>
                 </ul>
 
@@ -77,252 +77,260 @@
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">IO</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">overload</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span> <span class="nn">simple_text_renderer.blocks.text</span> <span class="kn">import</span> <span class="n">PlainTextBlock</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">FileRendererBase</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseRenderer</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="kn">from</span> <span class="nn">simple_text_renderer.blocks.base</span> <span class="kn">import</span> <span class="n">TBaseBlock</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>    <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="kn">from</span> <span class="nn">simple_text_renderer.blocks.base</span> <span class="kn">import</span> <span class="n">BaseBlock</span><span class="p">,</span> <span class="n">Data</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>    <span class="kn">from</span> <span class="nn">simple_text_renderer.file</span> <span class="kn">import</span> <span class="n">BaseFile</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="k">class</span> <span class="nc">TxtRenderer</span><span class="p">(</span><span class="n">BaseRenderer</span><span class="p">):</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">    Default renderer for the TXT file format.</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">    This renderer is used to render the data object into a string or a stream of bytes, which can be written</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">    as a plain .txt file.</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">    Args:</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="sd">        delimiter (str): Delimiter to use between blocks. Default is newline.</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_delimiter</span> <span class="o">=</span> <span class="n">delimiter</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>    <span class="k">def</span> <span class="nf">as_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">        Convert the provided file object into a string describing all the data.</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">        Args:</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">            file (BaseFile): File object to render.</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">        Returns:</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">            str: Rendered string.</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>    <span class="kn">from</span> <span class="nn">.mixins</span> <span class="kn">import</span> <span class="n">RendererProtocol</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="k">class</span> <span class="nc">TxtFileRenderer</span><span class="p">(</span><span class="n">FileRendererBase</span><span class="p">):</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">    Default renderer for the TXT file format.</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">    This renderer is used to render the data object into a string or a stream of bytes, which can be written</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">    as a plain .txt file.</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="sd">    Args:</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">        delimiter (str): Delimiter to use between blocks. Default is newline.</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">renderers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">        Initialize TxtFileRenderer object.</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">        Args:</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">            renderers (Mapping[type[BaseBlock[Data]], RendererProtocol[Data]] | None): Mapping of renderers to use for</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">            specific block types. Used to override the default renderers.</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">            delimiter (str): Delimiter to use between blocks. Default is newline</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>        <span class="n">string_io</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>            <span class="n">string_io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_render_block</span><span class="p">(</span><span class="n">block</span><span class="p">))</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>            <span class="n">string_io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>        <span class="n">stream</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StringIO&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">StringIO</span><span class="p">()))</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>        <span class="k">return</span> <span class="n">stream</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">renderers</span><span class="o">=</span><span class="n">renderers</span><span class="p">)</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_delimiter</span> <span class="o">=</span> <span class="n">delimiter</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="k">def</span> <span class="nf">as_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">        Convert the provided file object into a string describing all the data.</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="k">def</span> <span class="nf">as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">        Convert the provided file object into a stream.</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">        Args:</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">            file (BaseFile): File object to render.</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">        Returns:</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">            IO[bytes]: Stream object containing the rendered data.</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">())</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>    <span class="nd">@overload</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="k">def</span> <span class="nf">_as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span> <span class="o">...</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="nd">@overload</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="k">def</span> <span class="nf">_as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span> <span class="o">...</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>    <span class="k">def</span> <span class="nf">_as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">        Convert provided file object into an arbitrary stream.</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">        Args:</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">            file (BaseFile): file object to render.</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">            stream (IO[T]): the stream to write the rendered data to.</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">        Returns:</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">            IO[T]: stream object containing the rendered data.</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_write_message</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_block</span><span class="p">(</span><span class="n">block</span><span class="p">),</span> <span class="n">file</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_write_message</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delimiter</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>        <span class="n">stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>        <span class="k">return</span> <span class="n">stream</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="nd">@singledispatchmethod</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="k">def</span> <span class="nf">_write_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">        Write the message to the stream.</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">        Args:</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">            stream (io.IOBase): a stream to write the message to. May be any IOBase subclass.</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">            message (str): the message to write.</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">            encoding (str): the encoding to use when writing the message. Defaults to &quot;utf-8&quot;.</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">        Raises:</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">            TypeError: if the stream type is not supported.</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">        Args:</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">            file (BaseFile): File object to render.</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">        Returns:</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">            str: Rendered string.</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>        <span class="n">string_io</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>            <span class="n">string_io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_render_block</span><span class="p">(</span><span class="n">block</span><span class="p">))</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>            <span class="n">string_io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>        <span class="n">stream</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StringIO&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">StringIO</span><span class="p">()))</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>        <span class="k">return</span> <span class="n">stream</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="k">def</span> <span class="nf">as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">        Convert the provided file object into a stream.</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">        Args:</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">            file (BaseFile): File object to render.</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">        Returns:</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">            IO[bytes]: Stream object containing the rendered data.</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">())</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="nd">@overload</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="k">def</span> <span class="nf">_as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span> <span class="o">...</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="nd">@overload</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="k">def</span> <span class="nf">_as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span> <span class="o">...</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="k">def</span> <span class="nf">_as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">        Convert provided file object into an arbitrary stream.</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">        Args:</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">            file (BaseFile): file object to render.</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">            stream (IO[T]): the stream to write the rendered data to.</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">        Returns:</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">            IO[T]: stream object containing the rendered data.</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_write_message</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_block</span><span class="p">(</span><span class="n">block</span><span class="p">),</span> <span class="n">file</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_write_message</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delimiter</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>        <span class="n">stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="k">return</span> <span class="n">stream</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOBase</span><span class="p">):</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>            <span class="n">to_write</span> <span class="o">=</span> <span class="n">message</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">BufferedIOBase</span><span class="p">):</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>            <span class="n">to_write</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported stream type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">to_write</span><span class="p">)</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        Save the rendered file to the specified path.</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">        Args:</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">            file (BaseFile): File object to render.</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">            path (Path | str): Path to save the rendered file.</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>        <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="nd">@singledispatchmethod</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="k">def</span> <span class="nf">_write_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        Write the message to the stream.</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">        Args:</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">            stream (io.IOBase): a stream to write the message to. May be any IOBase subclass.</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">            message (str): the message to write.</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">            encoding (str): the encoding to use when writing the message. Defaults to &quot;utf-8&quot;.</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">        Raises:</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">            TypeError: if the stream type is not supported.</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOBase</span><span class="p">):</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>            <span class="n">to_write</span> <span class="o">=</span> <span class="n">message</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">BufferedIOBase</span><span class="p">):</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>            <span class="n">to_write</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported stream type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>        <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">to_write</span><span class="p">)</span>
 </span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>    <span class="k">def</span> <span class="nf">_render_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">TBaseBlock</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>        <span class="k">match</span> <span class="n">block</span><span class="p">:</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>            <span class="k">case</span> <span class="n">PlainTextBlock</span><span class="p">():</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>                <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported block type: </span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">        Save the rendered file to the specified path.</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">        Args:</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">            file (BaseFile): File object to render.</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">            path (Path | str): Path to save the rendered file.</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>        <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 </span></pre></div>
 
 
             </section>
-                <section id="TxtRenderer">
-                            <input id="TxtRenderer-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="TxtFileRenderer">
+                            <input id="TxtFileRenderer-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">TxtRenderer</span><wbr>(<span class="base"><a href="base.html#BaseRenderer">simple_text_renderer.renderers.base.BaseRenderer</a></span>):
+    <span class="name">TxtFileRenderer</span><wbr>(<span class="base"><a href="base.html#FileRendererBase">simple_text_renderer.renderers.base.FileRendererBase</a></span>):
 
-                <label class="view-source-button" for="TxtRenderer-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="TxtFileRenderer-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#TxtRenderer"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="TxtRenderer-19"><a href="#TxtRenderer-19"><span class="linenos"> 19</span></a><span class="k">class</span> <span class="nc">TxtRenderer</span><span class="p">(</span><span class="n">BaseRenderer</span><span class="p">):</span>
-</span><span id="TxtRenderer-20"><a href="#TxtRenderer-20"><span class="linenos"> 20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="TxtRenderer-21"><a href="#TxtRenderer-21"><span class="linenos"> 21</span></a><span class="sd">    Default renderer for the TXT file format.</span>
-</span><span id="TxtRenderer-22"><a href="#TxtRenderer-22"><span class="linenos"> 22</span></a>
-</span><span id="TxtRenderer-23"><a href="#TxtRenderer-23"><span class="linenos"> 23</span></a><span class="sd">    This renderer is used to render the data object into a string or a stream of bytes, which can be written</span>
-</span><span id="TxtRenderer-24"><a href="#TxtRenderer-24"><span class="linenos"> 24</span></a><span class="sd">    as a plain .txt file.</span>
-</span><span id="TxtRenderer-25"><a href="#TxtRenderer-25"><span class="linenos"> 25</span></a>
-</span><span id="TxtRenderer-26"><a href="#TxtRenderer-26"><span class="linenos"> 26</span></a><span class="sd">    Args:</span>
-</span><span id="TxtRenderer-27"><a href="#TxtRenderer-27"><span class="linenos"> 27</span></a><span class="sd">        delimiter (str): Delimiter to use between blocks. Default is newline.</span>
-</span><span id="TxtRenderer-28"><a href="#TxtRenderer-28"><span class="linenos"> 28</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="TxtRenderer-29"><a href="#TxtRenderer-29"><span class="linenos"> 29</span></a>
-</span><span id="TxtRenderer-30"><a href="#TxtRenderer-30"><span class="linenos"> 30</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="TxtRenderer-31"><a href="#TxtRenderer-31"><span class="linenos"> 31</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_delimiter</span> <span class="o">=</span> <span class="n">delimiter</span>
-</span><span id="TxtRenderer-32"><a href="#TxtRenderer-32"><span class="linenos"> 32</span></a>
-</span><span id="TxtRenderer-33"><a href="#TxtRenderer-33"><span class="linenos"> 33</span></a>    <span class="k">def</span> <span class="nf">as_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="TxtRenderer-34"><a href="#TxtRenderer-34"><span class="linenos"> 34</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="TxtRenderer-35"><a href="#TxtRenderer-35"><span class="linenos"> 35</span></a><span class="sd">        Convert the provided file object into a string describing all the data.</span>
-</span><span id="TxtRenderer-36"><a href="#TxtRenderer-36"><span class="linenos"> 36</span></a>
-</span><span id="TxtRenderer-37"><a href="#TxtRenderer-37"><span class="linenos"> 37</span></a><span class="sd">        Args:</span>
-</span><span id="TxtRenderer-38"><a href="#TxtRenderer-38"><span class="linenos"> 38</span></a><span class="sd">            file (BaseFile): File object to render.</span>
-</span><span id="TxtRenderer-39"><a href="#TxtRenderer-39"><span class="linenos"> 39</span></a>
-</span><span id="TxtRenderer-40"><a href="#TxtRenderer-40"><span class="linenos"> 40</span></a><span class="sd">        Returns:</span>
-</span><span id="TxtRenderer-41"><a href="#TxtRenderer-41"><span class="linenos"> 41</span></a><span class="sd">            str: Rendered string.</span>
-</span><span id="TxtRenderer-42"><a href="#TxtRenderer-42"><span class="linenos"> 42</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="TxtRenderer-43"><a href="#TxtRenderer-43"><span class="linenos"> 43</span></a>        <span class="n">string_io</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
-</span><span id="TxtRenderer-44"><a href="#TxtRenderer-44"><span class="linenos"> 44</span></a>        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
-</span><span id="TxtRenderer-45"><a href="#TxtRenderer-45"><span class="linenos"> 45</span></a>            <span class="n">string_io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_render_block</span><span class="p">(</span><span class="n">block</span><span class="p">))</span>
-</span><span id="TxtRenderer-46"><a href="#TxtRenderer-46"><span class="linenos"> 46</span></a>            <span class="n">string_io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="TxtRenderer-47"><a href="#TxtRenderer-47"><span class="linenos"> 47</span></a>        <span class="n">stream</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StringIO&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">StringIO</span><span class="p">()))</span>
-</span><span id="TxtRenderer-48"><a href="#TxtRenderer-48"><span class="linenos"> 48</span></a>        <span class="k">return</span> <span class="n">stream</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
-</span><span id="TxtRenderer-49"><a href="#TxtRenderer-49"><span class="linenos"> 49</span></a>
-</span><span id="TxtRenderer-50"><a href="#TxtRenderer-50"><span class="linenos"> 50</span></a>    <span class="k">def</span> <span class="nf">as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-</span><span id="TxtRenderer-51"><a href="#TxtRenderer-51"><span class="linenos"> 51</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="TxtRenderer-52"><a href="#TxtRenderer-52"><span class="linenos"> 52</span></a><span class="sd">        Convert the provided file object into a stream.</span>
-</span><span id="TxtRenderer-53"><a href="#TxtRenderer-53"><span class="linenos"> 53</span></a>
-</span><span id="TxtRenderer-54"><a href="#TxtRenderer-54"><span class="linenos"> 54</span></a><span class="sd">        Args:</span>
-</span><span id="TxtRenderer-55"><a href="#TxtRenderer-55"><span class="linenos"> 55</span></a><span class="sd">            file (BaseFile): File object to render.</span>
-</span><span id="TxtRenderer-56"><a href="#TxtRenderer-56"><span class="linenos"> 56</span></a>
-</span><span id="TxtRenderer-57"><a href="#TxtRenderer-57"><span class="linenos"> 57</span></a><span class="sd">        Returns:</span>
-</span><span id="TxtRenderer-58"><a href="#TxtRenderer-58"><span class="linenos"> 58</span></a><span class="sd">            IO[bytes]: Stream object containing the rendered data.</span>
-</span><span id="TxtRenderer-59"><a href="#TxtRenderer-59"><span class="linenos"> 59</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="TxtRenderer-60"><a href="#TxtRenderer-60"><span class="linenos"> 60</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">())</span>
-</span><span id="TxtRenderer-61"><a href="#TxtRenderer-61"><span class="linenos"> 61</span></a>
-</span><span id="TxtRenderer-62"><a href="#TxtRenderer-62"><span class="linenos"> 62</span></a>    <span class="nd">@overload</span>
-</span><span id="TxtRenderer-63"><a href="#TxtRenderer-63"><span class="linenos"> 63</span></a>    <span class="k">def</span> <span class="nf">_as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span> <span class="o">...</span>
-</span><span id="TxtRenderer-64"><a href="#TxtRenderer-64"><span class="linenos"> 64</span></a>
-</span><span id="TxtRenderer-65"><a href="#TxtRenderer-65"><span class="linenos"> 65</span></a>    <span class="nd">@overload</span>
-</span><span id="TxtRenderer-66"><a href="#TxtRenderer-66"><span class="linenos"> 66</span></a>    <span class="k">def</span> <span class="nf">_as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span> <span class="o">...</span>
-</span><span id="TxtRenderer-67"><a href="#TxtRenderer-67"><span class="linenos"> 67</span></a>
-</span><span id="TxtRenderer-68"><a href="#TxtRenderer-68"><span class="linenos"> 68</span></a>    <span class="k">def</span> <span class="nf">_as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-</span><span id="TxtRenderer-69"><a href="#TxtRenderer-69"><span class="linenos"> 69</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="TxtRenderer-70"><a href="#TxtRenderer-70"><span class="linenos"> 70</span></a><span class="sd">        Convert provided file object into an arbitrary stream.</span>
-</span><span id="TxtRenderer-71"><a href="#TxtRenderer-71"><span class="linenos"> 71</span></a>
-</span><span id="TxtRenderer-72"><a href="#TxtRenderer-72"><span class="linenos"> 72</span></a><span class="sd">        Args:</span>
-</span><span id="TxtRenderer-73"><a href="#TxtRenderer-73"><span class="linenos"> 73</span></a><span class="sd">            file (BaseFile): file object to render.</span>
-</span><span id="TxtRenderer-74"><a href="#TxtRenderer-74"><span class="linenos"> 74</span></a><span class="sd">            stream (IO[T]): the stream to write the rendered data to.</span>
-</span><span id="TxtRenderer-75"><a href="#TxtRenderer-75"><span class="linenos"> 75</span></a>
-</span><span id="TxtRenderer-76"><a href="#TxtRenderer-76"><span class="linenos"> 76</span></a><span class="sd">        Returns:</span>
-</span><span id="TxtRenderer-77"><a href="#TxtRenderer-77"><span class="linenos"> 77</span></a><span class="sd">            IO[T]: stream object containing the rendered data.</span>
-</span><span id="TxtRenderer-78"><a href="#TxtRenderer-78"><span class="linenos"> 78</span></a>
-</span><span id="TxtRenderer-79"><a href="#TxtRenderer-79"><span class="linenos"> 79</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="TxtRenderer-80"><a href="#TxtRenderer-80"><span class="linenos"> 80</span></a>        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
-</span><span id="TxtRenderer-81"><a href="#TxtRenderer-81"><span class="linenos"> 81</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_write_message</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_block</span><span class="p">(</span><span class="n">block</span><span class="p">),</span> <span class="n">file</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
-</span><span id="TxtRenderer-82"><a href="#TxtRenderer-82"><span class="linenos"> 82</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_write_message</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delimiter</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
-</span><span id="TxtRenderer-83"><a href="#TxtRenderer-83"><span class="linenos"> 83</span></a>        <span class="n">stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="TxtRenderer-84"><a href="#TxtRenderer-84"><span class="linenos"> 84</span></a>        <span class="k">return</span> <span class="n">stream</span>
-</span><span id="TxtRenderer-85"><a href="#TxtRenderer-85"><span class="linenos"> 85</span></a>
-</span><span id="TxtRenderer-86"><a href="#TxtRenderer-86"><span class="linenos"> 86</span></a>    <span class="nd">@singledispatchmethod</span>
-</span><span id="TxtRenderer-87"><a href="#TxtRenderer-87"><span class="linenos"> 87</span></a>    <span class="k">def</span> <span class="nf">_write_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="TxtRenderer-88"><a href="#TxtRenderer-88"><span class="linenos"> 88</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="TxtRenderer-89"><a href="#TxtRenderer-89"><span class="linenos"> 89</span></a><span class="sd">        Write the message to the stream.</span>
-</span><span id="TxtRenderer-90"><a href="#TxtRenderer-90"><span class="linenos"> 90</span></a>
-</span><span id="TxtRenderer-91"><a href="#TxtRenderer-91"><span class="linenos"> 91</span></a><span class="sd">        Args:</span>
-</span><span id="TxtRenderer-92"><a href="#TxtRenderer-92"><span class="linenos"> 92</span></a><span class="sd">            stream (io.IOBase): a stream to write the message to. May be any IOBase subclass.</span>
-</span><span id="TxtRenderer-93"><a href="#TxtRenderer-93"><span class="linenos"> 93</span></a><span class="sd">            message (str): the message to write.</span>
-</span><span id="TxtRenderer-94"><a href="#TxtRenderer-94"><span class="linenos"> 94</span></a><span class="sd">            encoding (str): the encoding to use when writing the message. Defaults to &quot;utf-8&quot;.</span>
-</span><span id="TxtRenderer-95"><a href="#TxtRenderer-95"><span class="linenos"> 95</span></a>
-</span><span id="TxtRenderer-96"><a href="#TxtRenderer-96"><span class="linenos"> 96</span></a><span class="sd">        Raises:</span>
-</span><span id="TxtRenderer-97"><a href="#TxtRenderer-97"><span class="linenos"> 97</span></a><span class="sd">            TypeError: if the stream type is not supported.</span>
-</span><span id="TxtRenderer-98"><a href="#TxtRenderer-98"><span class="linenos"> 98</span></a>
-</span><span id="TxtRenderer-99"><a href="#TxtRenderer-99"><span class="linenos"> 99</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="TxtRenderer-100"><a href="#TxtRenderer-100"><span class="linenos">100</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOBase</span><span class="p">):</span>
-</span><span id="TxtRenderer-101"><a href="#TxtRenderer-101"><span class="linenos">101</span></a>            <span class="n">to_write</span> <span class="o">=</span> <span class="n">message</span>
-</span><span id="TxtRenderer-102"><a href="#TxtRenderer-102"><span class="linenos">102</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">BufferedIOBase</span><span class="p">):</span>
-</span><span id="TxtRenderer-103"><a href="#TxtRenderer-103"><span class="linenos">103</span></a>            <span class="n">to_write</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
-</span><span id="TxtRenderer-104"><a href="#TxtRenderer-104"><span class="linenos">104</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="TxtRenderer-105"><a href="#TxtRenderer-105"><span class="linenos">105</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported stream type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="TxtRenderer-106"><a href="#TxtRenderer-106"><span class="linenos">106</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="TxtRenderer-107"><a href="#TxtRenderer-107"><span class="linenos">107</span></a>
-</span><span id="TxtRenderer-108"><a href="#TxtRenderer-108"><span class="linenos">108</span></a>        <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">to_write</span><span class="p">)</span>
-</span><span id="TxtRenderer-109"><a href="#TxtRenderer-109"><span class="linenos">109</span></a>
-</span><span id="TxtRenderer-110"><a href="#TxtRenderer-110"><span class="linenos">110</span></a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="TxtRenderer-111"><a href="#TxtRenderer-111"><span class="linenos">111</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="TxtRenderer-112"><a href="#TxtRenderer-112"><span class="linenos">112</span></a><span class="sd">        Save the rendered file to the specified path.</span>
-</span><span id="TxtRenderer-113"><a href="#TxtRenderer-113"><span class="linenos">113</span></a>
-</span><span id="TxtRenderer-114"><a href="#TxtRenderer-114"><span class="linenos">114</span></a><span class="sd">        Args:</span>
-</span><span id="TxtRenderer-115"><a href="#TxtRenderer-115"><span class="linenos">115</span></a><span class="sd">            file (BaseFile): File object to render.</span>
-</span><span id="TxtRenderer-116"><a href="#TxtRenderer-116"><span class="linenos">116</span></a><span class="sd">            path (Path | str): Path to save the rendered file.</span>
-</span><span id="TxtRenderer-117"><a href="#TxtRenderer-117"><span class="linenos">117</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="TxtRenderer-118"><a href="#TxtRenderer-118"><span class="linenos">118</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="TxtRenderer-119"><a href="#TxtRenderer-119"><span class="linenos">119</span></a>            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-</span><span id="TxtRenderer-120"><a href="#TxtRenderer-120"><span class="linenos">120</span></a>        <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span id="TxtRenderer-121"><a href="#TxtRenderer-121"><span class="linenos">121</span></a>            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-</span><span id="TxtRenderer-122"><a href="#TxtRenderer-122"><span class="linenos">122</span></a>
-</span><span id="TxtRenderer-123"><a href="#TxtRenderer-123"><span class="linenos">123</span></a>    <span class="k">def</span> <span class="nf">_render_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">TBaseBlock</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="TxtRenderer-124"><a href="#TxtRenderer-124"><span class="linenos">124</span></a>        <span class="k">match</span> <span class="n">block</span><span class="p">:</span>
-</span><span id="TxtRenderer-125"><a href="#TxtRenderer-125"><span class="linenos">125</span></a>            <span class="k">case</span> <span class="n">PlainTextBlock</span><span class="p">():</span>
-</span><span id="TxtRenderer-126"><a href="#TxtRenderer-126"><span class="linenos">126</span></a>                <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">text</span>
-</span><span id="TxtRenderer-127"><a href="#TxtRenderer-127"><span class="linenos">127</span></a>            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-</span><span id="TxtRenderer-128"><a href="#TxtRenderer-128"><span class="linenos">128</span></a>                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported block type: </span><span class="si">{</span><span class="n">block</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="TxtRenderer-129"><a href="#TxtRenderer-129"><span class="linenos">129</span></a>                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <a class="headerlink" href="#TxtFileRenderer"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TxtFileRenderer-21"><a href="#TxtFileRenderer-21"><span class="linenos"> 21</span></a><span class="k">class</span> <span class="nc">TxtFileRenderer</span><span class="p">(</span><span class="n">FileRendererBase</span><span class="p">):</span>
+</span><span id="TxtFileRenderer-22"><a href="#TxtFileRenderer-22"><span class="linenos"> 22</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer-23"><a href="#TxtFileRenderer-23"><span class="linenos"> 23</span></a><span class="sd">    Default renderer for the TXT file format.</span>
+</span><span id="TxtFileRenderer-24"><a href="#TxtFileRenderer-24"><span class="linenos"> 24</span></a>
+</span><span id="TxtFileRenderer-25"><a href="#TxtFileRenderer-25"><span class="linenos"> 25</span></a><span class="sd">    This renderer is used to render the data object into a string or a stream of bytes, which can be written</span>
+</span><span id="TxtFileRenderer-26"><a href="#TxtFileRenderer-26"><span class="linenos"> 26</span></a><span class="sd">    as a plain .txt file.</span>
+</span><span id="TxtFileRenderer-27"><a href="#TxtFileRenderer-27"><span class="linenos"> 27</span></a>
+</span><span id="TxtFileRenderer-28"><a href="#TxtFileRenderer-28"><span class="linenos"> 28</span></a><span class="sd">    Args:</span>
+</span><span id="TxtFileRenderer-29"><a href="#TxtFileRenderer-29"><span class="linenos"> 29</span></a><span class="sd">        delimiter (str): Delimiter to use between blocks. Default is newline.</span>
+</span><span id="TxtFileRenderer-30"><a href="#TxtFileRenderer-30"><span class="linenos"> 30</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer-31"><a href="#TxtFileRenderer-31"><span class="linenos"> 31</span></a>
+</span><span id="TxtFileRenderer-32"><a href="#TxtFileRenderer-32"><span class="linenos"> 32</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="TxtFileRenderer-33"><a href="#TxtFileRenderer-33"><span class="linenos"> 33</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">renderers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="TxtFileRenderer-34"><a href="#TxtFileRenderer-34"><span class="linenos"> 34</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="TxtFileRenderer-35"><a href="#TxtFileRenderer-35"><span class="linenos"> 35</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer-36"><a href="#TxtFileRenderer-36"><span class="linenos"> 36</span></a><span class="sd">        Initialize TxtFileRenderer object.</span>
+</span><span id="TxtFileRenderer-37"><a href="#TxtFileRenderer-37"><span class="linenos"> 37</span></a>
+</span><span id="TxtFileRenderer-38"><a href="#TxtFileRenderer-38"><span class="linenos"> 38</span></a><span class="sd">        Args:</span>
+</span><span id="TxtFileRenderer-39"><a href="#TxtFileRenderer-39"><span class="linenos"> 39</span></a><span class="sd">            renderers (Mapping[type[BaseBlock[Data]], RendererProtocol[Data]] | None): Mapping of renderers to use for</span>
+</span><span id="TxtFileRenderer-40"><a href="#TxtFileRenderer-40"><span class="linenos"> 40</span></a><span class="sd">            specific block types. Used to override the default renderers.</span>
+</span><span id="TxtFileRenderer-41"><a href="#TxtFileRenderer-41"><span class="linenos"> 41</span></a><span class="sd">            delimiter (str): Delimiter to use between blocks. Default is newline</span>
+</span><span id="TxtFileRenderer-42"><a href="#TxtFileRenderer-42"><span class="linenos"> 42</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer-43"><a href="#TxtFileRenderer-43"><span class="linenos"> 43</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">renderers</span><span class="o">=</span><span class="n">renderers</span><span class="p">)</span>
+</span><span id="TxtFileRenderer-44"><a href="#TxtFileRenderer-44"><span class="linenos"> 44</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_delimiter</span> <span class="o">=</span> <span class="n">delimiter</span>
+</span><span id="TxtFileRenderer-45"><a href="#TxtFileRenderer-45"><span class="linenos"> 45</span></a>
+</span><span id="TxtFileRenderer-46"><a href="#TxtFileRenderer-46"><span class="linenos"> 46</span></a>    <span class="k">def</span> <span class="nf">as_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="TxtFileRenderer-47"><a href="#TxtFileRenderer-47"><span class="linenos"> 47</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer-48"><a href="#TxtFileRenderer-48"><span class="linenos"> 48</span></a><span class="sd">        Convert the provided file object into a string describing all the data.</span>
+</span><span id="TxtFileRenderer-49"><a href="#TxtFileRenderer-49"><span class="linenos"> 49</span></a>
+</span><span id="TxtFileRenderer-50"><a href="#TxtFileRenderer-50"><span class="linenos"> 50</span></a><span class="sd">        Args:</span>
+</span><span id="TxtFileRenderer-51"><a href="#TxtFileRenderer-51"><span class="linenos"> 51</span></a><span class="sd">            file (BaseFile): File object to render.</span>
+</span><span id="TxtFileRenderer-52"><a href="#TxtFileRenderer-52"><span class="linenos"> 52</span></a>
+</span><span id="TxtFileRenderer-53"><a href="#TxtFileRenderer-53"><span class="linenos"> 53</span></a><span class="sd">        Returns:</span>
+</span><span id="TxtFileRenderer-54"><a href="#TxtFileRenderer-54"><span class="linenos"> 54</span></a><span class="sd">            str: Rendered string.</span>
+</span><span id="TxtFileRenderer-55"><a href="#TxtFileRenderer-55"><span class="linenos"> 55</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer-56"><a href="#TxtFileRenderer-56"><span class="linenos"> 56</span></a>        <span class="n">string_io</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+</span><span id="TxtFileRenderer-57"><a href="#TxtFileRenderer-57"><span class="linenos"> 57</span></a>        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+</span><span id="TxtFileRenderer-58"><a href="#TxtFileRenderer-58"><span class="linenos"> 58</span></a>            <span class="n">string_io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_render_block</span><span class="p">(</span><span class="n">block</span><span class="p">))</span>
+</span><span id="TxtFileRenderer-59"><a href="#TxtFileRenderer-59"><span class="linenos"> 59</span></a>            <span class="n">string_io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="TxtFileRenderer-60"><a href="#TxtFileRenderer-60"><span class="linenos"> 60</span></a>        <span class="n">stream</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StringIO&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">StringIO</span><span class="p">()))</span>
+</span><span id="TxtFileRenderer-61"><a href="#TxtFileRenderer-61"><span class="linenos"> 61</span></a>        <span class="k">return</span> <span class="n">stream</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+</span><span id="TxtFileRenderer-62"><a href="#TxtFileRenderer-62"><span class="linenos"> 62</span></a>
+</span><span id="TxtFileRenderer-63"><a href="#TxtFileRenderer-63"><span class="linenos"> 63</span></a>    <span class="k">def</span> <span class="nf">as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+</span><span id="TxtFileRenderer-64"><a href="#TxtFileRenderer-64"><span class="linenos"> 64</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer-65"><a href="#TxtFileRenderer-65"><span class="linenos"> 65</span></a><span class="sd">        Convert the provided file object into a stream.</span>
+</span><span id="TxtFileRenderer-66"><a href="#TxtFileRenderer-66"><span class="linenos"> 66</span></a>
+</span><span id="TxtFileRenderer-67"><a href="#TxtFileRenderer-67"><span class="linenos"> 67</span></a><span class="sd">        Args:</span>
+</span><span id="TxtFileRenderer-68"><a href="#TxtFileRenderer-68"><span class="linenos"> 68</span></a><span class="sd">            file (BaseFile): File object to render.</span>
+</span><span id="TxtFileRenderer-69"><a href="#TxtFileRenderer-69"><span class="linenos"> 69</span></a>
+</span><span id="TxtFileRenderer-70"><a href="#TxtFileRenderer-70"><span class="linenos"> 70</span></a><span class="sd">        Returns:</span>
+</span><span id="TxtFileRenderer-71"><a href="#TxtFileRenderer-71"><span class="linenos"> 71</span></a><span class="sd">            IO[bytes]: Stream object containing the rendered data.</span>
+</span><span id="TxtFileRenderer-72"><a href="#TxtFileRenderer-72"><span class="linenos"> 72</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer-73"><a href="#TxtFileRenderer-73"><span class="linenos"> 73</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">())</span>
+</span><span id="TxtFileRenderer-74"><a href="#TxtFileRenderer-74"><span class="linenos"> 74</span></a>
+</span><span id="TxtFileRenderer-75"><a href="#TxtFileRenderer-75"><span class="linenos"> 75</span></a>    <span class="nd">@overload</span>
+</span><span id="TxtFileRenderer-76"><a href="#TxtFileRenderer-76"><span class="linenos"> 76</span></a>    <span class="k">def</span> <span class="nf">_as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span> <span class="o">...</span>
+</span><span id="TxtFileRenderer-77"><a href="#TxtFileRenderer-77"><span class="linenos"> 77</span></a>
+</span><span id="TxtFileRenderer-78"><a href="#TxtFileRenderer-78"><span class="linenos"> 78</span></a>    <span class="nd">@overload</span>
+</span><span id="TxtFileRenderer-79"><a href="#TxtFileRenderer-79"><span class="linenos"> 79</span></a>    <span class="k">def</span> <span class="nf">_as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span> <span class="o">...</span>
+</span><span id="TxtFileRenderer-80"><a href="#TxtFileRenderer-80"><span class="linenos"> 80</span></a>
+</span><span id="TxtFileRenderer-81"><a href="#TxtFileRenderer-81"><span class="linenos"> 81</span></a>    <span class="k">def</span> <span class="nf">_as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+</span><span id="TxtFileRenderer-82"><a href="#TxtFileRenderer-82"><span class="linenos"> 82</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer-83"><a href="#TxtFileRenderer-83"><span class="linenos"> 83</span></a><span class="sd">        Convert provided file object into an arbitrary stream.</span>
+</span><span id="TxtFileRenderer-84"><a href="#TxtFileRenderer-84"><span class="linenos"> 84</span></a>
+</span><span id="TxtFileRenderer-85"><a href="#TxtFileRenderer-85"><span class="linenos"> 85</span></a><span class="sd">        Args:</span>
+</span><span id="TxtFileRenderer-86"><a href="#TxtFileRenderer-86"><span class="linenos"> 86</span></a><span class="sd">            file (BaseFile): file object to render.</span>
+</span><span id="TxtFileRenderer-87"><a href="#TxtFileRenderer-87"><span class="linenos"> 87</span></a><span class="sd">            stream (IO[T]): the stream to write the rendered data to.</span>
+</span><span id="TxtFileRenderer-88"><a href="#TxtFileRenderer-88"><span class="linenos"> 88</span></a>
+</span><span id="TxtFileRenderer-89"><a href="#TxtFileRenderer-89"><span class="linenos"> 89</span></a><span class="sd">        Returns:</span>
+</span><span id="TxtFileRenderer-90"><a href="#TxtFileRenderer-90"><span class="linenos"> 90</span></a><span class="sd">            IO[T]: stream object containing the rendered data.</span>
+</span><span id="TxtFileRenderer-91"><a href="#TxtFileRenderer-91"><span class="linenos"> 91</span></a>
+</span><span id="TxtFileRenderer-92"><a href="#TxtFileRenderer-92"><span class="linenos"> 92</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer-93"><a href="#TxtFileRenderer-93"><span class="linenos"> 93</span></a>        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+</span><span id="TxtFileRenderer-94"><a href="#TxtFileRenderer-94"><span class="linenos"> 94</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_write_message</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_render_block</span><span class="p">(</span><span class="n">block</span><span class="p">),</span> <span class="n">file</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+</span><span id="TxtFileRenderer-95"><a href="#TxtFileRenderer-95"><span class="linenos"> 95</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_write_message</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delimiter</span><span class="p">,</span> <span class="n">file</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span>
+</span><span id="TxtFileRenderer-96"><a href="#TxtFileRenderer-96"><span class="linenos"> 96</span></a>        <span class="n">stream</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="TxtFileRenderer-97"><a href="#TxtFileRenderer-97"><span class="linenos"> 97</span></a>        <span class="k">return</span> <span class="n">stream</span>
+</span><span id="TxtFileRenderer-98"><a href="#TxtFileRenderer-98"><span class="linenos"> 98</span></a>
+</span><span id="TxtFileRenderer-99"><a href="#TxtFileRenderer-99"><span class="linenos"> 99</span></a>    <span class="nd">@singledispatchmethod</span>
+</span><span id="TxtFileRenderer-100"><a href="#TxtFileRenderer-100"><span class="linenos">100</span></a>    <span class="k">def</span> <span class="nf">_write_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="TxtFileRenderer-101"><a href="#TxtFileRenderer-101"><span class="linenos">101</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer-102"><a href="#TxtFileRenderer-102"><span class="linenos">102</span></a><span class="sd">        Write the message to the stream.</span>
+</span><span id="TxtFileRenderer-103"><a href="#TxtFileRenderer-103"><span class="linenos">103</span></a>
+</span><span id="TxtFileRenderer-104"><a href="#TxtFileRenderer-104"><span class="linenos">104</span></a><span class="sd">        Args:</span>
+</span><span id="TxtFileRenderer-105"><a href="#TxtFileRenderer-105"><span class="linenos">105</span></a><span class="sd">            stream (io.IOBase): a stream to write the message to. May be any IOBase subclass.</span>
+</span><span id="TxtFileRenderer-106"><a href="#TxtFileRenderer-106"><span class="linenos">106</span></a><span class="sd">            message (str): the message to write.</span>
+</span><span id="TxtFileRenderer-107"><a href="#TxtFileRenderer-107"><span class="linenos">107</span></a><span class="sd">            encoding (str): the encoding to use when writing the message. Defaults to &quot;utf-8&quot;.</span>
+</span><span id="TxtFileRenderer-108"><a href="#TxtFileRenderer-108"><span class="linenos">108</span></a>
+</span><span id="TxtFileRenderer-109"><a href="#TxtFileRenderer-109"><span class="linenos">109</span></a><span class="sd">        Raises:</span>
+</span><span id="TxtFileRenderer-110"><a href="#TxtFileRenderer-110"><span class="linenos">110</span></a><span class="sd">            TypeError: if the stream type is not supported.</span>
+</span><span id="TxtFileRenderer-111"><a href="#TxtFileRenderer-111"><span class="linenos">111</span></a>
+</span><span id="TxtFileRenderer-112"><a href="#TxtFileRenderer-112"><span class="linenos">112</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer-113"><a href="#TxtFileRenderer-113"><span class="linenos">113</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOBase</span><span class="p">):</span>
+</span><span id="TxtFileRenderer-114"><a href="#TxtFileRenderer-114"><span class="linenos">114</span></a>            <span class="n">to_write</span> <span class="o">=</span> <span class="n">message</span>
+</span><span id="TxtFileRenderer-115"><a href="#TxtFileRenderer-115"><span class="linenos">115</span></a>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">BufferedIOBase</span><span class="p">):</span>
+</span><span id="TxtFileRenderer-116"><a href="#TxtFileRenderer-116"><span class="linenos">116</span></a>            <span class="n">to_write</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
+</span><span id="TxtFileRenderer-117"><a href="#TxtFileRenderer-117"><span class="linenos">117</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="TxtFileRenderer-118"><a href="#TxtFileRenderer-118"><span class="linenos">118</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported stream type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="TxtFileRenderer-119"><a href="#TxtFileRenderer-119"><span class="linenos">119</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="TxtFileRenderer-120"><a href="#TxtFileRenderer-120"><span class="linenos">120</span></a>
+</span><span id="TxtFileRenderer-121"><a href="#TxtFileRenderer-121"><span class="linenos">121</span></a>        <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">to_write</span><span class="p">)</span>
+</span><span id="TxtFileRenderer-122"><a href="#TxtFileRenderer-122"><span class="linenos">122</span></a>
+</span><span id="TxtFileRenderer-123"><a href="#TxtFileRenderer-123"><span class="linenos">123</span></a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="TxtFileRenderer-124"><a href="#TxtFileRenderer-124"><span class="linenos">124</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer-125"><a href="#TxtFileRenderer-125"><span class="linenos">125</span></a><span class="sd">        Save the rendered file to the specified path.</span>
+</span><span id="TxtFileRenderer-126"><a href="#TxtFileRenderer-126"><span class="linenos">126</span></a>
+</span><span id="TxtFileRenderer-127"><a href="#TxtFileRenderer-127"><span class="linenos">127</span></a><span class="sd">        Args:</span>
+</span><span id="TxtFileRenderer-128"><a href="#TxtFileRenderer-128"><span class="linenos">128</span></a><span class="sd">            file (BaseFile): File object to render.</span>
+</span><span id="TxtFileRenderer-129"><a href="#TxtFileRenderer-129"><span class="linenos">129</span></a><span class="sd">            path (Path | str): Path to save the rendered file.</span>
+</span><span id="TxtFileRenderer-130"><a href="#TxtFileRenderer-130"><span class="linenos">130</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer-131"><a href="#TxtFileRenderer-131"><span class="linenos">131</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="TxtFileRenderer-132"><a href="#TxtFileRenderer-132"><span class="linenos">132</span></a>            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span><span id="TxtFileRenderer-133"><a href="#TxtFileRenderer-133"><span class="linenos">133</span></a>        <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="TxtFileRenderer-134"><a href="#TxtFileRenderer-134"><span class="linenos">134</span></a>            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 </span></pre></div>
 
 
@@ -339,51 +347,72 @@ as a plain <a href="">simple_text_renderer.renderers.txt</a> file.</p>
 </div>
 
 
-                            <div id="TxtRenderer.__init__" class="classattr">
-                                        <input id="TxtRenderer.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="TxtFileRenderer.__init__" class="classattr">
+                                        <input id="TxtFileRenderer.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">TxtRenderer</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">*</span>, </span><span class="param"><span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span></span>)</span>
+        <span class="name">TxtFileRenderer</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">renderers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n"><a href="../blocks/base.html#BaseBlock">simple_text_renderer.blocks.base.BaseBlock</a></span><span class="p">[</span><span class="n"><a href="../blocks/base.html#Data">simple_text_renderer.blocks.base.Data</a></span><span class="p">]],</span> <span class="n"><a href="mixins.html#RendererProtocol">simple_text_renderer.renderers.mixins.RendererProtocol</a></span><span class="p">[</span><span class="n"><a href="../blocks/base.html#Data">simple_text_renderer.blocks.base.Data</a></span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span></span>)</span>
 
-                <label class="view-source-button" for="TxtRenderer.__init__-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="TxtFileRenderer.__init__-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#TxtRenderer.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="TxtRenderer.__init__-30"><a href="#TxtRenderer.__init__-30"><span class="linenos">30</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="TxtRenderer.__init__-31"><a href="#TxtRenderer.__init__-31"><span class="linenos">31</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_delimiter</span> <span class="o">=</span> <span class="n">delimiter</span>
+    <a class="headerlink" href="#TxtFileRenderer.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TxtFileRenderer.__init__-32"><a href="#TxtFileRenderer.__init__-32"><span class="linenos">32</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="TxtFileRenderer.__init__-33"><a href="#TxtFileRenderer.__init__-33"><span class="linenos">33</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">renderers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="TxtFileRenderer.__init__-34"><a href="#TxtFileRenderer.__init__-34"><span class="linenos">34</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="TxtFileRenderer.__init__-35"><a href="#TxtFileRenderer.__init__-35"><span class="linenos">35</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer.__init__-36"><a href="#TxtFileRenderer.__init__-36"><span class="linenos">36</span></a><span class="sd">        Initialize TxtFileRenderer object.</span>
+</span><span id="TxtFileRenderer.__init__-37"><a href="#TxtFileRenderer.__init__-37"><span class="linenos">37</span></a>
+</span><span id="TxtFileRenderer.__init__-38"><a href="#TxtFileRenderer.__init__-38"><span class="linenos">38</span></a><span class="sd">        Args:</span>
+</span><span id="TxtFileRenderer.__init__-39"><a href="#TxtFileRenderer.__init__-39"><span class="linenos">39</span></a><span class="sd">            renderers (Mapping[type[BaseBlock[Data]], RendererProtocol[Data]] | None): Mapping of renderers to use for</span>
+</span><span id="TxtFileRenderer.__init__-40"><a href="#TxtFileRenderer.__init__-40"><span class="linenos">40</span></a><span class="sd">            specific block types. Used to override the default renderers.</span>
+</span><span id="TxtFileRenderer.__init__-41"><a href="#TxtFileRenderer.__init__-41"><span class="linenos">41</span></a><span class="sd">            delimiter (str): Delimiter to use between blocks. Default is newline</span>
+</span><span id="TxtFileRenderer.__init__-42"><a href="#TxtFileRenderer.__init__-42"><span class="linenos">42</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer.__init__-43"><a href="#TxtFileRenderer.__init__-43"><span class="linenos">43</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">renderers</span><span class="o">=</span><span class="n">renderers</span><span class="p">)</span>
+</span><span id="TxtFileRenderer.__init__-44"><a href="#TxtFileRenderer.__init__-44"><span class="linenos">44</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_delimiter</span> <span class="o">=</span> <span class="n">delimiter</span>
 </span></pre></div>
 
 
-    
+            <div class="docstring"><p>Initialize TxtFileRenderer object.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>renderers (Mapping[type[BaseBlock[Data]], RendererProtocol[Data]] | None):</strong>  Mapping of renderers to use for</li>
+<li>specific block types. Used to override the default renderers.</li>
+<li><strong>delimiter (str):</strong>  Delimiter to use between blocks. Default is newline</li>
+</ul>
+</div>
+
 
                             </div>
-                            <div id="TxtRenderer.as_str" class="classattr">
-                                        <input id="TxtRenderer.as_str-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="TxtFileRenderer.as_str" class="classattr">
+                                        <input id="TxtFileRenderer.as_str-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
         <span class="name">as_str</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">file</span><span class="p">:</span> <span class="n"><a href="../file.html#BaseFile">simple_text_renderer.file.BaseFile</a></span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
-                <label class="view-source-button" for="TxtRenderer.as_str-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="TxtFileRenderer.as_str-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#TxtRenderer.as_str"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="TxtRenderer.as_str-33"><a href="#TxtRenderer.as_str-33"><span class="linenos">33</span></a>    <span class="k">def</span> <span class="nf">as_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="TxtRenderer.as_str-34"><a href="#TxtRenderer.as_str-34"><span class="linenos">34</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="TxtRenderer.as_str-35"><a href="#TxtRenderer.as_str-35"><span class="linenos">35</span></a><span class="sd">        Convert the provided file object into a string describing all the data.</span>
-</span><span id="TxtRenderer.as_str-36"><a href="#TxtRenderer.as_str-36"><span class="linenos">36</span></a>
-</span><span id="TxtRenderer.as_str-37"><a href="#TxtRenderer.as_str-37"><span class="linenos">37</span></a><span class="sd">        Args:</span>
-</span><span id="TxtRenderer.as_str-38"><a href="#TxtRenderer.as_str-38"><span class="linenos">38</span></a><span class="sd">            file (BaseFile): File object to render.</span>
-</span><span id="TxtRenderer.as_str-39"><a href="#TxtRenderer.as_str-39"><span class="linenos">39</span></a>
-</span><span id="TxtRenderer.as_str-40"><a href="#TxtRenderer.as_str-40"><span class="linenos">40</span></a><span class="sd">        Returns:</span>
-</span><span id="TxtRenderer.as_str-41"><a href="#TxtRenderer.as_str-41"><span class="linenos">41</span></a><span class="sd">            str: Rendered string.</span>
-</span><span id="TxtRenderer.as_str-42"><a href="#TxtRenderer.as_str-42"><span class="linenos">42</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="TxtRenderer.as_str-43"><a href="#TxtRenderer.as_str-43"><span class="linenos">43</span></a>        <span class="n">string_io</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
-</span><span id="TxtRenderer.as_str-44"><a href="#TxtRenderer.as_str-44"><span class="linenos">44</span></a>        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
-</span><span id="TxtRenderer.as_str-45"><a href="#TxtRenderer.as_str-45"><span class="linenos">45</span></a>            <span class="n">string_io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_render_block</span><span class="p">(</span><span class="n">block</span><span class="p">))</span>
-</span><span id="TxtRenderer.as_str-46"><a href="#TxtRenderer.as_str-46"><span class="linenos">46</span></a>            <span class="n">string_io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="TxtRenderer.as_str-47"><a href="#TxtRenderer.as_str-47"><span class="linenos">47</span></a>        <span class="n">stream</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StringIO&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">StringIO</span><span class="p">()))</span>
-</span><span id="TxtRenderer.as_str-48"><a href="#TxtRenderer.as_str-48"><span class="linenos">48</span></a>        <span class="k">return</span> <span class="n">stream</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+    <a class="headerlink" href="#TxtFileRenderer.as_str"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TxtFileRenderer.as_str-46"><a href="#TxtFileRenderer.as_str-46"><span class="linenos">46</span></a>    <span class="k">def</span> <span class="nf">as_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="TxtFileRenderer.as_str-47"><a href="#TxtFileRenderer.as_str-47"><span class="linenos">47</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer.as_str-48"><a href="#TxtFileRenderer.as_str-48"><span class="linenos">48</span></a><span class="sd">        Convert the provided file object into a string describing all the data.</span>
+</span><span id="TxtFileRenderer.as_str-49"><a href="#TxtFileRenderer.as_str-49"><span class="linenos">49</span></a>
+</span><span id="TxtFileRenderer.as_str-50"><a href="#TxtFileRenderer.as_str-50"><span class="linenos">50</span></a><span class="sd">        Args:</span>
+</span><span id="TxtFileRenderer.as_str-51"><a href="#TxtFileRenderer.as_str-51"><span class="linenos">51</span></a><span class="sd">            file (BaseFile): File object to render.</span>
+</span><span id="TxtFileRenderer.as_str-52"><a href="#TxtFileRenderer.as_str-52"><span class="linenos">52</span></a>
+</span><span id="TxtFileRenderer.as_str-53"><a href="#TxtFileRenderer.as_str-53"><span class="linenos">53</span></a><span class="sd">        Returns:</span>
+</span><span id="TxtFileRenderer.as_str-54"><a href="#TxtFileRenderer.as_str-54"><span class="linenos">54</span></a><span class="sd">            str: Rendered string.</span>
+</span><span id="TxtFileRenderer.as_str-55"><a href="#TxtFileRenderer.as_str-55"><span class="linenos">55</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer.as_str-56"><a href="#TxtFileRenderer.as_str-56"><span class="linenos">56</span></a>        <span class="n">string_io</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+</span><span id="TxtFileRenderer.as_str-57"><a href="#TxtFileRenderer.as_str-57"><span class="linenos">57</span></a>        <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+</span><span id="TxtFileRenderer.as_str-58"><a href="#TxtFileRenderer.as_str-58"><span class="linenos">58</span></a>            <span class="n">string_io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_render_block</span><span class="p">(</span><span class="n">block</span><span class="p">))</span>
+</span><span id="TxtFileRenderer.as_str-59"><a href="#TxtFileRenderer.as_str-59"><span class="linenos">59</span></a>            <span class="n">string_io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="TxtFileRenderer.as_str-60"><a href="#TxtFileRenderer.as_str-60"><span class="linenos">60</span></a>        <span class="n">stream</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;StringIO&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">StringIO</span><span class="p">()))</span>
+</span><span id="TxtFileRenderer.as_str-61"><a href="#TxtFileRenderer.as_str-61"><span class="linenos">61</span></a>        <span class="k">return</span> <span class="n">stream</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -404,28 +433,28 @@ as a plain <a href="">simple_text_renderer.renderers.txt</a> file.</p>
 
 
                             </div>
-                            <div id="TxtRenderer.as_stream" class="classattr">
-                                        <input id="TxtRenderer.as_stream-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="TxtFileRenderer.as_stream" class="classattr">
+                                        <input id="TxtFileRenderer.as_stream-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
         <span class="name">as_stream</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">file</span><span class="p">:</span> <span class="n"><a href="../file.html#BaseFile">simple_text_renderer.file.BaseFile</a></span></span><span class="return-annotation">) -> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span>:</span></span>
 
-                <label class="view-source-button" for="TxtRenderer.as_stream-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="TxtFileRenderer.as_stream-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#TxtRenderer.as_stream"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="TxtRenderer.as_stream-50"><a href="#TxtRenderer.as_stream-50"><span class="linenos">50</span></a>    <span class="k">def</span> <span class="nf">as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-</span><span id="TxtRenderer.as_stream-51"><a href="#TxtRenderer.as_stream-51"><span class="linenos">51</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="TxtRenderer.as_stream-52"><a href="#TxtRenderer.as_stream-52"><span class="linenos">52</span></a><span class="sd">        Convert the provided file object into a stream.</span>
-</span><span id="TxtRenderer.as_stream-53"><a href="#TxtRenderer.as_stream-53"><span class="linenos">53</span></a>
-</span><span id="TxtRenderer.as_stream-54"><a href="#TxtRenderer.as_stream-54"><span class="linenos">54</span></a><span class="sd">        Args:</span>
-</span><span id="TxtRenderer.as_stream-55"><a href="#TxtRenderer.as_stream-55"><span class="linenos">55</span></a><span class="sd">            file (BaseFile): File object to render.</span>
-</span><span id="TxtRenderer.as_stream-56"><a href="#TxtRenderer.as_stream-56"><span class="linenos">56</span></a>
-</span><span id="TxtRenderer.as_stream-57"><a href="#TxtRenderer.as_stream-57"><span class="linenos">57</span></a><span class="sd">        Returns:</span>
-</span><span id="TxtRenderer.as_stream-58"><a href="#TxtRenderer.as_stream-58"><span class="linenos">58</span></a><span class="sd">            IO[bytes]: Stream object containing the rendered data.</span>
-</span><span id="TxtRenderer.as_stream-59"><a href="#TxtRenderer.as_stream-59"><span class="linenos">59</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="TxtRenderer.as_stream-60"><a href="#TxtRenderer.as_stream-60"><span class="linenos">60</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">())</span>
+    <a class="headerlink" href="#TxtFileRenderer.as_stream"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TxtFileRenderer.as_stream-63"><a href="#TxtFileRenderer.as_stream-63"><span class="linenos">63</span></a>    <span class="k">def</span> <span class="nf">as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+</span><span id="TxtFileRenderer.as_stream-64"><a href="#TxtFileRenderer.as_stream-64"><span class="linenos">64</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer.as_stream-65"><a href="#TxtFileRenderer.as_stream-65"><span class="linenos">65</span></a><span class="sd">        Convert the provided file object into a stream.</span>
+</span><span id="TxtFileRenderer.as_stream-66"><a href="#TxtFileRenderer.as_stream-66"><span class="linenos">66</span></a>
+</span><span id="TxtFileRenderer.as_stream-67"><a href="#TxtFileRenderer.as_stream-67"><span class="linenos">67</span></a><span class="sd">        Args:</span>
+</span><span id="TxtFileRenderer.as_stream-68"><a href="#TxtFileRenderer.as_stream-68"><span class="linenos">68</span></a><span class="sd">            file (BaseFile): File object to render.</span>
+</span><span id="TxtFileRenderer.as_stream-69"><a href="#TxtFileRenderer.as_stream-69"><span class="linenos">69</span></a>
+</span><span id="TxtFileRenderer.as_stream-70"><a href="#TxtFileRenderer.as_stream-70"><span class="linenos">70</span></a><span class="sd">        Returns:</span>
+</span><span id="TxtFileRenderer.as_stream-71"><a href="#TxtFileRenderer.as_stream-71"><span class="linenos">71</span></a><span class="sd">            IO[bytes]: Stream object containing the rendered data.</span>
+</span><span id="TxtFileRenderer.as_stream-72"><a href="#TxtFileRenderer.as_stream-72"><span class="linenos">72</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer.as_stream-73"><a href="#TxtFileRenderer.as_stream-73"><span class="linenos">73</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">())</span>
 </span></pre></div>
 
 
@@ -446,29 +475,29 @@ as a plain <a href="">simple_text_renderer.renderers.txt</a> file.</p>
 
 
                             </div>
-                            <div id="TxtRenderer.to_file" class="classattr">
-                                        <input id="TxtRenderer.to_file-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="TxtFileRenderer.to_file" class="classattr">
+                                        <input id="TxtFileRenderer.to_file-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
         <span class="name">to_file</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">file</span><span class="p">:</span> <span class="n"><a href="../file.html#BaseFile">simple_text_renderer.file.BaseFile</a></span>,</span><span class="param">	<span class="n">path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
-                <label class="view-source-button" for="TxtRenderer.to_file-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="TxtFileRenderer.to_file-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#TxtRenderer.to_file"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="TxtRenderer.to_file-110"><a href="#TxtRenderer.to_file-110"><span class="linenos">110</span></a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="TxtRenderer.to_file-111"><a href="#TxtRenderer.to_file-111"><span class="linenos">111</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="TxtRenderer.to_file-112"><a href="#TxtRenderer.to_file-112"><span class="linenos">112</span></a><span class="sd">        Save the rendered file to the specified path.</span>
-</span><span id="TxtRenderer.to_file-113"><a href="#TxtRenderer.to_file-113"><span class="linenos">113</span></a>
-</span><span id="TxtRenderer.to_file-114"><a href="#TxtRenderer.to_file-114"><span class="linenos">114</span></a><span class="sd">        Args:</span>
-</span><span id="TxtRenderer.to_file-115"><a href="#TxtRenderer.to_file-115"><span class="linenos">115</span></a><span class="sd">            file (BaseFile): File object to render.</span>
-</span><span id="TxtRenderer.to_file-116"><a href="#TxtRenderer.to_file-116"><span class="linenos">116</span></a><span class="sd">            path (Path | str): Path to save the rendered file.</span>
-</span><span id="TxtRenderer.to_file-117"><a href="#TxtRenderer.to_file-117"><span class="linenos">117</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="TxtRenderer.to_file-118"><a href="#TxtRenderer.to_file-118"><span class="linenos">118</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="TxtRenderer.to_file-119"><a href="#TxtRenderer.to_file-119"><span class="linenos">119</span></a>            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-</span><span id="TxtRenderer.to_file-120"><a href="#TxtRenderer.to_file-120"><span class="linenos">120</span></a>        <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span id="TxtRenderer.to_file-121"><a href="#TxtRenderer.to_file-121"><span class="linenos">121</span></a>            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <a class="headerlink" href="#TxtFileRenderer.to_file"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TxtFileRenderer.to_file-123"><a href="#TxtFileRenderer.to_file-123"><span class="linenos">123</span></a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="TxtFileRenderer.to_file-124"><a href="#TxtFileRenderer.to_file-124"><span class="linenos">124</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer.to_file-125"><a href="#TxtFileRenderer.to_file-125"><span class="linenos">125</span></a><span class="sd">        Save the rendered file to the specified path.</span>
+</span><span id="TxtFileRenderer.to_file-126"><a href="#TxtFileRenderer.to_file-126"><span class="linenos">126</span></a>
+</span><span id="TxtFileRenderer.to_file-127"><a href="#TxtFileRenderer.to_file-127"><span class="linenos">127</span></a><span class="sd">        Args:</span>
+</span><span id="TxtFileRenderer.to_file-128"><a href="#TxtFileRenderer.to_file-128"><span class="linenos">128</span></a><span class="sd">            file (BaseFile): File object to render.</span>
+</span><span id="TxtFileRenderer.to_file-129"><a href="#TxtFileRenderer.to_file-129"><span class="linenos">129</span></a><span class="sd">            path (Path | str): Path to save the rendered file.</span>
+</span><span id="TxtFileRenderer.to_file-130"><a href="#TxtFileRenderer.to_file-130"><span class="linenos">130</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="TxtFileRenderer.to_file-131"><a href="#TxtFileRenderer.to_file-131"><span class="linenos">131</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="TxtFileRenderer.to_file-132"><a href="#TxtFileRenderer.to_file-132"><span class="linenos">132</span></a>            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span><span id="TxtFileRenderer.to_file-133"><a href="#TxtFileRenderer.to_file-133"><span class="linenos">133</span></a>        <span class="k">with</span> <span class="n">path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="TxtFileRenderer.to_file-134"><a href="#TxtFileRenderer.to_file-134"><span class="linenos">134</span></a>            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">as_stream</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 </span></pre></div>
 
 
@@ -483,6 +512,17 @@ as a plain <a href="">simple_text_renderer.renderers.txt</a> file.</p>
 </div>
 
 
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="base.html#FileRendererBase">simple_text_renderer.renderers.base.FileRendererBase</a></dt>
+                                <dd id="TxtFileRenderer.register" class="function"><a href="base.html#FileRendererBase.register">register</a></dd>
+                <dd id="TxtFileRenderer._init_renderers" class="function"><a href="base.html#FileRendererBase._init_renderers">_init_renderers</a></dd>
+                <dd id="TxtFileRenderer._render_block" class="function"><a href="base.html#FileRendererBase._render_block">_render_block</a></dd>
+
+            </div>
+                                </dl>
                             </div>
                 </section>
     </main>

@@ -31,16 +31,28 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#BaseRenderer">BaseRenderer</a>
+                    <a class="class" href="#FileRendererBase">FileRendererBase</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#BaseRenderer.as_str">as_str</a>
+                                <a class="function" href="#FileRendererBase.__init__">FileRendererBase</a>
                         </li>
                         <li>
-                                <a class="function" href="#BaseRenderer.as_stream">as_stream</a>
+                                <a class="function" href="#FileRendererBase.register">register</a>
                         </li>
                         <li>
-                                <a class="function" href="#BaseRenderer.to_file">to_file</a>
+                                <a class="function" href="#FileRendererBase._init_renderers">_init_renderers</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#FileRendererBase.as_str">as_str</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#FileRendererBase.as_stream">as_stream</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#FileRendererBase.to_file">to_file</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#FileRendererBase._render_block">_render_block</a>
                         </li>
                 </ul>
 
@@ -66,110 +78,296 @@
 
                         <label class="view-source-button" for="mod-base-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">import</span> <span class="nn">abc</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">IO</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>    <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="kn">from</span> <span class="nn">simple_text_renderer.file</span> <span class="kn">import</span> <span class="n">BaseFile</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="k">class</span> <span class="nc">BaseRenderer</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">    Base class to describe a renderer.</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">    Idea of the renderer is to have an object which know how to render arbitrary data object into a specified format.</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">    It shouldn&#39;t know anything about the data itself, as well as it shouldn&#39;t be responsible for the formatting outside</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">    required for the rendering itself.</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="k">def</span> <span class="nf">as_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">        Render the file in a correct format into a string.</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">        Args:</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">            file: File object to render.</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">        Returns:</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">            str: String representation of the rendered file content.</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>    <span class="k">def</span> <span class="nf">as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">        Render the file in a correct format into a stream.</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">        Args:</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">            file: File object to render.</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">        Render the file in a correct format and write it to the specified path.</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">        Args:</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="sd">            file: File object to render.</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">            path: Path to write the file.</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">        &quot;&quot;&quot;</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">import</span> <span class="nn">abc</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">IO</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">ClassVar</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span> <span class="nn">std_utils.more_typing.undefined</span> <span class="kn">import</span> <span class="n">UNDEFINED</span><span class="p">,</span> <span class="n">is_undefined</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">simple_text_renderer.blocks.base</span> <span class="kn">import</span> <span class="n">BaseBlock</span><span class="p">,</span> <span class="n">Data</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span> <span class="nn">simple_text_renderer.renderers.mixins</span> <span class="kn">import</span> <span class="n">RendererProtocol</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>    <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>    <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>    <span class="kn">from</span> <span class="nn">simple_text_renderer.file</span> <span class="kn">import</span> <span class="n">BaseFile</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="k">class</span> <span class="nc">FileRendererBase</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">    Base class to describe a renderer.</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">    Idea of the renderer is to have an object which know how to render arbitrary data object into a specified format.</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">    It shouldn&#39;t know anything about the data itself, as well as it shouldn&#39;t be responsible for the formatting outside</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">    required for the rendering itself.</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>    <span class="n">_DEFAULT_RENDERERS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">UNDEFINED</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="nd">@classmethod</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">renderer</span><span class="p">:</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">block_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]:</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="sd">        Register a renderer for the specified block type.</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">        Can be used as a decorator, as well as a regular function call.</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">        Args:</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">            block_type (type[BaseBlock[Data]]): Block type to register the renderer for.</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">            renderer (RendererProtocol[Data]): Renderer to register.</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">        Returns:</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">            RendererProtocol[Data]: Provided renderer.</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">        Raises:</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">            ValueError: If the renderer for the specified block type is already registered.</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>        <span class="k">if</span> <span class="n">is_undefined</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="p">):</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]()</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>        <span class="k">if</span> <span class="n">block_type</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="p">:</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Renderer for </span><span class="si">{</span><span class="n">block_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is already registered.&quot;</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>        <span class="bp">cls</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="p">[</span><span class="n">block_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">renderer</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>        <span class="k">return</span> <span class="n">renderer</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">renderers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">        Initialize FileRenderer object.</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">        Args:</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">            renderers (Mapping[type[BaseBlock[Data]], RendererProtocol[Data]] | None): Mapping of renderers to use for</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">                specific block types. Used to override the default renderers.</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_renderers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_renderers</span><span class="p">(</span><span class="n">renderers</span> <span class="ow">or</span> <span class="p">{})</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="k">def</span> <span class="nf">_init_renderers</span><span class="p">(</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">renderers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]:</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">        Initialize the renderers mapping.</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">        Combine the default renderers specified as `_DEFAULT_RENDERERS` with the provided renderers. Items provided</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">        by `__init__` method will override the default renderers.</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">        Args:</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">            renderers (Mapping[type[BaseBlock[Data]], RendererProtocol[Data]]): Provided renderers mapping.</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">        Returns:</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">            dict[type[BaseBlock[Data]], RendererProtocol[Data]]: Initialized renderers mapping.</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">        @public</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>        <span class="k">if</span> <span class="n">is_undefined</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="p">):</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">renderers</span><span class="p">)</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>        <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">renderers</span><span class="p">)</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="k">return</span> <span class="n">result</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="k">def</span> <span class="nf">as_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">        Render the file in a correct format into a string.</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">        Args:</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">            file: File object to render.</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">        Returns:</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">            str: String representation of the rendered file content.</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="k">def</span> <span class="nf">as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">        Render the file in a correct format into a stream.</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">        Args:</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">            file: File object to render.</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">        Render the file in a correct format and write it to the specified path.</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">        Args:</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">            file: File object to render.</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">            path: Path to write the file.</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="k">def</span> <span class="nf">_render_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">        Render the block data into a string representation.</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">        Args:</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">            block (BaseBlock[Data]): Block to render.</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">        Returns:</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">            str: Rendered block content.</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">        Raises:</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">            ValueError: If the block does not have a renderer and no default renderer is provided.</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="sd">        @public</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>        <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">renderer</span><span class="p">:</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>            <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">renderer</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>        <span class="k">if</span> <span class="n">renderer</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_renderers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">block</span><span class="p">)):</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>            <span class="k">return</span> <span class="n">renderer</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>            <span class="sa">f</span><span class="s2">&quot;This instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> does not have a renderer for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> blocks.&quot;</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>            <span class="s2">&quot;Please, register it as a default renderer for this block type, provide a renderer during initialization &quot;</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>            <span class="s2">&quot;or specify specific renderer for the block.&quot;</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>        <span class="p">)</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span></pre></div>
 
 
             </section>
-                <section id="BaseRenderer">
-                            <input id="BaseRenderer-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="FileRendererBase">
+                            <input id="FileRendererBase-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">BaseRenderer</span><wbr>(<span class="base">abc.ABC</span>):
+    <span class="name">FileRendererBase</span><wbr>(<span class="base">abc.ABC</span>):
 
-                <label class="view-source-button" for="BaseRenderer-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="FileRendererBase-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#BaseRenderer"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseRenderer-13"><a href="#BaseRenderer-13"><span class="linenos">13</span></a><span class="k">class</span> <span class="nc">BaseRenderer</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="BaseRenderer-14"><a href="#BaseRenderer-14"><span class="linenos">14</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="BaseRenderer-15"><a href="#BaseRenderer-15"><span class="linenos">15</span></a><span class="sd">    Base class to describe a renderer.</span>
-</span><span id="BaseRenderer-16"><a href="#BaseRenderer-16"><span class="linenos">16</span></a>
-</span><span id="BaseRenderer-17"><a href="#BaseRenderer-17"><span class="linenos">17</span></a><span class="sd">    Idea of the renderer is to have an object which know how to render arbitrary data object into a specified format.</span>
-</span><span id="BaseRenderer-18"><a href="#BaseRenderer-18"><span class="linenos">18</span></a><span class="sd">    It shouldn&#39;t know anything about the data itself, as well as it shouldn&#39;t be responsible for the formatting outside</span>
-</span><span id="BaseRenderer-19"><a href="#BaseRenderer-19"><span class="linenos">19</span></a><span class="sd">    required for the rendering itself.</span>
-</span><span id="BaseRenderer-20"><a href="#BaseRenderer-20"><span class="linenos">20</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="BaseRenderer-21"><a href="#BaseRenderer-21"><span class="linenos">21</span></a>
-</span><span id="BaseRenderer-22"><a href="#BaseRenderer-22"><span class="linenos">22</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="BaseRenderer-23"><a href="#BaseRenderer-23"><span class="linenos">23</span></a>    <span class="k">def</span> <span class="nf">as_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="BaseRenderer-24"><a href="#BaseRenderer-24"><span class="linenos">24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="BaseRenderer-25"><a href="#BaseRenderer-25"><span class="linenos">25</span></a><span class="sd">        Render the file in a correct format into a string.</span>
-</span><span id="BaseRenderer-26"><a href="#BaseRenderer-26"><span class="linenos">26</span></a>
-</span><span id="BaseRenderer-27"><a href="#BaseRenderer-27"><span class="linenos">27</span></a><span class="sd">        Args:</span>
-</span><span id="BaseRenderer-28"><a href="#BaseRenderer-28"><span class="linenos">28</span></a><span class="sd">            file: File object to render.</span>
-</span><span id="BaseRenderer-29"><a href="#BaseRenderer-29"><span class="linenos">29</span></a>
-</span><span id="BaseRenderer-30"><a href="#BaseRenderer-30"><span class="linenos">30</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseRenderer-31"><a href="#BaseRenderer-31"><span class="linenos">31</span></a><span class="sd">            str: String representation of the rendered file content.</span>
-</span><span id="BaseRenderer-32"><a href="#BaseRenderer-32"><span class="linenos">32</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseRenderer-33"><a href="#BaseRenderer-33"><span class="linenos">33</span></a>
-</span><span id="BaseRenderer-34"><a href="#BaseRenderer-34"><span class="linenos">34</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="BaseRenderer-35"><a href="#BaseRenderer-35"><span class="linenos">35</span></a>    <span class="k">def</span> <span class="nf">as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-</span><span id="BaseRenderer-36"><a href="#BaseRenderer-36"><span class="linenos">36</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="BaseRenderer-37"><a href="#BaseRenderer-37"><span class="linenos">37</span></a><span class="sd">        Render the file in a correct format into a stream.</span>
-</span><span id="BaseRenderer-38"><a href="#BaseRenderer-38"><span class="linenos">38</span></a>
-</span><span id="BaseRenderer-39"><a href="#BaseRenderer-39"><span class="linenos">39</span></a><span class="sd">        Args:</span>
-</span><span id="BaseRenderer-40"><a href="#BaseRenderer-40"><span class="linenos">40</span></a><span class="sd">            file: File object to render.</span>
-</span><span id="BaseRenderer-41"><a href="#BaseRenderer-41"><span class="linenos">41</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseRenderer-42"><a href="#BaseRenderer-42"><span class="linenos">42</span></a>
-</span><span id="BaseRenderer-43"><a href="#BaseRenderer-43"><span class="linenos">43</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="BaseRenderer-44"><a href="#BaseRenderer-44"><span class="linenos">44</span></a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="BaseRenderer-45"><a href="#BaseRenderer-45"><span class="linenos">45</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="BaseRenderer-46"><a href="#BaseRenderer-46"><span class="linenos">46</span></a><span class="sd">        Render the file in a correct format and write it to the specified path.</span>
-</span><span id="BaseRenderer-47"><a href="#BaseRenderer-47"><span class="linenos">47</span></a>
-</span><span id="BaseRenderer-48"><a href="#BaseRenderer-48"><span class="linenos">48</span></a><span class="sd">        Args:</span>
-</span><span id="BaseRenderer-49"><a href="#BaseRenderer-49"><span class="linenos">49</span></a><span class="sd">            file: File object to render.</span>
-</span><span id="BaseRenderer-50"><a href="#BaseRenderer-50"><span class="linenos">50</span></a><span class="sd">            path: Path to write the file.</span>
-</span><span id="BaseRenderer-51"><a href="#BaseRenderer-51"><span class="linenos">51</span></a><span class="sd">        &quot;&quot;&quot;</span>
+    <a class="headerlink" href="#FileRendererBase"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileRendererBase-19"><a href="#FileRendererBase-19"><span class="linenos"> 19</span></a><span class="k">class</span> <span class="nc">FileRendererBase</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="FileRendererBase-20"><a href="#FileRendererBase-20"><span class="linenos"> 20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-21"><a href="#FileRendererBase-21"><span class="linenos"> 21</span></a><span class="sd">    Base class to describe a renderer.</span>
+</span><span id="FileRendererBase-22"><a href="#FileRendererBase-22"><span class="linenos"> 22</span></a>
+</span><span id="FileRendererBase-23"><a href="#FileRendererBase-23"><span class="linenos"> 23</span></a><span class="sd">    Idea of the renderer is to have an object which know how to render arbitrary data object into a specified format.</span>
+</span><span id="FileRendererBase-24"><a href="#FileRendererBase-24"><span class="linenos"> 24</span></a><span class="sd">    It shouldn&#39;t know anything about the data itself, as well as it shouldn&#39;t be responsible for the formatting outside</span>
+</span><span id="FileRendererBase-25"><a href="#FileRendererBase-25"><span class="linenos"> 25</span></a><span class="sd">    required for the rendering itself.</span>
+</span><span id="FileRendererBase-26"><a href="#FileRendererBase-26"><span class="linenos"> 26</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-27"><a href="#FileRendererBase-27"><span class="linenos"> 27</span></a>
+</span><span id="FileRendererBase-28"><a href="#FileRendererBase-28"><span class="linenos"> 28</span></a>    <span class="n">_DEFAULT_RENDERERS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">UNDEFINED</span>
+</span><span id="FileRendererBase-29"><a href="#FileRendererBase-29"><span class="linenos"> 29</span></a>
+</span><span id="FileRendererBase-30"><a href="#FileRendererBase-30"><span class="linenos"> 30</span></a>    <span class="nd">@classmethod</span>
+</span><span id="FileRendererBase-31"><a href="#FileRendererBase-31"><span class="linenos"> 31</span></a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">renderer</span><span class="p">:</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">block_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]:</span>
+</span><span id="FileRendererBase-32"><a href="#FileRendererBase-32"><span class="linenos"> 32</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-33"><a href="#FileRendererBase-33"><span class="linenos"> 33</span></a><span class="sd">        Register a renderer for the specified block type.</span>
+</span><span id="FileRendererBase-34"><a href="#FileRendererBase-34"><span class="linenos"> 34</span></a>
+</span><span id="FileRendererBase-35"><a href="#FileRendererBase-35"><span class="linenos"> 35</span></a><span class="sd">        Can be used as a decorator, as well as a regular function call.</span>
+</span><span id="FileRendererBase-36"><a href="#FileRendererBase-36"><span class="linenos"> 36</span></a>
+</span><span id="FileRendererBase-37"><a href="#FileRendererBase-37"><span class="linenos"> 37</span></a><span class="sd">        Args:</span>
+</span><span id="FileRendererBase-38"><a href="#FileRendererBase-38"><span class="linenos"> 38</span></a><span class="sd">            block_type (type[BaseBlock[Data]]): Block type to register the renderer for.</span>
+</span><span id="FileRendererBase-39"><a href="#FileRendererBase-39"><span class="linenos"> 39</span></a><span class="sd">            renderer (RendererProtocol[Data]): Renderer to register.</span>
+</span><span id="FileRendererBase-40"><a href="#FileRendererBase-40"><span class="linenos"> 40</span></a>
+</span><span id="FileRendererBase-41"><a href="#FileRendererBase-41"><span class="linenos"> 41</span></a><span class="sd">        Returns:</span>
+</span><span id="FileRendererBase-42"><a href="#FileRendererBase-42"><span class="linenos"> 42</span></a><span class="sd">            RendererProtocol[Data]: Provided renderer.</span>
+</span><span id="FileRendererBase-43"><a href="#FileRendererBase-43"><span class="linenos"> 43</span></a>
+</span><span id="FileRendererBase-44"><a href="#FileRendererBase-44"><span class="linenos"> 44</span></a><span class="sd">        Raises:</span>
+</span><span id="FileRendererBase-45"><a href="#FileRendererBase-45"><span class="linenos"> 45</span></a><span class="sd">            ValueError: If the renderer for the specified block type is already registered.</span>
+</span><span id="FileRendererBase-46"><a href="#FileRendererBase-46"><span class="linenos"> 46</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-47"><a href="#FileRendererBase-47"><span class="linenos"> 47</span></a>        <span class="k">if</span> <span class="n">is_undefined</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="p">):</span>
+</span><span id="FileRendererBase-48"><a href="#FileRendererBase-48"><span class="linenos"> 48</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]()</span>
+</span><span id="FileRendererBase-49"><a href="#FileRendererBase-49"><span class="linenos"> 49</span></a>
+</span><span id="FileRendererBase-50"><a href="#FileRendererBase-50"><span class="linenos"> 50</span></a>        <span class="k">if</span> <span class="n">block_type</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="p">:</span>
+</span><span id="FileRendererBase-51"><a href="#FileRendererBase-51"><span class="linenos"> 51</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Renderer for </span><span class="si">{</span><span class="n">block_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is already registered.&quot;</span>
+</span><span id="FileRendererBase-52"><a href="#FileRendererBase-52"><span class="linenos"> 52</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="FileRendererBase-53"><a href="#FileRendererBase-53"><span class="linenos"> 53</span></a>
+</span><span id="FileRendererBase-54"><a href="#FileRendererBase-54"><span class="linenos"> 54</span></a>        <span class="bp">cls</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="p">[</span><span class="n">block_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">renderer</span>
+</span><span id="FileRendererBase-55"><a href="#FileRendererBase-55"><span class="linenos"> 55</span></a>        <span class="k">return</span> <span class="n">renderer</span>
+</span><span id="FileRendererBase-56"><a href="#FileRendererBase-56"><span class="linenos"> 56</span></a>
+</span><span id="FileRendererBase-57"><a href="#FileRendererBase-57"><span class="linenos"> 57</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">renderers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="FileRendererBase-58"><a href="#FileRendererBase-58"><span class="linenos"> 58</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-59"><a href="#FileRendererBase-59"><span class="linenos"> 59</span></a><span class="sd">        Initialize FileRenderer object.</span>
+</span><span id="FileRendererBase-60"><a href="#FileRendererBase-60"><span class="linenos"> 60</span></a>
+</span><span id="FileRendererBase-61"><a href="#FileRendererBase-61"><span class="linenos"> 61</span></a><span class="sd">        Args:</span>
+</span><span id="FileRendererBase-62"><a href="#FileRendererBase-62"><span class="linenos"> 62</span></a><span class="sd">            renderers (Mapping[type[BaseBlock[Data]], RendererProtocol[Data]] | None): Mapping of renderers to use for</span>
+</span><span id="FileRendererBase-63"><a href="#FileRendererBase-63"><span class="linenos"> 63</span></a><span class="sd">                specific block types. Used to override the default renderers.</span>
+</span><span id="FileRendererBase-64"><a href="#FileRendererBase-64"><span class="linenos"> 64</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-65"><a href="#FileRendererBase-65"><span class="linenos"> 65</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_renderers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_renderers</span><span class="p">(</span><span class="n">renderers</span> <span class="ow">or</span> <span class="p">{})</span>
+</span><span id="FileRendererBase-66"><a href="#FileRendererBase-66"><span class="linenos"> 66</span></a>
+</span><span id="FileRendererBase-67"><a href="#FileRendererBase-67"><span class="linenos"> 67</span></a>    <span class="k">def</span> <span class="nf">_init_renderers</span><span class="p">(</span>
+</span><span id="FileRendererBase-68"><a href="#FileRendererBase-68"><span class="linenos"> 68</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">renderers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span>
+</span><span id="FileRendererBase-69"><a href="#FileRendererBase-69"><span class="linenos"> 69</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]:</span>
+</span><span id="FileRendererBase-70"><a href="#FileRendererBase-70"><span class="linenos"> 70</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-71"><a href="#FileRendererBase-71"><span class="linenos"> 71</span></a><span class="sd">        Initialize the renderers mapping.</span>
+</span><span id="FileRendererBase-72"><a href="#FileRendererBase-72"><span class="linenos"> 72</span></a>
+</span><span id="FileRendererBase-73"><a href="#FileRendererBase-73"><span class="linenos"> 73</span></a><span class="sd">        Combine the default renderers specified as `_DEFAULT_RENDERERS` with the provided renderers. Items provided</span>
+</span><span id="FileRendererBase-74"><a href="#FileRendererBase-74"><span class="linenos"> 74</span></a><span class="sd">        by `__init__` method will override the default renderers.</span>
+</span><span id="FileRendererBase-75"><a href="#FileRendererBase-75"><span class="linenos"> 75</span></a>
+</span><span id="FileRendererBase-76"><a href="#FileRendererBase-76"><span class="linenos"> 76</span></a><span class="sd">        Args:</span>
+</span><span id="FileRendererBase-77"><a href="#FileRendererBase-77"><span class="linenos"> 77</span></a><span class="sd">            renderers (Mapping[type[BaseBlock[Data]], RendererProtocol[Data]]): Provided renderers mapping.</span>
+</span><span id="FileRendererBase-78"><a href="#FileRendererBase-78"><span class="linenos"> 78</span></a>
+</span><span id="FileRendererBase-79"><a href="#FileRendererBase-79"><span class="linenos"> 79</span></a><span class="sd">        Returns:</span>
+</span><span id="FileRendererBase-80"><a href="#FileRendererBase-80"><span class="linenos"> 80</span></a><span class="sd">            dict[type[BaseBlock[Data]], RendererProtocol[Data]]: Initialized renderers mapping.</span>
+</span><span id="FileRendererBase-81"><a href="#FileRendererBase-81"><span class="linenos"> 81</span></a>
+</span><span id="FileRendererBase-82"><a href="#FileRendererBase-82"><span class="linenos"> 82</span></a><span class="sd">        @public</span>
+</span><span id="FileRendererBase-83"><a href="#FileRendererBase-83"><span class="linenos"> 83</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-84"><a href="#FileRendererBase-84"><span class="linenos"> 84</span></a>        <span class="k">if</span> <span class="n">is_undefined</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="p">):</span>
+</span><span id="FileRendererBase-85"><a href="#FileRendererBase-85"><span class="linenos"> 85</span></a>            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">renderers</span><span class="p">)</span>
+</span><span id="FileRendererBase-86"><a href="#FileRendererBase-86"><span class="linenos"> 86</span></a>
+</span><span id="FileRendererBase-87"><a href="#FileRendererBase-87"><span class="linenos"> 87</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span id="FileRendererBase-88"><a href="#FileRendererBase-88"><span class="linenos"> 88</span></a>        <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">renderers</span><span class="p">)</span>
+</span><span id="FileRendererBase-89"><a href="#FileRendererBase-89"><span class="linenos"> 89</span></a>        <span class="k">return</span> <span class="n">result</span>
+</span><span id="FileRendererBase-90"><a href="#FileRendererBase-90"><span class="linenos"> 90</span></a>
+</span><span id="FileRendererBase-91"><a href="#FileRendererBase-91"><span class="linenos"> 91</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="FileRendererBase-92"><a href="#FileRendererBase-92"><span class="linenos"> 92</span></a>    <span class="k">def</span> <span class="nf">as_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="FileRendererBase-93"><a href="#FileRendererBase-93"><span class="linenos"> 93</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-94"><a href="#FileRendererBase-94"><span class="linenos"> 94</span></a><span class="sd">        Render the file in a correct format into a string.</span>
+</span><span id="FileRendererBase-95"><a href="#FileRendererBase-95"><span class="linenos"> 95</span></a>
+</span><span id="FileRendererBase-96"><a href="#FileRendererBase-96"><span class="linenos"> 96</span></a><span class="sd">        Args:</span>
+</span><span id="FileRendererBase-97"><a href="#FileRendererBase-97"><span class="linenos"> 97</span></a><span class="sd">            file: File object to render.</span>
+</span><span id="FileRendererBase-98"><a href="#FileRendererBase-98"><span class="linenos"> 98</span></a>
+</span><span id="FileRendererBase-99"><a href="#FileRendererBase-99"><span class="linenos"> 99</span></a><span class="sd">        Returns:</span>
+</span><span id="FileRendererBase-100"><a href="#FileRendererBase-100"><span class="linenos">100</span></a><span class="sd">            str: String representation of the rendered file content.</span>
+</span><span id="FileRendererBase-101"><a href="#FileRendererBase-101"><span class="linenos">101</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-102"><a href="#FileRendererBase-102"><span class="linenos">102</span></a>
+</span><span id="FileRendererBase-103"><a href="#FileRendererBase-103"><span class="linenos">103</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="FileRendererBase-104"><a href="#FileRendererBase-104"><span class="linenos">104</span></a>    <span class="k">def</span> <span class="nf">as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+</span><span id="FileRendererBase-105"><a href="#FileRendererBase-105"><span class="linenos">105</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-106"><a href="#FileRendererBase-106"><span class="linenos">106</span></a><span class="sd">        Render the file in a correct format into a stream.</span>
+</span><span id="FileRendererBase-107"><a href="#FileRendererBase-107"><span class="linenos">107</span></a>
+</span><span id="FileRendererBase-108"><a href="#FileRendererBase-108"><span class="linenos">108</span></a><span class="sd">        Args:</span>
+</span><span id="FileRendererBase-109"><a href="#FileRendererBase-109"><span class="linenos">109</span></a><span class="sd">            file: File object to render.</span>
+</span><span id="FileRendererBase-110"><a href="#FileRendererBase-110"><span class="linenos">110</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-111"><a href="#FileRendererBase-111"><span class="linenos">111</span></a>
+</span><span id="FileRendererBase-112"><a href="#FileRendererBase-112"><span class="linenos">112</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="FileRendererBase-113"><a href="#FileRendererBase-113"><span class="linenos">113</span></a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="FileRendererBase-114"><a href="#FileRendererBase-114"><span class="linenos">114</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-115"><a href="#FileRendererBase-115"><span class="linenos">115</span></a><span class="sd">        Render the file in a correct format and write it to the specified path.</span>
+</span><span id="FileRendererBase-116"><a href="#FileRendererBase-116"><span class="linenos">116</span></a>
+</span><span id="FileRendererBase-117"><a href="#FileRendererBase-117"><span class="linenos">117</span></a><span class="sd">        Args:</span>
+</span><span id="FileRendererBase-118"><a href="#FileRendererBase-118"><span class="linenos">118</span></a><span class="sd">            file: File object to render.</span>
+</span><span id="FileRendererBase-119"><a href="#FileRendererBase-119"><span class="linenos">119</span></a><span class="sd">            path: Path to write the file.</span>
+</span><span id="FileRendererBase-120"><a href="#FileRendererBase-120"><span class="linenos">120</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-121"><a href="#FileRendererBase-121"><span class="linenos">121</span></a>
+</span><span id="FileRendererBase-122"><a href="#FileRendererBase-122"><span class="linenos">122</span></a>    <span class="k">def</span> <span class="nf">_render_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="FileRendererBase-123"><a href="#FileRendererBase-123"><span class="linenos">123</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-124"><a href="#FileRendererBase-124"><span class="linenos">124</span></a><span class="sd">        Render the block data into a string representation.</span>
+</span><span id="FileRendererBase-125"><a href="#FileRendererBase-125"><span class="linenos">125</span></a>
+</span><span id="FileRendererBase-126"><a href="#FileRendererBase-126"><span class="linenos">126</span></a><span class="sd">        Args:</span>
+</span><span id="FileRendererBase-127"><a href="#FileRendererBase-127"><span class="linenos">127</span></a><span class="sd">            block (BaseBlock[Data]): Block to render.</span>
+</span><span id="FileRendererBase-128"><a href="#FileRendererBase-128"><span class="linenos">128</span></a>
+</span><span id="FileRendererBase-129"><a href="#FileRendererBase-129"><span class="linenos">129</span></a><span class="sd">        Returns:</span>
+</span><span id="FileRendererBase-130"><a href="#FileRendererBase-130"><span class="linenos">130</span></a><span class="sd">            str: Rendered block content.</span>
+</span><span id="FileRendererBase-131"><a href="#FileRendererBase-131"><span class="linenos">131</span></a>
+</span><span id="FileRendererBase-132"><a href="#FileRendererBase-132"><span class="linenos">132</span></a><span class="sd">        Raises:</span>
+</span><span id="FileRendererBase-133"><a href="#FileRendererBase-133"><span class="linenos">133</span></a><span class="sd">            ValueError: If the block does not have a renderer and no default renderer is provided.</span>
+</span><span id="FileRendererBase-134"><a href="#FileRendererBase-134"><span class="linenos">134</span></a>
+</span><span id="FileRendererBase-135"><a href="#FileRendererBase-135"><span class="linenos">135</span></a><span class="sd">        @public</span>
+</span><span id="FileRendererBase-136"><a href="#FileRendererBase-136"><span class="linenos">136</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileRendererBase-137"><a href="#FileRendererBase-137"><span class="linenos">137</span></a>        <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">renderer</span><span class="p">:</span>
+</span><span id="FileRendererBase-138"><a href="#FileRendererBase-138"><span class="linenos">138</span></a>            <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">renderer</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+</span><span id="FileRendererBase-139"><a href="#FileRendererBase-139"><span class="linenos">139</span></a>
+</span><span id="FileRendererBase-140"><a href="#FileRendererBase-140"><span class="linenos">140</span></a>        <span class="k">if</span> <span class="n">renderer</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_renderers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">block</span><span class="p">)):</span>
+</span><span id="FileRendererBase-141"><a href="#FileRendererBase-141"><span class="linenos">141</span></a>            <span class="k">return</span> <span class="n">renderer</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+</span><span id="FileRendererBase-142"><a href="#FileRendererBase-142"><span class="linenos">142</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="FileRendererBase-143"><a href="#FileRendererBase-143"><span class="linenos">143</span></a>            <span class="sa">f</span><span class="s2">&quot;This instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> does not have a renderer for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> blocks.&quot;</span>
+</span><span id="FileRendererBase-144"><a href="#FileRendererBase-144"><span class="linenos">144</span></a>            <span class="s2">&quot;Please, register it as a default renderer for this block type, provide a renderer during initialization &quot;</span>
+</span><span id="FileRendererBase-145"><a href="#FileRendererBase-145"><span class="linenos">145</span></a>            <span class="s2">&quot;or specify specific renderer for the block.&quot;</span>
+</span><span id="FileRendererBase-146"><a href="#FileRendererBase-146"><span class="linenos">146</span></a>        <span class="p">)</span>
+</span><span id="FileRendererBase-147"><a href="#FileRendererBase-147"><span class="linenos">147</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -181,29 +379,187 @@ required for the rendering itself.</p>
 </div>
 
 
-                            <div id="BaseRenderer.as_str" class="classattr">
-                                        <input id="BaseRenderer.as_str-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="FileRendererBase.__init__" class="classattr">
+                                        <input id="FileRendererBase.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">FileRendererBase</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">renderers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n"><a href="../blocks/base.html#BaseBlock">simple_text_renderer.blocks.base.BaseBlock</a></span><span class="p">[</span><span class="n"><a href="../blocks/base.html#Data">simple_text_renderer.blocks.base.Data</a></span><span class="p">]],</span> <span class="n"><a href="mixins.html#RendererProtocol">simple_text_renderer.renderers.mixins.RendererProtocol</a></span><span class="p">[</span><span class="n"><a href="../blocks/base.html#Data">simple_text_renderer.blocks.base.Data</a></span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+
+                <label class="view-source-button" for="FileRendererBase.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#FileRendererBase.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileRendererBase.__init__-57"><a href="#FileRendererBase.__init__-57"><span class="linenos">57</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">renderers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="FileRendererBase.__init__-58"><a href="#FileRendererBase.__init__-58"><span class="linenos">58</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase.__init__-59"><a href="#FileRendererBase.__init__-59"><span class="linenos">59</span></a><span class="sd">        Initialize FileRenderer object.</span>
+</span><span id="FileRendererBase.__init__-60"><a href="#FileRendererBase.__init__-60"><span class="linenos">60</span></a>
+</span><span id="FileRendererBase.__init__-61"><a href="#FileRendererBase.__init__-61"><span class="linenos">61</span></a><span class="sd">        Args:</span>
+</span><span id="FileRendererBase.__init__-62"><a href="#FileRendererBase.__init__-62"><span class="linenos">62</span></a><span class="sd">            renderers (Mapping[type[BaseBlock[Data]], RendererProtocol[Data]] | None): Mapping of renderers to use for</span>
+</span><span id="FileRendererBase.__init__-63"><a href="#FileRendererBase.__init__-63"><span class="linenos">63</span></a><span class="sd">                specific block types. Used to override the default renderers.</span>
+</span><span id="FileRendererBase.__init__-64"><a href="#FileRendererBase.__init__-64"><span class="linenos">64</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileRendererBase.__init__-65"><a href="#FileRendererBase.__init__-65"><span class="linenos">65</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_renderers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_renderers</span><span class="p">(</span><span class="n">renderers</span> <span class="ow">or</span> <span class="p">{})</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Initialize FileRenderer object.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>renderers (Mapping[type[BaseBlock[Data]], RendererProtocol[Data]] | None):</strong>  Mapping of renderers to use for
+specific block types. Used to override the default renderers.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="FileRendererBase.register" class="classattr">
+                                        <input id="FileRendererBase.register-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-classmethod">@classmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">register</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">cls</span>,</span><span class="param">	<span class="n">renderer</span><span class="p">:</span> <span class="n"><a href="mixins.html#RendererProtocol">simple_text_renderer.renderers.mixins.RendererProtocol</a></span><span class="p">[</span><span class="n"><a href="../blocks/base.html#Data">simple_text_renderer.blocks.base.Data</a></span><span class="p">]</span>,</span><span class="param">	<span class="n">block_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n"><a href="../blocks/base.html#BaseBlock">simple_text_renderer.blocks.base.BaseBlock</a></span><span class="p">[</span><span class="n"><a href="../blocks/base.html#Data">simple_text_renderer.blocks.base.Data</a></span><span class="p">]]</span></span><span class="return-annotation">) -> <span class="n"><a href="mixins.html#RendererProtocol">simple_text_renderer.renderers.mixins.RendererProtocol</a></span><span class="p">[</span><span class="n"><a href="../blocks/base.html#Data">simple_text_renderer.blocks.base.Data</a></span><span class="p">]</span>:</span></span>
+
+                <label class="view-source-button" for="FileRendererBase.register-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#FileRendererBase.register"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileRendererBase.register-30"><a href="#FileRendererBase.register-30"><span class="linenos">30</span></a>    <span class="nd">@classmethod</span>
+</span><span id="FileRendererBase.register-31"><a href="#FileRendererBase.register-31"><span class="linenos">31</span></a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">renderer</span><span class="p">:</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">block_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]:</span>
+</span><span id="FileRendererBase.register-32"><a href="#FileRendererBase.register-32"><span class="linenos">32</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase.register-33"><a href="#FileRendererBase.register-33"><span class="linenos">33</span></a><span class="sd">        Register a renderer for the specified block type.</span>
+</span><span id="FileRendererBase.register-34"><a href="#FileRendererBase.register-34"><span class="linenos">34</span></a>
+</span><span id="FileRendererBase.register-35"><a href="#FileRendererBase.register-35"><span class="linenos">35</span></a><span class="sd">        Can be used as a decorator, as well as a regular function call.</span>
+</span><span id="FileRendererBase.register-36"><a href="#FileRendererBase.register-36"><span class="linenos">36</span></a>
+</span><span id="FileRendererBase.register-37"><a href="#FileRendererBase.register-37"><span class="linenos">37</span></a><span class="sd">        Args:</span>
+</span><span id="FileRendererBase.register-38"><a href="#FileRendererBase.register-38"><span class="linenos">38</span></a><span class="sd">            block_type (type[BaseBlock[Data]]): Block type to register the renderer for.</span>
+</span><span id="FileRendererBase.register-39"><a href="#FileRendererBase.register-39"><span class="linenos">39</span></a><span class="sd">            renderer (RendererProtocol[Data]): Renderer to register.</span>
+</span><span id="FileRendererBase.register-40"><a href="#FileRendererBase.register-40"><span class="linenos">40</span></a>
+</span><span id="FileRendererBase.register-41"><a href="#FileRendererBase.register-41"><span class="linenos">41</span></a><span class="sd">        Returns:</span>
+</span><span id="FileRendererBase.register-42"><a href="#FileRendererBase.register-42"><span class="linenos">42</span></a><span class="sd">            RendererProtocol[Data]: Provided renderer.</span>
+</span><span id="FileRendererBase.register-43"><a href="#FileRendererBase.register-43"><span class="linenos">43</span></a>
+</span><span id="FileRendererBase.register-44"><a href="#FileRendererBase.register-44"><span class="linenos">44</span></a><span class="sd">        Raises:</span>
+</span><span id="FileRendererBase.register-45"><a href="#FileRendererBase.register-45"><span class="linenos">45</span></a><span class="sd">            ValueError: If the renderer for the specified block type is already registered.</span>
+</span><span id="FileRendererBase.register-46"><a href="#FileRendererBase.register-46"><span class="linenos">46</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileRendererBase.register-47"><a href="#FileRendererBase.register-47"><span class="linenos">47</span></a>        <span class="k">if</span> <span class="n">is_undefined</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="p">):</span>
+</span><span id="FileRendererBase.register-48"><a href="#FileRendererBase.register-48"><span class="linenos">48</span></a>            <span class="bp">cls</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]()</span>
+</span><span id="FileRendererBase.register-49"><a href="#FileRendererBase.register-49"><span class="linenos">49</span></a>
+</span><span id="FileRendererBase.register-50"><a href="#FileRendererBase.register-50"><span class="linenos">50</span></a>        <span class="k">if</span> <span class="n">block_type</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="p">:</span>
+</span><span id="FileRendererBase.register-51"><a href="#FileRendererBase.register-51"><span class="linenos">51</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Renderer for </span><span class="si">{</span><span class="n">block_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is already registered.&quot;</span>
+</span><span id="FileRendererBase.register-52"><a href="#FileRendererBase.register-52"><span class="linenos">52</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="FileRendererBase.register-53"><a href="#FileRendererBase.register-53"><span class="linenos">53</span></a>
+</span><span id="FileRendererBase.register-54"><a href="#FileRendererBase.register-54"><span class="linenos">54</span></a>        <span class="bp">cls</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="p">[</span><span class="n">block_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">renderer</span>
+</span><span id="FileRendererBase.register-55"><a href="#FileRendererBase.register-55"><span class="linenos">55</span></a>        <span class="k">return</span> <span class="n">renderer</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Register a renderer for the specified block type.</p>
+
+<p>Can be used as a decorator, as well as a regular function call.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>block_type (type[BaseBlock[Data]]):</strong>  Block type to register the renderer for.</li>
+<li><strong>renderer (RendererProtocol[Data]):</strong>  Renderer to register.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>RendererProtocol[Data]: Provided renderer.</p>
+</blockquote>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>ValueError:</strong>  If the renderer for the specified block type is already registered.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="FileRendererBase._init_renderers" class="classattr">
+                                        <input id="FileRendererBase._init_renderers-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">_init_renderers</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">renderers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n"><a href="../blocks/base.html#BaseBlock">simple_text_renderer.blocks.base.BaseBlock</a></span><span class="p">[</span><span class="n"><a href="../blocks/base.html#Data">simple_text_renderer.blocks.base.Data</a></span><span class="p">]],</span> <span class="n"><a href="mixins.html#RendererProtocol">simple_text_renderer.renderers.mixins.RendererProtocol</a></span><span class="p">[</span><span class="n"><a href="../blocks/base.html#Data">simple_text_renderer.blocks.base.Data</a></span><span class="p">]]</span></span><span class="return-annotation">) -> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n"><a href="../blocks/base.html#BaseBlock">simple_text_renderer.blocks.base.BaseBlock</a></span><span class="p">[</span><span class="n"><a href="../blocks/base.html#Data">simple_text_renderer.blocks.base.Data</a></span><span class="p">]],</span> <span class="n"><a href="mixins.html#RendererProtocol">simple_text_renderer.renderers.mixins.RendererProtocol</a></span><span class="p">[</span><span class="n"><a href="../blocks/base.html#Data">simple_text_renderer.blocks.base.Data</a></span><span class="p">]]</span>:</span></span>
+
+                <label class="view-source-button" for="FileRendererBase._init_renderers-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#FileRendererBase._init_renderers"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileRendererBase._init_renderers-67"><a href="#FileRendererBase._init_renderers-67"><span class="linenos">67</span></a>    <span class="k">def</span> <span class="nf">_init_renderers</span><span class="p">(</span>
+</span><span id="FileRendererBase._init_renderers-68"><a href="#FileRendererBase._init_renderers-68"><span class="linenos">68</span></a>        <span class="bp">self</span><span class="p">,</span> <span class="n">renderers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span>
+</span><span id="FileRendererBase._init_renderers-69"><a href="#FileRendererBase._init_renderers-69"><span class="linenos">69</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]],</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">Data</span><span class="p">]]:</span>
+</span><span id="FileRendererBase._init_renderers-70"><a href="#FileRendererBase._init_renderers-70"><span class="linenos">70</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase._init_renderers-71"><a href="#FileRendererBase._init_renderers-71"><span class="linenos">71</span></a><span class="sd">        Initialize the renderers mapping.</span>
+</span><span id="FileRendererBase._init_renderers-72"><a href="#FileRendererBase._init_renderers-72"><span class="linenos">72</span></a>
+</span><span id="FileRendererBase._init_renderers-73"><a href="#FileRendererBase._init_renderers-73"><span class="linenos">73</span></a><span class="sd">        Combine the default renderers specified as `_DEFAULT_RENDERERS` with the provided renderers. Items provided</span>
+</span><span id="FileRendererBase._init_renderers-74"><a href="#FileRendererBase._init_renderers-74"><span class="linenos">74</span></a><span class="sd">        by `__init__` method will override the default renderers.</span>
+</span><span id="FileRendererBase._init_renderers-75"><a href="#FileRendererBase._init_renderers-75"><span class="linenos">75</span></a>
+</span><span id="FileRendererBase._init_renderers-76"><a href="#FileRendererBase._init_renderers-76"><span class="linenos">76</span></a><span class="sd">        Args:</span>
+</span><span id="FileRendererBase._init_renderers-77"><a href="#FileRendererBase._init_renderers-77"><span class="linenos">77</span></a><span class="sd">            renderers (Mapping[type[BaseBlock[Data]], RendererProtocol[Data]]): Provided renderers mapping.</span>
+</span><span id="FileRendererBase._init_renderers-78"><a href="#FileRendererBase._init_renderers-78"><span class="linenos">78</span></a>
+</span><span id="FileRendererBase._init_renderers-79"><a href="#FileRendererBase._init_renderers-79"><span class="linenos">79</span></a><span class="sd">        Returns:</span>
+</span><span id="FileRendererBase._init_renderers-80"><a href="#FileRendererBase._init_renderers-80"><span class="linenos">80</span></a><span class="sd">            dict[type[BaseBlock[Data]], RendererProtocol[Data]]: Initialized renderers mapping.</span>
+</span><span id="FileRendererBase._init_renderers-81"><a href="#FileRendererBase._init_renderers-81"><span class="linenos">81</span></a>
+</span><span id="FileRendererBase._init_renderers-82"><a href="#FileRendererBase._init_renderers-82"><span class="linenos">82</span></a><span class="sd">        @public</span>
+</span><span id="FileRendererBase._init_renderers-83"><a href="#FileRendererBase._init_renderers-83"><span class="linenos">83</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileRendererBase._init_renderers-84"><a href="#FileRendererBase._init_renderers-84"><span class="linenos">84</span></a>        <span class="k">if</span> <span class="n">is_undefined</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="p">):</span>
+</span><span id="FileRendererBase._init_renderers-85"><a href="#FileRendererBase._init_renderers-85"><span class="linenos">85</span></a>            <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">renderers</span><span class="p">)</span>
+</span><span id="FileRendererBase._init_renderers-86"><a href="#FileRendererBase._init_renderers-86"><span class="linenos">86</span></a>
+</span><span id="FileRendererBase._init_renderers-87"><a href="#FileRendererBase._init_renderers-87"><span class="linenos">87</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DEFAULT_RENDERERS</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span id="FileRendererBase._init_renderers-88"><a href="#FileRendererBase._init_renderers-88"><span class="linenos">88</span></a>        <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">renderers</span><span class="p">)</span>
+</span><span id="FileRendererBase._init_renderers-89"><a href="#FileRendererBase._init_renderers-89"><span class="linenos">89</span></a>        <span class="k">return</span> <span class="n">result</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Initialize the renderers mapping.</p>
+
+<p>Combine the default renderers specified as <code>_DEFAULT_RENDERERS</code> with the provided renderers. Items provided
+by <code><a href="#FileRendererBase.__init__">__init__</a></code> method will override the default renderers.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>renderers (Mapping[type[BaseBlock[Data]], RendererProtocol[Data]]):</strong>  Provided renderers mapping.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>dict[type[BaseBlock[Data]], RendererProtocol[Data]]: Initialized renderers mapping.</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="FileRendererBase.as_str" class="classattr">
+                                        <input id="FileRendererBase.as_str-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
                     <div class="decorator decorator-abc.abstractmethod">@abc.abstractmethod</div>
 
         <span class="def">def</span>
         <span class="name">as_str</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">file</span><span class="p">:</span> <span class="n"><a href="../file.html#BaseFile">simple_text_renderer.file.BaseFile</a></span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
-                <label class="view-source-button" for="BaseRenderer.as_str-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="FileRendererBase.as_str-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#BaseRenderer.as_str"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseRenderer.as_str-22"><a href="#BaseRenderer.as_str-22"><span class="linenos">22</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="BaseRenderer.as_str-23"><a href="#BaseRenderer.as_str-23"><span class="linenos">23</span></a>    <span class="k">def</span> <span class="nf">as_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="BaseRenderer.as_str-24"><a href="#BaseRenderer.as_str-24"><span class="linenos">24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="BaseRenderer.as_str-25"><a href="#BaseRenderer.as_str-25"><span class="linenos">25</span></a><span class="sd">        Render the file in a correct format into a string.</span>
-</span><span id="BaseRenderer.as_str-26"><a href="#BaseRenderer.as_str-26"><span class="linenos">26</span></a>
-</span><span id="BaseRenderer.as_str-27"><a href="#BaseRenderer.as_str-27"><span class="linenos">27</span></a><span class="sd">        Args:</span>
-</span><span id="BaseRenderer.as_str-28"><a href="#BaseRenderer.as_str-28"><span class="linenos">28</span></a><span class="sd">            file: File object to render.</span>
-</span><span id="BaseRenderer.as_str-29"><a href="#BaseRenderer.as_str-29"><span class="linenos">29</span></a>
-</span><span id="BaseRenderer.as_str-30"><a href="#BaseRenderer.as_str-30"><span class="linenos">30</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseRenderer.as_str-31"><a href="#BaseRenderer.as_str-31"><span class="linenos">31</span></a><span class="sd">            str: String representation of the rendered file content.</span>
-</span><span id="BaseRenderer.as_str-32"><a href="#BaseRenderer.as_str-32"><span class="linenos">32</span></a><span class="sd">        &quot;&quot;&quot;</span>
+    <a class="headerlink" href="#FileRendererBase.as_str"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileRendererBase.as_str-91"><a href="#FileRendererBase.as_str-91"><span class="linenos"> 91</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="FileRendererBase.as_str-92"><a href="#FileRendererBase.as_str-92"><span class="linenos"> 92</span></a>    <span class="k">def</span> <span class="nf">as_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="FileRendererBase.as_str-93"><a href="#FileRendererBase.as_str-93"><span class="linenos"> 93</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase.as_str-94"><a href="#FileRendererBase.as_str-94"><span class="linenos"> 94</span></a><span class="sd">        Render the file in a correct format into a string.</span>
+</span><span id="FileRendererBase.as_str-95"><a href="#FileRendererBase.as_str-95"><span class="linenos"> 95</span></a>
+</span><span id="FileRendererBase.as_str-96"><a href="#FileRendererBase.as_str-96"><span class="linenos"> 96</span></a><span class="sd">        Args:</span>
+</span><span id="FileRendererBase.as_str-97"><a href="#FileRendererBase.as_str-97"><span class="linenos"> 97</span></a><span class="sd">            file: File object to render.</span>
+</span><span id="FileRendererBase.as_str-98"><a href="#FileRendererBase.as_str-98"><span class="linenos"> 98</span></a>
+</span><span id="FileRendererBase.as_str-99"><a href="#FileRendererBase.as_str-99"><span class="linenos"> 99</span></a><span class="sd">        Returns:</span>
+</span><span id="FileRendererBase.as_str-100"><a href="#FileRendererBase.as_str-100"><span class="linenos">100</span></a><span class="sd">            str: String representation of the rendered file content.</span>
+</span><span id="FileRendererBase.as_str-101"><a href="#FileRendererBase.as_str-101"><span class="linenos">101</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -224,26 +580,26 @@ required for the rendering itself.</p>
 
 
                             </div>
-                            <div id="BaseRenderer.as_stream" class="classattr">
-                                        <input id="BaseRenderer.as_stream-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="FileRendererBase.as_stream" class="classattr">
+                                        <input id="FileRendererBase.as_stream-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
                     <div class="decorator decorator-abc.abstractmethod">@abc.abstractmethod</div>
 
         <span class="def">def</span>
         <span class="name">as_stream</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">file</span><span class="p">:</span> <span class="n"><a href="../file.html#BaseFile">simple_text_renderer.file.BaseFile</a></span></span><span class="return-annotation">) -> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span>:</span></span>
 
-                <label class="view-source-button" for="BaseRenderer.as_stream-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="FileRendererBase.as_stream-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#BaseRenderer.as_stream"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseRenderer.as_stream-34"><a href="#BaseRenderer.as_stream-34"><span class="linenos">34</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="BaseRenderer.as_stream-35"><a href="#BaseRenderer.as_stream-35"><span class="linenos">35</span></a>    <span class="k">def</span> <span class="nf">as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-</span><span id="BaseRenderer.as_stream-36"><a href="#BaseRenderer.as_stream-36"><span class="linenos">36</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="BaseRenderer.as_stream-37"><a href="#BaseRenderer.as_stream-37"><span class="linenos">37</span></a><span class="sd">        Render the file in a correct format into a stream.</span>
-</span><span id="BaseRenderer.as_stream-38"><a href="#BaseRenderer.as_stream-38"><span class="linenos">38</span></a>
-</span><span id="BaseRenderer.as_stream-39"><a href="#BaseRenderer.as_stream-39"><span class="linenos">39</span></a><span class="sd">        Args:</span>
-</span><span id="BaseRenderer.as_stream-40"><a href="#BaseRenderer.as_stream-40"><span class="linenos">40</span></a><span class="sd">            file: File object to render.</span>
-</span><span id="BaseRenderer.as_stream-41"><a href="#BaseRenderer.as_stream-41"><span class="linenos">41</span></a><span class="sd">        &quot;&quot;&quot;</span>
+    <a class="headerlink" href="#FileRendererBase.as_stream"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileRendererBase.as_stream-103"><a href="#FileRendererBase.as_stream-103"><span class="linenos">103</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="FileRendererBase.as_stream-104"><a href="#FileRendererBase.as_stream-104"><span class="linenos">104</span></a>    <span class="k">def</span> <span class="nf">as_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+</span><span id="FileRendererBase.as_stream-105"><a href="#FileRendererBase.as_stream-105"><span class="linenos">105</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase.as_stream-106"><a href="#FileRendererBase.as_stream-106"><span class="linenos">106</span></a><span class="sd">        Render the file in a correct format into a stream.</span>
+</span><span id="FileRendererBase.as_stream-107"><a href="#FileRendererBase.as_stream-107"><span class="linenos">107</span></a>
+</span><span id="FileRendererBase.as_stream-108"><a href="#FileRendererBase.as_stream-108"><span class="linenos">108</span></a><span class="sd">        Args:</span>
+</span><span id="FileRendererBase.as_stream-109"><a href="#FileRendererBase.as_stream-109"><span class="linenos">109</span></a><span class="sd">            file: File object to render.</span>
+</span><span id="FileRendererBase.as_stream-110"><a href="#FileRendererBase.as_stream-110"><span class="linenos">110</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -258,27 +614,27 @@ required for the rendering itself.</p>
 
 
                             </div>
-                            <div id="BaseRenderer.to_file" class="classattr">
-                                        <input id="BaseRenderer.to_file-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="FileRendererBase.to_file" class="classattr">
+                                        <input id="FileRendererBase.to_file-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
                     <div class="decorator decorator-abc.abstractmethod">@abc.abstractmethod</div>
 
         <span class="def">def</span>
         <span class="name">to_file</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">file</span><span class="p">:</span> <span class="n"><a href="../file.html#BaseFile">simple_text_renderer.file.BaseFile</a></span>,</span><span class="param">	<span class="n">path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">_local</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
-                <label class="view-source-button" for="BaseRenderer.to_file-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="FileRendererBase.to_file-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#BaseRenderer.to_file"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseRenderer.to_file-43"><a href="#BaseRenderer.to_file-43"><span class="linenos">43</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="BaseRenderer.to_file-44"><a href="#BaseRenderer.to_file-44"><span class="linenos">44</span></a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="BaseRenderer.to_file-45"><a href="#BaseRenderer.to_file-45"><span class="linenos">45</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="BaseRenderer.to_file-46"><a href="#BaseRenderer.to_file-46"><span class="linenos">46</span></a><span class="sd">        Render the file in a correct format and write it to the specified path.</span>
-</span><span id="BaseRenderer.to_file-47"><a href="#BaseRenderer.to_file-47"><span class="linenos">47</span></a>
-</span><span id="BaseRenderer.to_file-48"><a href="#BaseRenderer.to_file-48"><span class="linenos">48</span></a><span class="sd">        Args:</span>
-</span><span id="BaseRenderer.to_file-49"><a href="#BaseRenderer.to_file-49"><span class="linenos">49</span></a><span class="sd">            file: File object to render.</span>
-</span><span id="BaseRenderer.to_file-50"><a href="#BaseRenderer.to_file-50"><span class="linenos">50</span></a><span class="sd">            path: Path to write the file.</span>
-</span><span id="BaseRenderer.to_file-51"><a href="#BaseRenderer.to_file-51"><span class="linenos">51</span></a><span class="sd">        &quot;&quot;&quot;</span>
+    <a class="headerlink" href="#FileRendererBase.to_file"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileRendererBase.to_file-112"><a href="#FileRendererBase.to_file-112"><span class="linenos">112</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="FileRendererBase.to_file-113"><a href="#FileRendererBase.to_file-113"><span class="linenos">113</span></a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BaseFile</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="FileRendererBase.to_file-114"><a href="#FileRendererBase.to_file-114"><span class="linenos">114</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase.to_file-115"><a href="#FileRendererBase.to_file-115"><span class="linenos">115</span></a><span class="sd">        Render the file in a correct format and write it to the specified path.</span>
+</span><span id="FileRendererBase.to_file-116"><a href="#FileRendererBase.to_file-116"><span class="linenos">116</span></a>
+</span><span id="FileRendererBase.to_file-117"><a href="#FileRendererBase.to_file-117"><span class="linenos">117</span></a><span class="sd">        Args:</span>
+</span><span id="FileRendererBase.to_file-118"><a href="#FileRendererBase.to_file-118"><span class="linenos">118</span></a><span class="sd">            file: File object to render.</span>
+</span><span id="FileRendererBase.to_file-119"><a href="#FileRendererBase.to_file-119"><span class="linenos">119</span></a><span class="sd">            path: Path to write the file.</span>
+</span><span id="FileRendererBase.to_file-120"><a href="#FileRendererBase.to_file-120"><span class="linenos">120</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -289,6 +645,69 @@ required for the rendering itself.</p>
 <ul>
 <li><strong>file:</strong>  File object to render.</li>
 <li><strong>path:</strong>  Path to write the file.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="FileRendererBase._render_block" class="classattr">
+                                        <input id="FileRendererBase._render_block-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">_render_block</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">block</span><span class="p">:</span> <span class="n"><a href="../blocks/base.html#BaseBlock">simple_text_renderer.blocks.base.BaseBlock</a></span><span class="p">[</span><span class="n"><a href="../blocks/base.html#Data">simple_text_renderer.blocks.base.Data</a></span><span class="p">]</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+
+                <label class="view-source-button" for="FileRendererBase._render_block-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#FileRendererBase._render_block"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileRendererBase._render_block-122"><a href="#FileRendererBase._render_block-122"><span class="linenos">122</span></a>    <span class="k">def</span> <span class="nf">_render_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="FileRendererBase._render_block-123"><a href="#FileRendererBase._render_block-123"><span class="linenos">123</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileRendererBase._render_block-124"><a href="#FileRendererBase._render_block-124"><span class="linenos">124</span></a><span class="sd">        Render the block data into a string representation.</span>
+</span><span id="FileRendererBase._render_block-125"><a href="#FileRendererBase._render_block-125"><span class="linenos">125</span></a>
+</span><span id="FileRendererBase._render_block-126"><a href="#FileRendererBase._render_block-126"><span class="linenos">126</span></a><span class="sd">        Args:</span>
+</span><span id="FileRendererBase._render_block-127"><a href="#FileRendererBase._render_block-127"><span class="linenos">127</span></a><span class="sd">            block (BaseBlock[Data]): Block to render.</span>
+</span><span id="FileRendererBase._render_block-128"><a href="#FileRendererBase._render_block-128"><span class="linenos">128</span></a>
+</span><span id="FileRendererBase._render_block-129"><a href="#FileRendererBase._render_block-129"><span class="linenos">129</span></a><span class="sd">        Returns:</span>
+</span><span id="FileRendererBase._render_block-130"><a href="#FileRendererBase._render_block-130"><span class="linenos">130</span></a><span class="sd">            str: Rendered block content.</span>
+</span><span id="FileRendererBase._render_block-131"><a href="#FileRendererBase._render_block-131"><span class="linenos">131</span></a>
+</span><span id="FileRendererBase._render_block-132"><a href="#FileRendererBase._render_block-132"><span class="linenos">132</span></a><span class="sd">        Raises:</span>
+</span><span id="FileRendererBase._render_block-133"><a href="#FileRendererBase._render_block-133"><span class="linenos">133</span></a><span class="sd">            ValueError: If the block does not have a renderer and no default renderer is provided.</span>
+</span><span id="FileRendererBase._render_block-134"><a href="#FileRendererBase._render_block-134"><span class="linenos">134</span></a>
+</span><span id="FileRendererBase._render_block-135"><a href="#FileRendererBase._render_block-135"><span class="linenos">135</span></a><span class="sd">        @public</span>
+</span><span id="FileRendererBase._render_block-136"><a href="#FileRendererBase._render_block-136"><span class="linenos">136</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileRendererBase._render_block-137"><a href="#FileRendererBase._render_block-137"><span class="linenos">137</span></a>        <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">renderer</span><span class="p">:</span>
+</span><span id="FileRendererBase._render_block-138"><a href="#FileRendererBase._render_block-138"><span class="linenos">138</span></a>            <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">renderer</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+</span><span id="FileRendererBase._render_block-139"><a href="#FileRendererBase._render_block-139"><span class="linenos">139</span></a>
+</span><span id="FileRendererBase._render_block-140"><a href="#FileRendererBase._render_block-140"><span class="linenos">140</span></a>        <span class="k">if</span> <span class="n">renderer</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_renderers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">block</span><span class="p">)):</span>
+</span><span id="FileRendererBase._render_block-141"><a href="#FileRendererBase._render_block-141"><span class="linenos">141</span></a>            <span class="k">return</span> <span class="n">renderer</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+</span><span id="FileRendererBase._render_block-142"><a href="#FileRendererBase._render_block-142"><span class="linenos">142</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="FileRendererBase._render_block-143"><a href="#FileRendererBase._render_block-143"><span class="linenos">143</span></a>            <span class="sa">f</span><span class="s2">&quot;This instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> does not have a renderer for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> blocks.&quot;</span>
+</span><span id="FileRendererBase._render_block-144"><a href="#FileRendererBase._render_block-144"><span class="linenos">144</span></a>            <span class="s2">&quot;Please, register it as a default renderer for this block type, provide a renderer during initialization &quot;</span>
+</span><span id="FileRendererBase._render_block-145"><a href="#FileRendererBase._render_block-145"><span class="linenos">145</span></a>            <span class="s2">&quot;or specify specific renderer for the block.&quot;</span>
+</span><span id="FileRendererBase._render_block-146"><a href="#FileRendererBase._render_block-146"><span class="linenos">146</span></a>        <span class="p">)</span>
+</span><span id="FileRendererBase._render_block-147"><a href="#FileRendererBase._render_block-147"><span class="linenos">147</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Render the block data into a string representation.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>block (BaseBlock[Data]):</strong>  Block to render.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>str: Rendered block content.</p>
+</blockquote>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>ValueError:</strong>  If the block does not have a renderer and no default renderer is provided.</li>
 </ul>
 </div>
 

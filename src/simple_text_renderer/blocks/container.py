@@ -10,6 +10,8 @@ if TYPE_CHECKING:
 
     from simple_text_renderer.formatters.base import FormatterProtocol
 
+    from ..renderers.mixins import RendererProtocol
+
 
 @dataclasses.dataclass(slots=True)
 class ContainerData(Data):
@@ -39,6 +41,7 @@ class Container(BaseBlock[ContainerData]):
         *,
         name: str | None = None,
         formatters: Sequence[FormatterProtocol[ContainerData]] = (),
+        renderer: RendererProtocol[ContainerData] | None = None,
         blocks: Sequence[TBaseBlock] = (),
         **kwargs: Any,  # noqa: ANN401, ARG003
     ) -> Self:
@@ -51,13 +54,15 @@ class Container(BaseBlock[ContainerData]):
             formatters (Sequence[FormatterProtocol[ContainerData]]): Collection of formatters that can be applied to the
                 data object.
             blocks (Sequence[TBaseBlock]): Blocks to add to the container.
+            renderer (RendererProtocol[ContainerData] | None): Renderer object to render the block into a specific
+                format.
             kwargs: Not required. Specified for the seek of good code practices.
 
         Returns:
             Container: Created container block.
         """
         blocks_map = {block.name: block for block in blocks}
-        return cls(ContainerData(blocks=blocks_map), name=name, formatters=formatters)
+        return cls(ContainerData(blocks=blocks_map), renderer=renderer, name=name, formatters=formatters)
 
     def add_block(self, block: BaseBlock[Data]) -> str:
         """

@@ -90,82 +90,87 @@
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="kn">from</span> <span class="nn">simple_text_renderer.formatters.base</span> <span class="kn">import</span> <span class="n">FormatterProtocol</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="k">class</span> <span class="nc">ContainerData</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">    Default data class for a container block.</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">    Contains a list of blocks of container block in the order they should be rendered. In fact, it may contain</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">    any arbitrary blocks, including other container blocks.</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">    Useful for creating a blocks&#39; hierarchy.</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="n">blocks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]])</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">    Dictionary representing blocks in the container.</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">    Key is the name of the block, when value is the block itself.</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="k">class</span> <span class="nc">Container</span><span class="p">(</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">ContainerData</span><span class="p">]):</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Block that contains a group of other blocks.&quot;&quot;&quot;</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="nd">@classmethod</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="k">def</span> <span class="nf">by_content</span><span class="p">(</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="bp">cls</span><span class="p">,</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="o">*</span><span class="p">,</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="n">formatters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FormatterProtocol</span><span class="p">[</span><span class="n">ContainerData</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(),</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>        <span class="n">blocks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TBaseBlock</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>  <span class="c1"># noqa: ANN401, ARG003</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">        Create a container block by provided blocks.</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="sd">        Args:</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">            name (str): name of the block. Used to reference the block in the file. If None, the block</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">                will generate it based on the class name and some randomized suffix.</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="sd">            formatters (Sequence[FormatterProtocol[ContainerData]]): Collection of formatters that can be applied to the</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="sd">                data object.</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="sd">            blocks (Sequence[TBaseBlock]): Blocks to add to the container.</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">            kwargs: Not required. Specified for the seek of good code practices.</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">        Returns:</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">            Container: Created container block.</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>        <span class="n">blocks_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">block</span> <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">}</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">ContainerData</span><span class="p">(</span><span class="n">blocks</span><span class="o">=</span><span class="n">blocks_map</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">formatters</span><span class="o">=</span><span class="n">formatters</span><span class="p">)</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>    <span class="k">def</span> <span class="nf">add_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="sd">        Add a new block to the container.</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">        Args:</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="sd">            block: New block instance to add.</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="sd">        Returns:</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="sd">            str: Name of the block in the container.</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>        <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>
-</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>    <span class="k">def</span> <span class="nf">remove_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a><span class="sd">        Remove a block from the container by its name.</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>
-</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a><span class="sd">        Args:</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a><span class="sd">            block_name: Name of the block to remove.</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a><span class="sd">        Raises:</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a><span class="sd">            KeyError: If the block with the provided name is not found.</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>        <span class="k">if</span> <span class="n">block_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">:</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Block with name &#39;</span><span class="si">{</span><span class="n">block_name</span><span class="si">}</span><span class="s2">&#39; not found in the container.&quot;</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block_name</span><span class="p">]</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="kn">from</span> <span class="nn">..renderers.mixins</span> <span class="kn">import</span> <span class="n">RendererProtocol</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="k">class</span> <span class="nc">ContainerData</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">    Default data class for a container block.</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">    Contains a list of blocks of container block in the order they should be rendered. In fact, it may contain</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="sd">    any arbitrary blocks, including other container blocks.</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">    Useful for creating a blocks&#39; hierarchy.</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>    <span class="n">blocks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]])</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">    Dictionary representing blocks in the container.</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">    Key is the name of the block, when value is the block itself.</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="k">class</span> <span class="nc">Container</span><span class="p">(</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">ContainerData</span><span class="p">]):</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Block that contains a group of other blocks.&quot;&quot;&quot;</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="nd">@classmethod</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="k">def</span> <span class="nf">by_content</span><span class="p">(</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="o">*</span><span class="p">,</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>        <span class="n">formatters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FormatterProtocol</span><span class="p">[</span><span class="n">ContainerData</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(),</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="n">renderer</span><span class="p">:</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">ContainerData</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="n">blocks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TBaseBlock</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>  <span class="c1"># noqa: ANN401, ARG003</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">        Create a container block by provided blocks.</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="sd">        Args:</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="sd">            name (str): name of the block. Used to reference the block in the file. If None, the block</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="sd">                will generate it based on the class name and some randomized suffix.</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">            formatters (Sequence[FormatterProtocol[ContainerData]]): Collection of formatters that can be applied to the</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">                data object.</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">            blocks (Sequence[TBaseBlock]): Blocks to add to the container.</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">            renderer (RendererProtocol[ContainerData] | None): Renderer object to render the block into a specific</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">                format.</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="sd">            kwargs: Not required. Specified for the seek of good code practices.</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">        Returns:</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">            Container: Created container block.</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="n">blocks_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">block</span> <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">}</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">ContainerData</span><span class="p">(</span><span class="n">blocks</span><span class="o">=</span><span class="n">blocks_map</span><span class="p">),</span> <span class="n">renderer</span><span class="o">=</span><span class="n">renderer</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">formatters</span><span class="o">=</span><span class="n">formatters</span><span class="p">)</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="k">def</span> <span class="nf">add_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="sd">        Add a new block to the container.</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="sd">        Args:</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="sd">            block: New block instance to add.</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="sd">        Returns:</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a><span class="sd">            str: Name of the block in the container.</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>        <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="k">def</span> <span class="nf">remove_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a><span class="sd">        Remove a block from the container by its name.</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a><span class="sd">        Args:</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a><span class="sd">            block_name: Name of the block to remove.</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a><span class="sd">        Raises:</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a><span class="sd">            KeyError: If the block with the provided name is not found.</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>        <span class="k">if</span> <span class="n">block_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">:</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Block with name &#39;</span><span class="si">{</span><span class="n">block_name</span><span class="si">}</span><span class="s2">&#39; not found in the container.&quot;</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a>        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block_name</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -182,23 +187,23 @@
 
     </div>
     <a class="headerlink" href="#ContainerData"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ContainerData-15"><a href="#ContainerData-15"><span class="linenos">15</span></a><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="ContainerData-16"><a href="#ContainerData-16"><span class="linenos">16</span></a><span class="k">class</span> <span class="nc">ContainerData</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
-</span><span id="ContainerData-17"><a href="#ContainerData-17"><span class="linenos">17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ContainerData-18"><a href="#ContainerData-18"><span class="linenos">18</span></a><span class="sd">    Default data class for a container block.</span>
-</span><span id="ContainerData-19"><a href="#ContainerData-19"><span class="linenos">19</span></a>
-</span><span id="ContainerData-20"><a href="#ContainerData-20"><span class="linenos">20</span></a><span class="sd">    Contains a list of blocks of container block in the order they should be rendered. In fact, it may contain</span>
-</span><span id="ContainerData-21"><a href="#ContainerData-21"><span class="linenos">21</span></a><span class="sd">    any arbitrary blocks, including other container blocks.</span>
-</span><span id="ContainerData-22"><a href="#ContainerData-22"><span class="linenos">22</span></a>
-</span><span id="ContainerData-23"><a href="#ContainerData-23"><span class="linenos">23</span></a><span class="sd">    Useful for creating a blocks&#39; hierarchy.</span>
-</span><span id="ContainerData-24"><a href="#ContainerData-24"><span class="linenos">24</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="ContainerData-25"><a href="#ContainerData-25"><span class="linenos">25</span></a>
-</span><span id="ContainerData-26"><a href="#ContainerData-26"><span class="linenos">26</span></a>    <span class="n">blocks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]])</span>
-</span><span id="ContainerData-27"><a href="#ContainerData-27"><span class="linenos">27</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="ContainerData-28"><a href="#ContainerData-28"><span class="linenos">28</span></a><span class="sd">    Dictionary representing blocks in the container.</span>
-</span><span id="ContainerData-29"><a href="#ContainerData-29"><span class="linenos">29</span></a>
-</span><span id="ContainerData-30"><a href="#ContainerData-30"><span class="linenos">30</span></a><span class="sd">    Key is the name of the block, when value is the block itself.</span>
-</span><span id="ContainerData-31"><a href="#ContainerData-31"><span class="linenos">31</span></a><span class="sd">    &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ContainerData-17"><a href="#ContainerData-17"><span class="linenos">17</span></a><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="ContainerData-18"><a href="#ContainerData-18"><span class="linenos">18</span></a><span class="k">class</span> <span class="nc">ContainerData</span><span class="p">(</span><span class="n">Data</span><span class="p">):</span>
+</span><span id="ContainerData-19"><a href="#ContainerData-19"><span class="linenos">19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ContainerData-20"><a href="#ContainerData-20"><span class="linenos">20</span></a><span class="sd">    Default data class for a container block.</span>
+</span><span id="ContainerData-21"><a href="#ContainerData-21"><span class="linenos">21</span></a>
+</span><span id="ContainerData-22"><a href="#ContainerData-22"><span class="linenos">22</span></a><span class="sd">    Contains a list of blocks of container block in the order they should be rendered. In fact, it may contain</span>
+</span><span id="ContainerData-23"><a href="#ContainerData-23"><span class="linenos">23</span></a><span class="sd">    any arbitrary blocks, including other container blocks.</span>
+</span><span id="ContainerData-24"><a href="#ContainerData-24"><span class="linenos">24</span></a>
+</span><span id="ContainerData-25"><a href="#ContainerData-25"><span class="linenos">25</span></a><span class="sd">    Useful for creating a blocks&#39; hierarchy.</span>
+</span><span id="ContainerData-26"><a href="#ContainerData-26"><span class="linenos">26</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="ContainerData-27"><a href="#ContainerData-27"><span class="linenos">27</span></a>
+</span><span id="ContainerData-28"><a href="#ContainerData-28"><span class="linenos">28</span></a>    <span class="n">blocks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]])</span>
+</span><span id="ContainerData-29"><a href="#ContainerData-29"><span class="linenos">29</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="ContainerData-30"><a href="#ContainerData-30"><span class="linenos">30</span></a><span class="sd">    Dictionary representing blocks in the container.</span>
+</span><span id="ContainerData-31"><a href="#ContainerData-31"><span class="linenos">31</span></a>
+</span><span id="ContainerData-32"><a href="#ContainerData-32"><span class="linenos">32</span></a><span class="sd">    Key is the name of the block, when value is the block itself.</span>
+</span><span id="ContainerData-33"><a href="#ContainerData-33"><span class="linenos">33</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -250,62 +255,65 @@ any arbitrary blocks, including other container blocks.</p>
 
     </div>
     <a class="headerlink" href="#Container"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Container-34"><a href="#Container-34"><span class="linenos">34</span></a><span class="k">class</span> <span class="nc">Container</span><span class="p">(</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">ContainerData</span><span class="p">]):</span>
-</span><span id="Container-35"><a href="#Container-35"><span class="linenos">35</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Block that contains a group of other blocks.&quot;&quot;&quot;</span>
-</span><span id="Container-36"><a href="#Container-36"><span class="linenos">36</span></a>
-</span><span id="Container-37"><a href="#Container-37"><span class="linenos">37</span></a>    <span class="nd">@classmethod</span>
-</span><span id="Container-38"><a href="#Container-38"><span class="linenos">38</span></a>    <span class="k">def</span> <span class="nf">by_content</span><span class="p">(</span>
-</span><span id="Container-39"><a href="#Container-39"><span class="linenos">39</span></a>        <span class="bp">cls</span><span class="p">,</span>
-</span><span id="Container-40"><a href="#Container-40"><span class="linenos">40</span></a>        <span class="o">*</span><span class="p">,</span>
-</span><span id="Container-41"><a href="#Container-41"><span class="linenos">41</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="Container-42"><a href="#Container-42"><span class="linenos">42</span></a>        <span class="n">formatters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FormatterProtocol</span><span class="p">[</span><span class="n">ContainerData</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(),</span>
-</span><span id="Container-43"><a href="#Container-43"><span class="linenos">43</span></a>        <span class="n">blocks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TBaseBlock</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
-</span><span id="Container-44"><a href="#Container-44"><span class="linenos">44</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>  <span class="c1"># noqa: ANN401, ARG003</span>
-</span><span id="Container-45"><a href="#Container-45"><span class="linenos">45</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-</span><span id="Container-46"><a href="#Container-46"><span class="linenos">46</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Container-47"><a href="#Container-47"><span class="linenos">47</span></a><span class="sd">        Create a container block by provided blocks.</span>
-</span><span id="Container-48"><a href="#Container-48"><span class="linenos">48</span></a>
-</span><span id="Container-49"><a href="#Container-49"><span class="linenos">49</span></a><span class="sd">        Args:</span>
-</span><span id="Container-50"><a href="#Container-50"><span class="linenos">50</span></a><span class="sd">            name (str): name of the block. Used to reference the block in the file. If None, the block</span>
-</span><span id="Container-51"><a href="#Container-51"><span class="linenos">51</span></a><span class="sd">                will generate it based on the class name and some randomized suffix.</span>
-</span><span id="Container-52"><a href="#Container-52"><span class="linenos">52</span></a><span class="sd">            formatters (Sequence[FormatterProtocol[ContainerData]]): Collection of formatters that can be applied to the</span>
-</span><span id="Container-53"><a href="#Container-53"><span class="linenos">53</span></a><span class="sd">                data object.</span>
-</span><span id="Container-54"><a href="#Container-54"><span class="linenos">54</span></a><span class="sd">            blocks (Sequence[TBaseBlock]): Blocks to add to the container.</span>
-</span><span id="Container-55"><a href="#Container-55"><span class="linenos">55</span></a><span class="sd">            kwargs: Not required. Specified for the seek of good code practices.</span>
-</span><span id="Container-56"><a href="#Container-56"><span class="linenos">56</span></a>
-</span><span id="Container-57"><a href="#Container-57"><span class="linenos">57</span></a><span class="sd">        Returns:</span>
-</span><span id="Container-58"><a href="#Container-58"><span class="linenos">58</span></a><span class="sd">            Container: Created container block.</span>
-</span><span id="Container-59"><a href="#Container-59"><span class="linenos">59</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Container-60"><a href="#Container-60"><span class="linenos">60</span></a>        <span class="n">blocks_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">block</span> <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">}</span>
-</span><span id="Container-61"><a href="#Container-61"><span class="linenos">61</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">ContainerData</span><span class="p">(</span><span class="n">blocks</span><span class="o">=</span><span class="n">blocks_map</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">formatters</span><span class="o">=</span><span class="n">formatters</span><span class="p">)</span>
-</span><span id="Container-62"><a href="#Container-62"><span class="linenos">62</span></a>
-</span><span id="Container-63"><a href="#Container-63"><span class="linenos">63</span></a>    <span class="k">def</span> <span class="nf">add_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="Container-64"><a href="#Container-64"><span class="linenos">64</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Container-65"><a href="#Container-65"><span class="linenos">65</span></a><span class="sd">        Add a new block to the container.</span>
-</span><span id="Container-66"><a href="#Container-66"><span class="linenos">66</span></a>
-</span><span id="Container-67"><a href="#Container-67"><span class="linenos">67</span></a><span class="sd">        Args:</span>
-</span><span id="Container-68"><a href="#Container-68"><span class="linenos">68</span></a><span class="sd">            block: New block instance to add.</span>
-</span><span id="Container-69"><a href="#Container-69"><span class="linenos">69</span></a>
-</span><span id="Container-70"><a href="#Container-70"><span class="linenos">70</span></a><span class="sd">        Returns:</span>
-</span><span id="Container-71"><a href="#Container-71"><span class="linenos">71</span></a><span class="sd">            str: Name of the block in the container.</span>
-</span><span id="Container-72"><a href="#Container-72"><span class="linenos">72</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Container-73"><a href="#Container-73"><span class="linenos">73</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span>
-</span><span id="Container-74"><a href="#Container-74"><span class="linenos">74</span></a>        <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span>
-</span><span id="Container-75"><a href="#Container-75"><span class="linenos">75</span></a>
-</span><span id="Container-76"><a href="#Container-76"><span class="linenos">76</span></a>    <span class="k">def</span> <span class="nf">remove_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Container-77"><a href="#Container-77"><span class="linenos">77</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Container-78"><a href="#Container-78"><span class="linenos">78</span></a><span class="sd">        Remove a block from the container by its name.</span>
-</span><span id="Container-79"><a href="#Container-79"><span class="linenos">79</span></a>
-</span><span id="Container-80"><a href="#Container-80"><span class="linenos">80</span></a><span class="sd">        Args:</span>
-</span><span id="Container-81"><a href="#Container-81"><span class="linenos">81</span></a><span class="sd">            block_name: Name of the block to remove.</span>
-</span><span id="Container-82"><a href="#Container-82"><span class="linenos">82</span></a>
-</span><span id="Container-83"><a href="#Container-83"><span class="linenos">83</span></a><span class="sd">        Raises:</span>
-</span><span id="Container-84"><a href="#Container-84"><span class="linenos">84</span></a><span class="sd">            KeyError: If the block with the provided name is not found.</span>
-</span><span id="Container-85"><a href="#Container-85"><span class="linenos">85</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Container-86"><a href="#Container-86"><span class="linenos">86</span></a>        <span class="k">if</span> <span class="n">block_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">:</span>
-</span><span id="Container-87"><a href="#Container-87"><span class="linenos">87</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Block with name &#39;</span><span class="si">{</span><span class="n">block_name</span><span class="si">}</span><span class="s2">&#39; not found in the container.&quot;</span>
-</span><span id="Container-88"><a href="#Container-88"><span class="linenos">88</span></a>            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="Container-89"><a href="#Container-89"><span class="linenos">89</span></a>        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block_name</span><span class="p">]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Container-36"><a href="#Container-36"><span class="linenos">36</span></a><span class="k">class</span> <span class="nc">Container</span><span class="p">(</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">ContainerData</span><span class="p">]):</span>
+</span><span id="Container-37"><a href="#Container-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Block that contains a group of other blocks.&quot;&quot;&quot;</span>
+</span><span id="Container-38"><a href="#Container-38"><span class="linenos">38</span></a>
+</span><span id="Container-39"><a href="#Container-39"><span class="linenos">39</span></a>    <span class="nd">@classmethod</span>
+</span><span id="Container-40"><a href="#Container-40"><span class="linenos">40</span></a>    <span class="k">def</span> <span class="nf">by_content</span><span class="p">(</span>
+</span><span id="Container-41"><a href="#Container-41"><span class="linenos">41</span></a>        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="Container-42"><a href="#Container-42"><span class="linenos">42</span></a>        <span class="o">*</span><span class="p">,</span>
+</span><span id="Container-43"><a href="#Container-43"><span class="linenos">43</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Container-44"><a href="#Container-44"><span class="linenos">44</span></a>        <span class="n">formatters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FormatterProtocol</span><span class="p">[</span><span class="n">ContainerData</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(),</span>
+</span><span id="Container-45"><a href="#Container-45"><span class="linenos">45</span></a>        <span class="n">renderer</span><span class="p">:</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">ContainerData</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Container-46"><a href="#Container-46"><span class="linenos">46</span></a>        <span class="n">blocks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TBaseBlock</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
+</span><span id="Container-47"><a href="#Container-47"><span class="linenos">47</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>  <span class="c1"># noqa: ANN401, ARG003</span>
+</span><span id="Container-48"><a href="#Container-48"><span class="linenos">48</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+</span><span id="Container-49"><a href="#Container-49"><span class="linenos">49</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Container-50"><a href="#Container-50"><span class="linenos">50</span></a><span class="sd">        Create a container block by provided blocks.</span>
+</span><span id="Container-51"><a href="#Container-51"><span class="linenos">51</span></a>
+</span><span id="Container-52"><a href="#Container-52"><span class="linenos">52</span></a><span class="sd">        Args:</span>
+</span><span id="Container-53"><a href="#Container-53"><span class="linenos">53</span></a><span class="sd">            name (str): name of the block. Used to reference the block in the file. If None, the block</span>
+</span><span id="Container-54"><a href="#Container-54"><span class="linenos">54</span></a><span class="sd">                will generate it based on the class name and some randomized suffix.</span>
+</span><span id="Container-55"><a href="#Container-55"><span class="linenos">55</span></a><span class="sd">            formatters (Sequence[FormatterProtocol[ContainerData]]): Collection of formatters that can be applied to the</span>
+</span><span id="Container-56"><a href="#Container-56"><span class="linenos">56</span></a><span class="sd">                data object.</span>
+</span><span id="Container-57"><a href="#Container-57"><span class="linenos">57</span></a><span class="sd">            blocks (Sequence[TBaseBlock]): Blocks to add to the container.</span>
+</span><span id="Container-58"><a href="#Container-58"><span class="linenos">58</span></a><span class="sd">            renderer (RendererProtocol[ContainerData] | None): Renderer object to render the block into a specific</span>
+</span><span id="Container-59"><a href="#Container-59"><span class="linenos">59</span></a><span class="sd">                format.</span>
+</span><span id="Container-60"><a href="#Container-60"><span class="linenos">60</span></a><span class="sd">            kwargs: Not required. Specified for the seek of good code practices.</span>
+</span><span id="Container-61"><a href="#Container-61"><span class="linenos">61</span></a>
+</span><span id="Container-62"><a href="#Container-62"><span class="linenos">62</span></a><span class="sd">        Returns:</span>
+</span><span id="Container-63"><a href="#Container-63"><span class="linenos">63</span></a><span class="sd">            Container: Created container block.</span>
+</span><span id="Container-64"><a href="#Container-64"><span class="linenos">64</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Container-65"><a href="#Container-65"><span class="linenos">65</span></a>        <span class="n">blocks_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">block</span> <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">}</span>
+</span><span id="Container-66"><a href="#Container-66"><span class="linenos">66</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">ContainerData</span><span class="p">(</span><span class="n">blocks</span><span class="o">=</span><span class="n">blocks_map</span><span class="p">),</span> <span class="n">renderer</span><span class="o">=</span><span class="n">renderer</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">formatters</span><span class="o">=</span><span class="n">formatters</span><span class="p">)</span>
+</span><span id="Container-67"><a href="#Container-67"><span class="linenos">67</span></a>
+</span><span id="Container-68"><a href="#Container-68"><span class="linenos">68</span></a>    <span class="k">def</span> <span class="nf">add_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Container-69"><a href="#Container-69"><span class="linenos">69</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Container-70"><a href="#Container-70"><span class="linenos">70</span></a><span class="sd">        Add a new block to the container.</span>
+</span><span id="Container-71"><a href="#Container-71"><span class="linenos">71</span></a>
+</span><span id="Container-72"><a href="#Container-72"><span class="linenos">72</span></a><span class="sd">        Args:</span>
+</span><span id="Container-73"><a href="#Container-73"><span class="linenos">73</span></a><span class="sd">            block: New block instance to add.</span>
+</span><span id="Container-74"><a href="#Container-74"><span class="linenos">74</span></a>
+</span><span id="Container-75"><a href="#Container-75"><span class="linenos">75</span></a><span class="sd">        Returns:</span>
+</span><span id="Container-76"><a href="#Container-76"><span class="linenos">76</span></a><span class="sd">            str: Name of the block in the container.</span>
+</span><span id="Container-77"><a href="#Container-77"><span class="linenos">77</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Container-78"><a href="#Container-78"><span class="linenos">78</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span>
+</span><span id="Container-79"><a href="#Container-79"><span class="linenos">79</span></a>        <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span>
+</span><span id="Container-80"><a href="#Container-80"><span class="linenos">80</span></a>
+</span><span id="Container-81"><a href="#Container-81"><span class="linenos">81</span></a>    <span class="k">def</span> <span class="nf">remove_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Container-82"><a href="#Container-82"><span class="linenos">82</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Container-83"><a href="#Container-83"><span class="linenos">83</span></a><span class="sd">        Remove a block from the container by its name.</span>
+</span><span id="Container-84"><a href="#Container-84"><span class="linenos">84</span></a>
+</span><span id="Container-85"><a href="#Container-85"><span class="linenos">85</span></a><span class="sd">        Args:</span>
+</span><span id="Container-86"><a href="#Container-86"><span class="linenos">86</span></a><span class="sd">            block_name: Name of the block to remove.</span>
+</span><span id="Container-87"><a href="#Container-87"><span class="linenos">87</span></a>
+</span><span id="Container-88"><a href="#Container-88"><span class="linenos">88</span></a><span class="sd">        Raises:</span>
+</span><span id="Container-89"><a href="#Container-89"><span class="linenos">89</span></a><span class="sd">            KeyError: If the block with the provided name is not found.</span>
+</span><span id="Container-90"><a href="#Container-90"><span class="linenos">90</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Container-91"><a href="#Container-91"><span class="linenos">91</span></a>        <span class="k">if</span> <span class="n">block_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">:</span>
+</span><span id="Container-92"><a href="#Container-92"><span class="linenos">92</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Block with name &#39;</span><span class="si">{</span><span class="n">block_name</span><span class="si">}</span><span class="s2">&#39; not found in the container.&quot;</span>
+</span><span id="Container-93"><a href="#Container-93"><span class="linenos">93</span></a>            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="Container-94"><a href="#Container-94"><span class="linenos">94</span></a>        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block_name</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -319,37 +327,40 @@ any arbitrary blocks, including other container blocks.</p>
                     <div class="decorator decorator-classmethod">@classmethod</div>
 
         <span class="def">def</span>
-        <span class="name">by_content</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">cls</span>,</span><span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">formatters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n"><a href="../formatters/base.html#FormatterProtocol">simple_text_renderer.formatters.base.FormatterProtocol</a></span><span class="p">[</span><span class="n"><a href="#ContainerData">ContainerData</a></span><span class="p">]]</span> <span class="o">=</span> <span class="p">()</span>,</span><span class="param">	<span class="n">blocks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TBaseBlock</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
+        <span class="name">by_content</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">cls</span>,</span><span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">formatters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n"><a href="../formatters/base.html#FormatterProtocol">simple_text_renderer.formatters.base.FormatterProtocol</a></span><span class="p">[</span><span class="n"><a href="#ContainerData">ContainerData</a></span><span class="p">]]</span> <span class="o">=</span> <span class="p">()</span>,</span><span class="param">	<span class="n">renderer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n"><a href="../renderers/mixins.html#RendererProtocol">simple_text_renderer.renderers.mixins.RendererProtocol</a></span><span class="p">[</span><span class="n"><a href="#ContainerData">ContainerData</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">blocks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TBaseBlock</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
 
                 <label class="view-source-button" for="Container.by_content-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#Container.by_content"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Container.by_content-37"><a href="#Container.by_content-37"><span class="linenos">37</span></a>    <span class="nd">@classmethod</span>
-</span><span id="Container.by_content-38"><a href="#Container.by_content-38"><span class="linenos">38</span></a>    <span class="k">def</span> <span class="nf">by_content</span><span class="p">(</span>
-</span><span id="Container.by_content-39"><a href="#Container.by_content-39"><span class="linenos">39</span></a>        <span class="bp">cls</span><span class="p">,</span>
-</span><span id="Container.by_content-40"><a href="#Container.by_content-40"><span class="linenos">40</span></a>        <span class="o">*</span><span class="p">,</span>
-</span><span id="Container.by_content-41"><a href="#Container.by_content-41"><span class="linenos">41</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="Container.by_content-42"><a href="#Container.by_content-42"><span class="linenos">42</span></a>        <span class="n">formatters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FormatterProtocol</span><span class="p">[</span><span class="n">ContainerData</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(),</span>
-</span><span id="Container.by_content-43"><a href="#Container.by_content-43"><span class="linenos">43</span></a>        <span class="n">blocks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TBaseBlock</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
-</span><span id="Container.by_content-44"><a href="#Container.by_content-44"><span class="linenos">44</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>  <span class="c1"># noqa: ANN401, ARG003</span>
-</span><span id="Container.by_content-45"><a href="#Container.by_content-45"><span class="linenos">45</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-</span><span id="Container.by_content-46"><a href="#Container.by_content-46"><span class="linenos">46</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Container.by_content-47"><a href="#Container.by_content-47"><span class="linenos">47</span></a><span class="sd">        Create a container block by provided blocks.</span>
-</span><span id="Container.by_content-48"><a href="#Container.by_content-48"><span class="linenos">48</span></a>
-</span><span id="Container.by_content-49"><a href="#Container.by_content-49"><span class="linenos">49</span></a><span class="sd">        Args:</span>
-</span><span id="Container.by_content-50"><a href="#Container.by_content-50"><span class="linenos">50</span></a><span class="sd">            name (str): name of the block. Used to reference the block in the file. If None, the block</span>
-</span><span id="Container.by_content-51"><a href="#Container.by_content-51"><span class="linenos">51</span></a><span class="sd">                will generate it based on the class name and some randomized suffix.</span>
-</span><span id="Container.by_content-52"><a href="#Container.by_content-52"><span class="linenos">52</span></a><span class="sd">            formatters (Sequence[FormatterProtocol[ContainerData]]): Collection of formatters that can be applied to the</span>
-</span><span id="Container.by_content-53"><a href="#Container.by_content-53"><span class="linenos">53</span></a><span class="sd">                data object.</span>
-</span><span id="Container.by_content-54"><a href="#Container.by_content-54"><span class="linenos">54</span></a><span class="sd">            blocks (Sequence[TBaseBlock]): Blocks to add to the container.</span>
-</span><span id="Container.by_content-55"><a href="#Container.by_content-55"><span class="linenos">55</span></a><span class="sd">            kwargs: Not required. Specified for the seek of good code practices.</span>
-</span><span id="Container.by_content-56"><a href="#Container.by_content-56"><span class="linenos">56</span></a>
-</span><span id="Container.by_content-57"><a href="#Container.by_content-57"><span class="linenos">57</span></a><span class="sd">        Returns:</span>
-</span><span id="Container.by_content-58"><a href="#Container.by_content-58"><span class="linenos">58</span></a><span class="sd">            Container: Created container block.</span>
-</span><span id="Container.by_content-59"><a href="#Container.by_content-59"><span class="linenos">59</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Container.by_content-60"><a href="#Container.by_content-60"><span class="linenos">60</span></a>        <span class="n">blocks_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">block</span> <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">}</span>
-</span><span id="Container.by_content-61"><a href="#Container.by_content-61"><span class="linenos">61</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">ContainerData</span><span class="p">(</span><span class="n">blocks</span><span class="o">=</span><span class="n">blocks_map</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">formatters</span><span class="o">=</span><span class="n">formatters</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Container.by_content-39"><a href="#Container.by_content-39"><span class="linenos">39</span></a>    <span class="nd">@classmethod</span>
+</span><span id="Container.by_content-40"><a href="#Container.by_content-40"><span class="linenos">40</span></a>    <span class="k">def</span> <span class="nf">by_content</span><span class="p">(</span>
+</span><span id="Container.by_content-41"><a href="#Container.by_content-41"><span class="linenos">41</span></a>        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="Container.by_content-42"><a href="#Container.by_content-42"><span class="linenos">42</span></a>        <span class="o">*</span><span class="p">,</span>
+</span><span id="Container.by_content-43"><a href="#Container.by_content-43"><span class="linenos">43</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Container.by_content-44"><a href="#Container.by_content-44"><span class="linenos">44</span></a>        <span class="n">formatters</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">FormatterProtocol</span><span class="p">[</span><span class="n">ContainerData</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(),</span>
+</span><span id="Container.by_content-45"><a href="#Container.by_content-45"><span class="linenos">45</span></a>        <span class="n">renderer</span><span class="p">:</span> <span class="n">RendererProtocol</span><span class="p">[</span><span class="n">ContainerData</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Container.by_content-46"><a href="#Container.by_content-46"><span class="linenos">46</span></a>        <span class="n">blocks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TBaseBlock</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>
+</span><span id="Container.by_content-47"><a href="#Container.by_content-47"><span class="linenos">47</span></a>        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>  <span class="c1"># noqa: ANN401, ARG003</span>
+</span><span id="Container.by_content-48"><a href="#Container.by_content-48"><span class="linenos">48</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+</span><span id="Container.by_content-49"><a href="#Container.by_content-49"><span class="linenos">49</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Container.by_content-50"><a href="#Container.by_content-50"><span class="linenos">50</span></a><span class="sd">        Create a container block by provided blocks.</span>
+</span><span id="Container.by_content-51"><a href="#Container.by_content-51"><span class="linenos">51</span></a>
+</span><span id="Container.by_content-52"><a href="#Container.by_content-52"><span class="linenos">52</span></a><span class="sd">        Args:</span>
+</span><span id="Container.by_content-53"><a href="#Container.by_content-53"><span class="linenos">53</span></a><span class="sd">            name (str): name of the block. Used to reference the block in the file. If None, the block</span>
+</span><span id="Container.by_content-54"><a href="#Container.by_content-54"><span class="linenos">54</span></a><span class="sd">                will generate it based on the class name and some randomized suffix.</span>
+</span><span id="Container.by_content-55"><a href="#Container.by_content-55"><span class="linenos">55</span></a><span class="sd">            formatters (Sequence[FormatterProtocol[ContainerData]]): Collection of formatters that can be applied to the</span>
+</span><span id="Container.by_content-56"><a href="#Container.by_content-56"><span class="linenos">56</span></a><span class="sd">                data object.</span>
+</span><span id="Container.by_content-57"><a href="#Container.by_content-57"><span class="linenos">57</span></a><span class="sd">            blocks (Sequence[TBaseBlock]): Blocks to add to the container.</span>
+</span><span id="Container.by_content-58"><a href="#Container.by_content-58"><span class="linenos">58</span></a><span class="sd">            renderer (RendererProtocol[ContainerData] | None): Renderer object to render the block into a specific</span>
+</span><span id="Container.by_content-59"><a href="#Container.by_content-59"><span class="linenos">59</span></a><span class="sd">                format.</span>
+</span><span id="Container.by_content-60"><a href="#Container.by_content-60"><span class="linenos">60</span></a><span class="sd">            kwargs: Not required. Specified for the seek of good code practices.</span>
+</span><span id="Container.by_content-61"><a href="#Container.by_content-61"><span class="linenos">61</span></a>
+</span><span id="Container.by_content-62"><a href="#Container.by_content-62"><span class="linenos">62</span></a><span class="sd">        Returns:</span>
+</span><span id="Container.by_content-63"><a href="#Container.by_content-63"><span class="linenos">63</span></a><span class="sd">            Container: Created container block.</span>
+</span><span id="Container.by_content-64"><a href="#Container.by_content-64"><span class="linenos">64</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Container.by_content-65"><a href="#Container.by_content-65"><span class="linenos">65</span></a>        <span class="n">blocks_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">block</span> <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">}</span>
+</span><span id="Container.by_content-66"><a href="#Container.by_content-66"><span class="linenos">66</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">ContainerData</span><span class="p">(</span><span class="n">blocks</span><span class="o">=</span><span class="n">blocks_map</span><span class="p">),</span> <span class="n">renderer</span><span class="o">=</span><span class="n">renderer</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">formatters</span><span class="o">=</span><span class="n">formatters</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -363,6 +374,8 @@ will generate it based on the class name and some randomized suffix.</li>
 <li><strong>formatters (Sequence[FormatterProtocol[ContainerData]]):</strong>  Collection of formatters that can be applied to the
 data object.</li>
 <li><strong>blocks (Sequence[TBaseBlock]):</strong>  Blocks to add to the container.</li>
+<li><strong>renderer (RendererProtocol[ContainerData] | None):</strong>  Renderer object to render the block into a specific
+format.</li>
 <li><strong>kwargs:</strong>  Not required. Specified for the seek of good code practices.</li>
 </ul>
 
@@ -386,18 +399,18 @@ data object.</li>
 
     </div>
     <a class="headerlink" href="#Container.add_block"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Container.add_block-63"><a href="#Container.add_block-63"><span class="linenos">63</span></a>    <span class="k">def</span> <span class="nf">add_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="Container.add_block-64"><a href="#Container.add_block-64"><span class="linenos">64</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Container.add_block-65"><a href="#Container.add_block-65"><span class="linenos">65</span></a><span class="sd">        Add a new block to the container.</span>
-</span><span id="Container.add_block-66"><a href="#Container.add_block-66"><span class="linenos">66</span></a>
-</span><span id="Container.add_block-67"><a href="#Container.add_block-67"><span class="linenos">67</span></a><span class="sd">        Args:</span>
-</span><span id="Container.add_block-68"><a href="#Container.add_block-68"><span class="linenos">68</span></a><span class="sd">            block: New block instance to add.</span>
-</span><span id="Container.add_block-69"><a href="#Container.add_block-69"><span class="linenos">69</span></a>
-</span><span id="Container.add_block-70"><a href="#Container.add_block-70"><span class="linenos">70</span></a><span class="sd">        Returns:</span>
-</span><span id="Container.add_block-71"><a href="#Container.add_block-71"><span class="linenos">71</span></a><span class="sd">            str: Name of the block in the container.</span>
-</span><span id="Container.add_block-72"><a href="#Container.add_block-72"><span class="linenos">72</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Container.add_block-73"><a href="#Container.add_block-73"><span class="linenos">73</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span>
-</span><span id="Container.add_block-74"><a href="#Container.add_block-74"><span class="linenos">74</span></a>        <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Container.add_block-68"><a href="#Container.add_block-68"><span class="linenos">68</span></a>    <span class="k">def</span> <span class="nf">add_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Container.add_block-69"><a href="#Container.add_block-69"><span class="linenos">69</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Container.add_block-70"><a href="#Container.add_block-70"><span class="linenos">70</span></a><span class="sd">        Add a new block to the container.</span>
+</span><span id="Container.add_block-71"><a href="#Container.add_block-71"><span class="linenos">71</span></a>
+</span><span id="Container.add_block-72"><a href="#Container.add_block-72"><span class="linenos">72</span></a><span class="sd">        Args:</span>
+</span><span id="Container.add_block-73"><a href="#Container.add_block-73"><span class="linenos">73</span></a><span class="sd">            block: New block instance to add.</span>
+</span><span id="Container.add_block-74"><a href="#Container.add_block-74"><span class="linenos">74</span></a>
+</span><span id="Container.add_block-75"><a href="#Container.add_block-75"><span class="linenos">75</span></a><span class="sd">        Returns:</span>
+</span><span id="Container.add_block-76"><a href="#Container.add_block-76"><span class="linenos">76</span></a><span class="sd">            str: Name of the block in the container.</span>
+</span><span id="Container.add_block-77"><a href="#Container.add_block-77"><span class="linenos">77</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Container.add_block-78"><a href="#Container.add_block-78"><span class="linenos">78</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span>
+</span><span id="Container.add_block-79"><a href="#Container.add_block-79"><span class="linenos">79</span></a>        <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span>
 </span></pre></div>
 
 
@@ -429,20 +442,20 @@ data object.</li>
 
     </div>
     <a class="headerlink" href="#Container.remove_block"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Container.remove_block-76"><a href="#Container.remove_block-76"><span class="linenos">76</span></a>    <span class="k">def</span> <span class="nf">remove_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Container.remove_block-77"><a href="#Container.remove_block-77"><span class="linenos">77</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Container.remove_block-78"><a href="#Container.remove_block-78"><span class="linenos">78</span></a><span class="sd">        Remove a block from the container by its name.</span>
-</span><span id="Container.remove_block-79"><a href="#Container.remove_block-79"><span class="linenos">79</span></a>
-</span><span id="Container.remove_block-80"><a href="#Container.remove_block-80"><span class="linenos">80</span></a><span class="sd">        Args:</span>
-</span><span id="Container.remove_block-81"><a href="#Container.remove_block-81"><span class="linenos">81</span></a><span class="sd">            block_name: Name of the block to remove.</span>
-</span><span id="Container.remove_block-82"><a href="#Container.remove_block-82"><span class="linenos">82</span></a>
-</span><span id="Container.remove_block-83"><a href="#Container.remove_block-83"><span class="linenos">83</span></a><span class="sd">        Raises:</span>
-</span><span id="Container.remove_block-84"><a href="#Container.remove_block-84"><span class="linenos">84</span></a><span class="sd">            KeyError: If the block with the provided name is not found.</span>
-</span><span id="Container.remove_block-85"><a href="#Container.remove_block-85"><span class="linenos">85</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Container.remove_block-86"><a href="#Container.remove_block-86"><span class="linenos">86</span></a>        <span class="k">if</span> <span class="n">block_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">:</span>
-</span><span id="Container.remove_block-87"><a href="#Container.remove_block-87"><span class="linenos">87</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Block with name &#39;</span><span class="si">{</span><span class="n">block_name</span><span class="si">}</span><span class="s2">&#39; not found in the container.&quot;</span>
-</span><span id="Container.remove_block-88"><a href="#Container.remove_block-88"><span class="linenos">88</span></a>            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="Container.remove_block-89"><a href="#Container.remove_block-89"><span class="linenos">89</span></a>        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block_name</span><span class="p">]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Container.remove_block-81"><a href="#Container.remove_block-81"><span class="linenos">81</span></a>    <span class="k">def</span> <span class="nf">remove_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Container.remove_block-82"><a href="#Container.remove_block-82"><span class="linenos">82</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Container.remove_block-83"><a href="#Container.remove_block-83"><span class="linenos">83</span></a><span class="sd">        Remove a block from the container by its name.</span>
+</span><span id="Container.remove_block-84"><a href="#Container.remove_block-84"><span class="linenos">84</span></a>
+</span><span id="Container.remove_block-85"><a href="#Container.remove_block-85"><span class="linenos">85</span></a><span class="sd">        Args:</span>
+</span><span id="Container.remove_block-86"><a href="#Container.remove_block-86"><span class="linenos">86</span></a><span class="sd">            block_name: Name of the block to remove.</span>
+</span><span id="Container.remove_block-87"><a href="#Container.remove_block-87"><span class="linenos">87</span></a>
+</span><span id="Container.remove_block-88"><a href="#Container.remove_block-88"><span class="linenos">88</span></a><span class="sd">        Raises:</span>
+</span><span id="Container.remove_block-89"><a href="#Container.remove_block-89"><span class="linenos">89</span></a><span class="sd">            KeyError: If the block with the provided name is not found.</span>
+</span><span id="Container.remove_block-90"><a href="#Container.remove_block-90"><span class="linenos">90</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Container.remove_block-91"><a href="#Container.remove_block-91"><span class="linenos">91</span></a>        <span class="k">if</span> <span class="n">block_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">:</span>
+</span><span id="Container.remove_block-92"><a href="#Container.remove_block-92"><span class="linenos">92</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Block with name &#39;</span><span class="si">{</span><span class="n">block_name</span><span class="si">}</span><span class="s2">&#39; not found in the container.&quot;</span>
+</span><span id="Container.remove_block-93"><a href="#Container.remove_block-93"><span class="linenos">93</span></a>            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="Container.remove_block-94"><a href="#Container.remove_block-94"><span class="linenos">94</span></a>        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">block_name</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -470,6 +483,7 @@ data object.</li>
                                 <dd id="Container.__init__" class="function"><a href="base.html#BaseBlock.__init__">BaseBlock</a></dd>
                 <dd id="Container.name" class="variable"><a href="base.html#BaseBlock.name">name</a></dd>
                 <dd id="Container.data" class="variable"><a href="base.html#BaseBlock.data">data</a></dd>
+                <dd id="Container.renderer" class="variable"><a href="base.html#BaseBlock.renderer">renderer</a></dd>
                 <dd id="Container.format" class="function"><a href="base.html#BaseBlock.format">format</a></dd>
 
             </div>

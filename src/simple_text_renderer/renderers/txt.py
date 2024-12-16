@@ -6,16 +6,18 @@ from io import StringIO
 from pathlib import Path
 from typing import IO, TYPE_CHECKING, cast, overload
 
-from simple_text_renderer.blocks.text import PlainTextBlock
-
-from .base import BaseRenderer
+from .base import FileRendererBase
 
 if TYPE_CHECKING:
-    from simple_text_renderer.blocks.base import TBaseBlock
+    from collections.abc import Mapping
+
+    from simple_text_renderer.blocks.base import BaseBlock, Data
     from simple_text_renderer.file import BaseFile
 
+    from .mixins import RendererProtocol
 
-class TxtRenderer(BaseRenderer):
+
+class TxtFileRenderer(FileRendererBase):
     """
     Default renderer for the TXT file format.
 
@@ -26,7 +28,18 @@ class TxtRenderer(BaseRenderer):
         delimiter (str): Delimiter to use between blocks. Default is newline.
     """
 
-    def __init__(self, *, delimiter: str = "\n") -> None:
+    def __init__(
+        self, *, renderers: Mapping[type[BaseBlock[Data]], RendererProtocol[Data]] | None = None, delimiter: str = "\n"
+    ) -> None:
+        """
+        Initialize TxtFileRenderer object.
+
+        Args:
+            renderers (Mapping[type[BaseBlock[Data]], RendererProtocol[Data]] | None): Mapping of renderers to use for
+            specific block types. Used to override the default renderers.
+            delimiter (str): Delimiter to use between blocks. Default is newline
+        """
+        super().__init__(renderers=renderers)
         self._delimiter = delimiter
 
     def as_str(self, file: BaseFile) -> str:
@@ -88,7 +101,7 @@ class TxtRenderer(BaseRenderer):
         Write the message to the stream.
 
         Args:
-            stream (io.IOBase): a stream to write the message to. May be any IOBase subclass.
+            stream (io.IOBase): a stream to write the message to. It may be any IOBase subclass.
             message (str): the message to write.
             encoding (str): the encoding to use when writing the message. Defaults to "utf-8".
 
@@ -118,11 +131,3 @@ class TxtRenderer(BaseRenderer):
             path = Path(path)
         with path.open("wb") as f:
             f.write(self.as_stream(file).read())
-
-    def _render_block(self, block: TBaseBlock) -> str:
-        match block:
-            case PlainTextBlock():
-                return block.data.text
-            case _:
-                msg = f"Unsupported block type: {block.__class__.__name__}"
-                raise TypeError(msg)
