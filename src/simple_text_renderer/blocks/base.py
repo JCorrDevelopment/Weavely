@@ -2,15 +2,13 @@ from __future__ import annotations
 
 import abc
 import dataclasses
-from typing import TYPE_CHECKING, Any, Final, Generic, Self, TypeVar
+from typing import TYPE_CHECKING, Any, Final, Self
 
 from std_utils.more_str.generators import random_string
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
-
-    from simple_text_renderer.formatters.base import FormatterProtocol
-    from simple_text_renderer.renderers.mixins import RendererProtocol
+    from simple_text_renderer.formatters.base import IBlockFormatter
+    from simple_text_renderer.renderers.mixins import IBlockRenderer
 
 
 @dataclasses.dataclass(slots=True)
@@ -22,124 +20,80 @@ class Data:
     """
 
 
-# Temporary usage of older version of Python annotations
-# Migrate this to python 3.12+ generics after pdoc resolve this issue:
-#
-# details: https://github.com/mitmproxy/pdoc/issues/762
-TData = TypeVar("TData", bound=Data)
+type TData = Data
+"""
+Used to reference arbitrary data object in the block when generic is required by it is impossible
+to specify it.
+"""
 
 
-class BaseBlock(Generic[TData], abc.ABC):
+class BaseBlock[TData: Data](abc.ABC):
     """
     Base class for all blocks in the simple text renderer.
 
     Idea of the block is to have a simple way to contain any arbitrary data and operate on it in abstract way. The best
     analogy for this is a simple paragraph in a text editor. It can contain any text, tables, images, etc. But you can
     move the paragraph around, change its style, etc. without knowing what is inside it.
+
+    Each of blocks must contain a `Data` object, which is a container for the arbitrary information that block can
+    operate on. Specific data type must be defined in the inherited class.
+
+    Each block has a name, which is used to reference the blocks in the application. It can be provided by the user on
+    block creation, or it will be generated automatically.
+
+    Each block can follow one of two ways to format or render the data:
+        a. It may specify a specific formatter or renderer object to use exclusively for this block.
+        b. Or, otherwise, it will use the default formatter or renderers provided by the downstream objects
+            implementation.
     """
 
     def __init__(
         self,
         data: TData,
         name: str | None = None,
-        formatters: Sequence[FormatterProtocol[TData]] = (),
-        renderer: RendererProtocol[TData] | None = None,
+        formatter: IBlockFormatter | None = None,
+        renderer: IBlockRenderer | None = None,
     ) -> None:
         """
+        Initialize the block object.
+
         Args:
             data (TData): Data object containing any arbitrary data that block can operate on. Specific data type must
                 be defined in the inherited class.
             name (str | None): Optional name of the block. Used to reference the block in the file. If None, the block
                 will generate it based on the class name and some randomized suffix.
-            formatters (Sequence[FormatterProtocol[TData]]): Collection of formatters that can be applied to the
-                data object. Will be applied in the order they are provided.
-            renderer (RendererProtocol[TData] | None): Renderer object to render the block into a specific format.
+            formatter (IBlockFormatter): Formatter object to format the data object. If None, the block will
+                use the default formatter provided by the file formatter implementation.
+            renderer (IBlockRenderer | None): Renderer object to render the block into a specific format.
                 If None, the block will use the default renderer provided by the file renderer implementation.
-        """  # noqa: D205
+        """
         self._data = data
-        self._formatters = formatters
+        self._formatter = formatter
         self._renderer = renderer
         self._name: Final[str] = name or random_string(prefix=self.__class__.__name__)
 
     @classmethod
     @abc.abstractmethod
-    def by_content(
+    def by_data(
         cls,
         *,
         name: str | None = None,
-        formatters: Sequence[FormatterProtocol[TData]] = (),
-        renderer: RendererProtocol[TData] | None = None,
-        **kwargs: Any,  # noqa: ANN401
+        formatter: IBlockFormatter | None = None,
+        renderer: IBlockRenderer | None = None,
+        **data: Any,  # noqa: ANN401
     ) -> Self:
         """
-        Create a new block instance by provided input values.
+        Create a new block instance by providing the data object.
 
         Args:
             name (str | None): Optional name of the block. Used to reference the block in the file. If None, the block
                 will generate it based on the class name and some randomized suffix.
-            formatters (Sequence[FormatterProtocol[TData]]): Collection of formatters that can be applied
-                to the data object.
-            renderer (RendererProtocol[TData] | None): Renderer object to render the block into a specific format.
-            kwargs: arbitrary keyword arguments to specify the block content. See specific block implementation for
-                details.
+            formatter (IBlockFormatter): Formatter object to format the data object. If None, the block will
+                use the default formatter provided by the file formatter implementation.
+            renderer (IBlockRenderer | None): Renderer object to render the block into a specific format.
+                If None, the block will use the default renderer provided by the file renderer implementation.
+            data (Any): Arbitrary range of keyword arguments to initialize the data object.
 
         Returns:
             Self: New block instance.
         """
-
-    @property
-    def name(self) -> str:
-        """
-        Guaranteed read-only access to the block name.
-
-        Returns:
-            str: Name of the block.
-        """
-        return self._name
-
-    @property
-    def data(self) -> TData:
-        """
-        Guaranteed read-only access to the block data.
-
-        Returns:
-            TData: Data object of the block.
-        """
-        return self._data
-
-    @property
-    def renderer(self) -> RendererProtocol[TData] | None:
-        """
-        Guaranteed read-only access to the block renderer.
-
-        Returns:
-            RendererProtocol[TData] | None: Renderer object of the block.
-        """
-        return self._renderer
-
-    def format(self, *, inplace: bool = True) -> Self:
-        """
-        Apply all specified formatters to the block.
-
-        Args:
-            inplace(bool): If True, modify the block in place and return it.
-            If False, return a new block without modifying the original one.
-            Keyword-only argument, defaults to True.
-
-
-        Returns:
-            Self: Formatted block as a new or modified instance based on inplace parameter.
-        """
-        data = self._data
-        for formatter in self._formatters:
-            data = formatter(data)
-
-        if inplace:
-            self._data = data
-            return self
-
-        return self.__class__(data=data, name=self._name, formatters=self._formatters)
-
-
-type TBaseBlock = BaseBlock
-"""Type alias for the BaseBlock class to use in type hints."""
