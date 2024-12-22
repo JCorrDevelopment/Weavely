@@ -18,5 +18,5 @@ class TextWrapFormatter(BlockFormatterBase[PlainTextData]):
     _SUPPORTED_DATA_TYPES = (PlainTextData,)
 
     def _format(self, data: PlainTextData) -> PlainTextData:
-        data.text = "\n".join(textwrap.fill(data.text, width=self._max_width))
+        data.text = textwrap.fill(data.text, width=self._max_width)
         return data
