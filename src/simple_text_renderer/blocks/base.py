@@ -8,7 +8,7 @@ from std_utils.more_str.generators import random_string
 
 if TYPE_CHECKING:
     from simple_text_renderer.formatters.base import IBlockFormatter
-    from simple_text_renderer.renderers.mixins import IBlockRenderer
+    from simple_text_renderer.renderers.base import IBlockRenderer
 
 
 @dataclasses.dataclass(slots=True)
@@ -18,13 +18,6 @@ class Data:
 
     This class doesn't have any specific information, any specific Data type must be inherited from this class.
     """
-
-
-type TData = Data
-"""
-Used to reference arbitrary data object in the block when generic is required by it is impossible
-to specify it.
-"""
 
 
 class BaseBlock[TData: Data](abc.ABC):
@@ -72,6 +65,46 @@ class BaseBlock[TData: Data](abc.ABC):
         self._renderer = renderer
         self._name: Final[str] = name or random_string(prefix=self.__class__.__name__)
 
+    @property
+    def data(self) -> TData:
+        """
+        Get the data object contained in the block.
+
+        Returns:
+            TData: Data object.
+        """
+        return self._data
+
+    @property
+    def formatter(self) -> IBlockFormatter | None:
+        """
+        Get the formatter object used by the block.
+
+        Returns:
+            IBlockFormatter | None: Formatter object.
+        """
+        return self._formatter
+
+    @property
+    def renderer(self) -> IBlockRenderer | None:
+        """
+        Get the renderer object used by the block.
+
+        Returns:
+            IBlockRenderer | None: Renderer object.
+        """
+        return self._renderer
+
+    @property
+    def name(self) -> str:
+        """
+        Get the block name.
+
+        Returns:
+            str: Block name.
+        """
+        return self._name
+
     @classmethod
     @abc.abstractmethod
     def by_data(
@@ -96,4 +129,7 @@ class BaseBlock[TData: Data](abc.ABC):
 
         Returns:
             Self: New block instance.
+
+        Raises:
+            DataIsMissingError: If information provided in `**data` is not enough to create data object.
         """

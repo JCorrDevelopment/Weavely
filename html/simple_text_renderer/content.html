@@ -33,6 +33,12 @@
             <li>
                     <a class="class" href="#Content">Content</a>
                             <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#Content.add_block">add_block</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#Content.add_plain_text">add_plain_text</a>
+                        </li>
                 </ul>
 
             </li>
@@ -57,26 +63,88 @@
 
                         <label class="view-source-button" for="mod-content-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>    <span class="kn">from</span> <span class="nn">simple_text_renderer.blocks.base</span> <span class="kn">import</span> <span class="n">BaseBlock</span><span class="p">,</span> <span class="n">Data</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span> <span class="nn">simple_text_renderer.blocks.txt</span> <span class="kn">import</span> <span class="n">PlainText</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="k">class</span> <span class="nc">Content</span><span class="p">:</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">    A class to represent a file content.</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">    Responsible for storing, adding, removing and other operations with the file blocks.</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">    By itself this class does not render the file content, as well as know nothing about blocks formatting, which</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">    is delegated to `File` object.</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>    <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterator</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="kn">from</span> <span class="nn">simple_text_renderer.blocks.base</span> <span class="kn">import</span> <span class="n">BaseBlock</span><span class="p">,</span> <span class="n">Data</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="kn">from</span> <span class="nn">simple_text_renderer.formatters.base</span> <span class="kn">import</span> <span class="n">IBlockFormatter</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="kn">from</span> <span class="nn">simple_text_renderer.renderers.base</span> <span class="kn">import</span> <span class="n">IBlockRenderer</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">    Blocks are stored inside the contend as a dictionary, where the key is the block name, and the values is</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">    the block object itself. This allows for simple block reference, as well as guarantees block insertion order.</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="k">class</span> <span class="nc">Content</span><span class="p">:</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">    A class to represent a file content.</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_blocks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">    Responsible for storing, adding, removing and other operations with the file blocks.</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="sd">    By itself this class does not render the file content, as well as know nothing about blocks formatting, which</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">    is delegated to `File` object.</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    Blocks are stored inside the contend as a dictionary, where the key is the block name, and the values is</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">    the block object itself. This allows for simple block reference, as well as guarantees block insertion order.</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_blocks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]]:</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">        Iterate over the blocks in the content in insertion order.</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">        Returns:</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">            Iterator[BaseBlock[Data]]: Block object.</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_blocks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="sd">        Get the number of blocks in the content.</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">        Returns:</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="sd">            int: Number of blocks in the content.</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_blocks</span><span class="p">)</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>    <span class="k">def</span> <span class="nf">add_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">        Add a new block to the content.</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="sd">        Args:</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="sd">            block (BaseBlock[Data]): Block object to add.</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">        Returns:</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">            str: Name of the block.</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_blocks</span><span class="p">[</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>        <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="k">def</span> <span class="nf">add_plain_text</span><span class="p">(</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="o">*</span><span class="p">,</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>        <span class="n">formatter</span><span class="p">:</span> <span class="n">IBlockFormatter</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>        <span class="n">renderer</span><span class="p">:</span> <span class="n">IBlockRenderer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="sd">        Add a new plain text block to the content.</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="sd">        Args:</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="sd">            text (str): Plain text that should be added to the content as a PlainText block.</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="sd">            name (str | None): Name of the block. If not specified, it will be generated automatically.</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a><span class="sd">            formatter (IBlockFormatter | None): Specific formatter to use for this block.</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a><span class="sd">            renderer (IBlockRenderer | None): Specific renderer to use for this block.</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a><span class="sd">        Returns:</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a><span class="sd">            str: Name of the block.</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>        <span class="n">block</span> <span class="o">=</span> <span class="n">PlainText</span><span class="o">.</span><span class="n">by_data</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">formatter</span><span class="o">=</span><span class="n">formatter</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="n">renderer</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_block</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -92,20 +160,74 @@
 
     </div>
     <a class="headerlink" href="#Content"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Content-8"><a href="#Content-8"><span class="linenos"> 8</span></a><span class="k">class</span> <span class="nc">Content</span><span class="p">:</span>
-</span><span id="Content-9"><a href="#Content-9"><span class="linenos"> 9</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="Content-10"><a href="#Content-10"><span class="linenos">10</span></a><span class="sd">    A class to represent a file content.</span>
-</span><span id="Content-11"><a href="#Content-11"><span class="linenos">11</span></a>
-</span><span id="Content-12"><a href="#Content-12"><span class="linenos">12</span></a><span class="sd">    Responsible for storing, adding, removing and other operations with the file blocks.</span>
-</span><span id="Content-13"><a href="#Content-13"><span class="linenos">13</span></a><span class="sd">    By itself this class does not render the file content, as well as know nothing about blocks formatting, which</span>
-</span><span id="Content-14"><a href="#Content-14"><span class="linenos">14</span></a><span class="sd">    is delegated to `File` object.</span>
-</span><span id="Content-15"><a href="#Content-15"><span class="linenos">15</span></a>
-</span><span id="Content-16"><a href="#Content-16"><span class="linenos">16</span></a><span class="sd">    Blocks are stored inside the contend as a dictionary, where the key is the block name, and the values is</span>
-</span><span id="Content-17"><a href="#Content-17"><span class="linenos">17</span></a><span class="sd">    the block object itself. This allows for simple block reference, as well as guarantees block insertion order.</span>
-</span><span id="Content-18"><a href="#Content-18"><span class="linenos">18</span></a><span class="sd">    &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Content-16"><a href="#Content-16"><span class="linenos">16</span></a><span class="k">class</span> <span class="nc">Content</span><span class="p">:</span>
+</span><span id="Content-17"><a href="#Content-17"><span class="linenos">17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Content-18"><a href="#Content-18"><span class="linenos">18</span></a><span class="sd">    A class to represent a file content.</span>
 </span><span id="Content-19"><a href="#Content-19"><span class="linenos">19</span></a>
-</span><span id="Content-20"><a href="#Content-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="Content-21"><a href="#Content-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_blocks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="Content-20"><a href="#Content-20"><span class="linenos">20</span></a><span class="sd">    Responsible for storing, adding, removing and other operations with the file blocks.</span>
+</span><span id="Content-21"><a href="#Content-21"><span class="linenos">21</span></a><span class="sd">    By itself this class does not render the file content, as well as know nothing about blocks formatting, which</span>
+</span><span id="Content-22"><a href="#Content-22"><span class="linenos">22</span></a><span class="sd">    is delegated to `File` object.</span>
+</span><span id="Content-23"><a href="#Content-23"><span class="linenos">23</span></a>
+</span><span id="Content-24"><a href="#Content-24"><span class="linenos">24</span></a><span class="sd">    Blocks are stored inside the contend as a dictionary, where the key is the block name, and the values is</span>
+</span><span id="Content-25"><a href="#Content-25"><span class="linenos">25</span></a><span class="sd">    the block object itself. This allows for simple block reference, as well as guarantees block insertion order.</span>
+</span><span id="Content-26"><a href="#Content-26"><span class="linenos">26</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="Content-27"><a href="#Content-27"><span class="linenos">27</span></a>
+</span><span id="Content-28"><a href="#Content-28"><span class="linenos">28</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="Content-29"><a href="#Content-29"><span class="linenos">29</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_blocks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="Content-30"><a href="#Content-30"><span class="linenos">30</span></a>
+</span><span id="Content-31"><a href="#Content-31"><span class="linenos">31</span></a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">]]:</span>
+</span><span id="Content-32"><a href="#Content-32"><span class="linenos">32</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Content-33"><a href="#Content-33"><span class="linenos">33</span></a><span class="sd">        Iterate over the blocks in the content in insertion order.</span>
+</span><span id="Content-34"><a href="#Content-34"><span class="linenos">34</span></a>
+</span><span id="Content-35"><a href="#Content-35"><span class="linenos">35</span></a><span class="sd">        Returns:</span>
+</span><span id="Content-36"><a href="#Content-36"><span class="linenos">36</span></a><span class="sd">            Iterator[BaseBlock[Data]]: Block object.</span>
+</span><span id="Content-37"><a href="#Content-37"><span class="linenos">37</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Content-38"><a href="#Content-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_blocks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+</span><span id="Content-39"><a href="#Content-39"><span class="linenos">39</span></a>
+</span><span id="Content-40"><a href="#Content-40"><span class="linenos">40</span></a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="Content-41"><a href="#Content-41"><span class="linenos">41</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Content-42"><a href="#Content-42"><span class="linenos">42</span></a><span class="sd">        Get the number of blocks in the content.</span>
+</span><span id="Content-43"><a href="#Content-43"><span class="linenos">43</span></a>
+</span><span id="Content-44"><a href="#Content-44"><span class="linenos">44</span></a><span class="sd">        Returns:</span>
+</span><span id="Content-45"><a href="#Content-45"><span class="linenos">45</span></a><span class="sd">            int: Number of blocks in the content.</span>
+</span><span id="Content-46"><a href="#Content-46"><span class="linenos">46</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Content-47"><a href="#Content-47"><span class="linenos">47</span></a>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_blocks</span><span class="p">)</span>
+</span><span id="Content-48"><a href="#Content-48"><span class="linenos">48</span></a>
+</span><span id="Content-49"><a href="#Content-49"><span class="linenos">49</span></a>    <span class="k">def</span> <span class="nf">add_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Content-50"><a href="#Content-50"><span class="linenos">50</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Content-51"><a href="#Content-51"><span class="linenos">51</span></a><span class="sd">        Add a new block to the content.</span>
+</span><span id="Content-52"><a href="#Content-52"><span class="linenos">52</span></a>
+</span><span id="Content-53"><a href="#Content-53"><span class="linenos">53</span></a><span class="sd">        Args:</span>
+</span><span id="Content-54"><a href="#Content-54"><span class="linenos">54</span></a><span class="sd">            block (BaseBlock[Data]): Block object to add.</span>
+</span><span id="Content-55"><a href="#Content-55"><span class="linenos">55</span></a>
+</span><span id="Content-56"><a href="#Content-56"><span class="linenos">56</span></a><span class="sd">        Returns:</span>
+</span><span id="Content-57"><a href="#Content-57"><span class="linenos">57</span></a><span class="sd">            str: Name of the block.</span>
+</span><span id="Content-58"><a href="#Content-58"><span class="linenos">58</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Content-59"><a href="#Content-59"><span class="linenos">59</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_blocks</span><span class="p">[</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span>
+</span><span id="Content-60"><a href="#Content-60"><span class="linenos">60</span></a>        <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span>
+</span><span id="Content-61"><a href="#Content-61"><span class="linenos">61</span></a>
+</span><span id="Content-62"><a href="#Content-62"><span class="linenos">62</span></a>    <span class="k">def</span> <span class="nf">add_plain_text</span><span class="p">(</span>
+</span><span id="Content-63"><a href="#Content-63"><span class="linenos">63</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="Content-64"><a href="#Content-64"><span class="linenos">64</span></a>        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="Content-65"><a href="#Content-65"><span class="linenos">65</span></a>        <span class="o">*</span><span class="p">,</span>
+</span><span id="Content-66"><a href="#Content-66"><span class="linenos">66</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Content-67"><a href="#Content-67"><span class="linenos">67</span></a>        <span class="n">formatter</span><span class="p">:</span> <span class="n">IBlockFormatter</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Content-68"><a href="#Content-68"><span class="linenos">68</span></a>        <span class="n">renderer</span><span class="p">:</span> <span class="n">IBlockRenderer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Content-69"><a href="#Content-69"><span class="linenos">69</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Content-70"><a href="#Content-70"><span class="linenos">70</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Content-71"><a href="#Content-71"><span class="linenos">71</span></a><span class="sd">        Add a new plain text block to the content.</span>
+</span><span id="Content-72"><a href="#Content-72"><span class="linenos">72</span></a>
+</span><span id="Content-73"><a href="#Content-73"><span class="linenos">73</span></a><span class="sd">        Args:</span>
+</span><span id="Content-74"><a href="#Content-74"><span class="linenos">74</span></a><span class="sd">            text (str): Plain text that should be added to the content as a PlainText block.</span>
+</span><span id="Content-75"><a href="#Content-75"><span class="linenos">75</span></a><span class="sd">            name (str | None): Name of the block. If not specified, it will be generated automatically.</span>
+</span><span id="Content-76"><a href="#Content-76"><span class="linenos">76</span></a><span class="sd">            formatter (IBlockFormatter | None): Specific formatter to use for this block.</span>
+</span><span id="Content-77"><a href="#Content-77"><span class="linenos">77</span></a><span class="sd">            renderer (IBlockRenderer | None): Specific renderer to use for this block.</span>
+</span><span id="Content-78"><a href="#Content-78"><span class="linenos">78</span></a>
+</span><span id="Content-79"><a href="#Content-79"><span class="linenos">79</span></a><span class="sd">        Returns:</span>
+</span><span id="Content-80"><a href="#Content-80"><span class="linenos">80</span></a><span class="sd">            str: Name of the block.</span>
+</span><span id="Content-81"><a href="#Content-81"><span class="linenos">81</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Content-82"><a href="#Content-82"><span class="linenos">82</span></a>        <span class="n">block</span> <span class="o">=</span> <span class="n">PlainText</span><span class="o">.</span><span class="n">by_data</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">formatter</span><span class="o">=</span><span class="n">formatter</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="n">renderer</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+</span><span id="Content-83"><a href="#Content-83"><span class="linenos">83</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_block</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -120,6 +242,105 @@ the block object itself. This allows for simple block reference, as well as guar
 </div>
 
 
+                            <div id="Content.add_block" class="classattr">
+                                        <input id="Content.add_block-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">add_block</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">block</span><span class="p">:</span> <span class="n"><a href="blocks.html#BaseBlock">simple_text_renderer.blocks.BaseBlock</a></span><span class="p">[</span><span class="n"><a href="blocks.html#Data">simple_text_renderer.blocks.Data</a></span><span class="p">]</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+
+                <label class="view-source-button" for="Content.add_block-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Content.add_block"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Content.add_block-49"><a href="#Content.add_block-49"><span class="linenos">49</span></a>    <span class="k">def</span> <span class="nf">add_block</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="n">BaseBlock</span><span class="p">[</span><span class="n">Data</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Content.add_block-50"><a href="#Content.add_block-50"><span class="linenos">50</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Content.add_block-51"><a href="#Content.add_block-51"><span class="linenos">51</span></a><span class="sd">        Add a new block to the content.</span>
+</span><span id="Content.add_block-52"><a href="#Content.add_block-52"><span class="linenos">52</span></a>
+</span><span id="Content.add_block-53"><a href="#Content.add_block-53"><span class="linenos">53</span></a><span class="sd">        Args:</span>
+</span><span id="Content.add_block-54"><a href="#Content.add_block-54"><span class="linenos">54</span></a><span class="sd">            block (BaseBlock[Data]): Block object to add.</span>
+</span><span id="Content.add_block-55"><a href="#Content.add_block-55"><span class="linenos">55</span></a>
+</span><span id="Content.add_block-56"><a href="#Content.add_block-56"><span class="linenos">56</span></a><span class="sd">        Returns:</span>
+</span><span id="Content.add_block-57"><a href="#Content.add_block-57"><span class="linenos">57</span></a><span class="sd">            str: Name of the block.</span>
+</span><span id="Content.add_block-58"><a href="#Content.add_block-58"><span class="linenos">58</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Content.add_block-59"><a href="#Content.add_block-59"><span class="linenos">59</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_blocks</span><span class="p">[</span><span class="n">block</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span>
+</span><span id="Content.add_block-60"><a href="#Content.add_block-60"><span class="linenos">60</span></a>        <span class="k">return</span> <span class="n">block</span><span class="o">.</span><span class="n">name</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Add a new block to the content.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>block (BaseBlock[Data]):</strong>  Block object to add.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>str: Name of the block.</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="Content.add_plain_text" class="classattr">
+                                        <input id="Content.add_plain_text-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">add_plain_text</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">text</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">formatter</span><span class="p">:</span> <span class="n"><a href="formatters/base.html#IBlockFormatter">simple_text_renderer.formatters.base.IBlockFormatter</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">renderer</span><span class="p">:</span> <span class="n"><a href="renderers/base.html#IBlockRenderer">simple_text_renderer.renderers.base.IBlockRenderer</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+
+                <label class="view-source-button" for="Content.add_plain_text-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Content.add_plain_text"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Content.add_plain_text-62"><a href="#Content.add_plain_text-62"><span class="linenos">62</span></a>    <span class="k">def</span> <span class="nf">add_plain_text</span><span class="p">(</span>
+</span><span id="Content.add_plain_text-63"><a href="#Content.add_plain_text-63"><span class="linenos">63</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="Content.add_plain_text-64"><a href="#Content.add_plain_text-64"><span class="linenos">64</span></a>        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="Content.add_plain_text-65"><a href="#Content.add_plain_text-65"><span class="linenos">65</span></a>        <span class="o">*</span><span class="p">,</span>
+</span><span id="Content.add_plain_text-66"><a href="#Content.add_plain_text-66"><span class="linenos">66</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Content.add_plain_text-67"><a href="#Content.add_plain_text-67"><span class="linenos">67</span></a>        <span class="n">formatter</span><span class="p">:</span> <span class="n">IBlockFormatter</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Content.add_plain_text-68"><a href="#Content.add_plain_text-68"><span class="linenos">68</span></a>        <span class="n">renderer</span><span class="p">:</span> <span class="n">IBlockRenderer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Content.add_plain_text-69"><a href="#Content.add_plain_text-69"><span class="linenos">69</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Content.add_plain_text-70"><a href="#Content.add_plain_text-70"><span class="linenos">70</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Content.add_plain_text-71"><a href="#Content.add_plain_text-71"><span class="linenos">71</span></a><span class="sd">        Add a new plain text block to the content.</span>
+</span><span id="Content.add_plain_text-72"><a href="#Content.add_plain_text-72"><span class="linenos">72</span></a>
+</span><span id="Content.add_plain_text-73"><a href="#Content.add_plain_text-73"><span class="linenos">73</span></a><span class="sd">        Args:</span>
+</span><span id="Content.add_plain_text-74"><a href="#Content.add_plain_text-74"><span class="linenos">74</span></a><span class="sd">            text (str): Plain text that should be added to the content as a PlainText block.</span>
+</span><span id="Content.add_plain_text-75"><a href="#Content.add_plain_text-75"><span class="linenos">75</span></a><span class="sd">            name (str | None): Name of the block. If not specified, it will be generated automatically.</span>
+</span><span id="Content.add_plain_text-76"><a href="#Content.add_plain_text-76"><span class="linenos">76</span></a><span class="sd">            formatter (IBlockFormatter | None): Specific formatter to use for this block.</span>
+</span><span id="Content.add_plain_text-77"><a href="#Content.add_plain_text-77"><span class="linenos">77</span></a><span class="sd">            renderer (IBlockRenderer | None): Specific renderer to use for this block.</span>
+</span><span id="Content.add_plain_text-78"><a href="#Content.add_plain_text-78"><span class="linenos">78</span></a>
+</span><span id="Content.add_plain_text-79"><a href="#Content.add_plain_text-79"><span class="linenos">79</span></a><span class="sd">        Returns:</span>
+</span><span id="Content.add_plain_text-80"><a href="#Content.add_plain_text-80"><span class="linenos">80</span></a><span class="sd">            str: Name of the block.</span>
+</span><span id="Content.add_plain_text-81"><a href="#Content.add_plain_text-81"><span class="linenos">81</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Content.add_plain_text-82"><a href="#Content.add_plain_text-82"><span class="linenos">82</span></a>        <span class="n">block</span> <span class="o">=</span> <span class="n">PlainText</span><span class="o">.</span><span class="n">by_data</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">formatter</span><span class="o">=</span><span class="n">formatter</span><span class="p">,</span> <span class="n">renderer</span><span class="o">=</span><span class="n">renderer</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+</span><span id="Content.add_plain_text-83"><a href="#Content.add_plain_text-83"><span class="linenos">83</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_block</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Add a new plain text block to the content.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>text (str):</strong>  Plain text that should be added to the content as a PlainText block.</li>
+<li><strong>name (str | None):</strong>  Name of the block. If not specified, it will be generated automatically.</li>
+<li><strong>formatter (IBlockFormatter | None):</strong>  Specific formatter to use for this block.</li>
+<li><strong>renderer (IBlockRenderer | None):</strong>  Specific renderer to use for this block.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>str: Name of the block.</p>
+</blockquote>
+</div>
+
+
+                            </div>
                 </section>
     </main>
 <script>

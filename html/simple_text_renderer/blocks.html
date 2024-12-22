@@ -27,10 +27,40 @@
                    pattern=".+" required>
 
 
-            <h2>Submodules</h2>
-            <ul>
-                    <li><a href="blocks/base.html">base</a></li>
-            </ul>
+
+            <h2>API Documentation</h2>
+                <ul class="memberlist">
+            <li>
+                    <a class="class" href="#BaseBlock">BaseBlock</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#BaseBlock.__init__">BaseBlock</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#BaseBlock.data">data</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#BaseBlock.formatter">formatter</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#BaseBlock.renderer">renderer</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#BaseBlock.name">name</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#BaseBlock.by_data">by_data</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#Data">Data</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
+    </ul>
 
 
 
@@ -51,11 +81,451 @@
 
                         <label class="view-source-button" for="mod-blocks-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a>    <span class="s2">&quot;BaseBlock&quot;</span><span class="p">,</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a>    <span class="s2">&quot;Data&quot;</span><span class="p">,</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">4</span></a><span class="p">]</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">5</span></a>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">6</span></a><span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseBlock</span><span class="p">,</span> <span class="n">Data</span>
 </span></pre></div>
 
 
             </section>
+                <section id="BaseBlock">
+                            <input id="BaseBlock-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">BaseBlock</span><wbr>(<span class="base">abc.ABC</span>, <span class="base">typing.Generic[TData]</span>):
+
+                <label class="view-source-button" for="BaseBlock-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BaseBlock"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseBlock-24"><a href="#BaseBlock-24"><span class="linenos"> 24</span></a><span class="k">class</span> <span class="nc">BaseBlock</span><span class="p">[</span><span class="n">TData</span><span class="p">:</span> <span class="n">Data</span><span class="p">](</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="BaseBlock-25"><a href="#BaseBlock-25"><span class="linenos"> 25</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseBlock-26"><a href="#BaseBlock-26"><span class="linenos"> 26</span></a><span class="sd">    Base class for all blocks in the simple text renderer.</span>
+</span><span id="BaseBlock-27"><a href="#BaseBlock-27"><span class="linenos"> 27</span></a>
+</span><span id="BaseBlock-28"><a href="#BaseBlock-28"><span class="linenos"> 28</span></a><span class="sd">    Idea of the block is to have a simple way to contain any arbitrary data and operate on it in abstract way. The best</span>
+</span><span id="BaseBlock-29"><a href="#BaseBlock-29"><span class="linenos"> 29</span></a><span class="sd">    analogy for this is a simple paragraph in a text editor. It can contain any text, tables, images, etc. But you can</span>
+</span><span id="BaseBlock-30"><a href="#BaseBlock-30"><span class="linenos"> 30</span></a><span class="sd">    move the paragraph around, change its style, etc. without knowing what is inside it.</span>
+</span><span id="BaseBlock-31"><a href="#BaseBlock-31"><span class="linenos"> 31</span></a>
+</span><span id="BaseBlock-32"><a href="#BaseBlock-32"><span class="linenos"> 32</span></a><span class="sd">    Each of blocks must contain a `Data` object, which is a container for the arbitrary information that block can</span>
+</span><span id="BaseBlock-33"><a href="#BaseBlock-33"><span class="linenos"> 33</span></a><span class="sd">    operate on. Specific data type must be defined in the inherited class.</span>
+</span><span id="BaseBlock-34"><a href="#BaseBlock-34"><span class="linenos"> 34</span></a>
+</span><span id="BaseBlock-35"><a href="#BaseBlock-35"><span class="linenos"> 35</span></a><span class="sd">    Each block has a name, which is used to reference the blocks in the application. It can be provided by the user on</span>
+</span><span id="BaseBlock-36"><a href="#BaseBlock-36"><span class="linenos"> 36</span></a><span class="sd">    block creation, or it will be generated automatically.</span>
+</span><span id="BaseBlock-37"><a href="#BaseBlock-37"><span class="linenos"> 37</span></a>
+</span><span id="BaseBlock-38"><a href="#BaseBlock-38"><span class="linenos"> 38</span></a><span class="sd">    Each block can follow one of two ways to format or render the data:</span>
+</span><span id="BaseBlock-39"><a href="#BaseBlock-39"><span class="linenos"> 39</span></a><span class="sd">        a. It may specify a specific formatter or renderer object to use exclusively for this block.</span>
+</span><span id="BaseBlock-40"><a href="#BaseBlock-40"><span class="linenos"> 40</span></a><span class="sd">        b. Or, otherwise, it will use the default formatter or renderers provided by the downstream objects</span>
+</span><span id="BaseBlock-41"><a href="#BaseBlock-41"><span class="linenos"> 41</span></a><span class="sd">            implementation.</span>
+</span><span id="BaseBlock-42"><a href="#BaseBlock-42"><span class="linenos"> 42</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="BaseBlock-43"><a href="#BaseBlock-43"><span class="linenos"> 43</span></a>
+</span><span id="BaseBlock-44"><a href="#BaseBlock-44"><span class="linenos"> 44</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="BaseBlock-45"><a href="#BaseBlock-45"><span class="linenos"> 45</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="BaseBlock-46"><a href="#BaseBlock-46"><span class="linenos"> 46</span></a>        <span class="n">data</span><span class="p">:</span> <span class="n">TData</span><span class="p">,</span>
+</span><span id="BaseBlock-47"><a href="#BaseBlock-47"><span class="linenos"> 47</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="BaseBlock-48"><a href="#BaseBlock-48"><span class="linenos"> 48</span></a>        <span class="n">formatter</span><span class="p">:</span> <span class="n">IBlockFormatter</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="BaseBlock-49"><a href="#BaseBlock-49"><span class="linenos"> 49</span></a>        <span class="n">renderer</span><span class="p">:</span> <span class="n">IBlockRenderer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="BaseBlock-50"><a href="#BaseBlock-50"><span class="linenos"> 50</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseBlock-51"><a href="#BaseBlock-51"><span class="linenos"> 51</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseBlock-52"><a href="#BaseBlock-52"><span class="linenos"> 52</span></a><span class="sd">        Initialize the block object.</span>
+</span><span id="BaseBlock-53"><a href="#BaseBlock-53"><span class="linenos"> 53</span></a>
+</span><span id="BaseBlock-54"><a href="#BaseBlock-54"><span class="linenos"> 54</span></a><span class="sd">        Args:</span>
+</span><span id="BaseBlock-55"><a href="#BaseBlock-55"><span class="linenos"> 55</span></a><span class="sd">            data (TData): Data object containing any arbitrary data that block can operate on. Specific data type must</span>
+</span><span id="BaseBlock-56"><a href="#BaseBlock-56"><span class="linenos"> 56</span></a><span class="sd">                be defined in the inherited class.</span>
+</span><span id="BaseBlock-57"><a href="#BaseBlock-57"><span class="linenos"> 57</span></a><span class="sd">            name (str | None): Optional name of the block. Used to reference the block in the file. If None, the block</span>
+</span><span id="BaseBlock-58"><a href="#BaseBlock-58"><span class="linenos"> 58</span></a><span class="sd">                will generate it based on the class name and some randomized suffix.</span>
+</span><span id="BaseBlock-59"><a href="#BaseBlock-59"><span class="linenos"> 59</span></a><span class="sd">            formatter (IBlockFormatter): Formatter object to format the data object. If None, the block will</span>
+</span><span id="BaseBlock-60"><a href="#BaseBlock-60"><span class="linenos"> 60</span></a><span class="sd">                use the default formatter provided by the file formatter implementation.</span>
+</span><span id="BaseBlock-61"><a href="#BaseBlock-61"><span class="linenos"> 61</span></a><span class="sd">            renderer (IBlockRenderer | None): Renderer object to render the block into a specific format.</span>
+</span><span id="BaseBlock-62"><a href="#BaseBlock-62"><span class="linenos"> 62</span></a><span class="sd">                If None, the block will use the default renderer provided by the file renderer implementation.</span>
+</span><span id="BaseBlock-63"><a href="#BaseBlock-63"><span class="linenos"> 63</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseBlock-64"><a href="#BaseBlock-64"><span class="linenos"> 64</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+</span><span id="BaseBlock-65"><a href="#BaseBlock-65"><span class="linenos"> 65</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_formatter</span> <span class="o">=</span> <span class="n">formatter</span>
+</span><span id="BaseBlock-66"><a href="#BaseBlock-66"><span class="linenos"> 66</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_renderer</span> <span class="o">=</span> <span class="n">renderer</span>
+</span><span id="BaseBlock-67"><a href="#BaseBlock-67"><span class="linenos"> 67</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">random_string</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span id="BaseBlock-68"><a href="#BaseBlock-68"><span class="linenos"> 68</span></a>
+</span><span id="BaseBlock-69"><a href="#BaseBlock-69"><span class="linenos"> 69</span></a>    <span class="nd">@property</span>
+</span><span id="BaseBlock-70"><a href="#BaseBlock-70"><span class="linenos"> 70</span></a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TData</span><span class="p">:</span>
+</span><span id="BaseBlock-71"><a href="#BaseBlock-71"><span class="linenos"> 71</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseBlock-72"><a href="#BaseBlock-72"><span class="linenos"> 72</span></a><span class="sd">        Get the data object contained in the block.</span>
+</span><span id="BaseBlock-73"><a href="#BaseBlock-73"><span class="linenos"> 73</span></a>
+</span><span id="BaseBlock-74"><a href="#BaseBlock-74"><span class="linenos"> 74</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseBlock-75"><a href="#BaseBlock-75"><span class="linenos"> 75</span></a><span class="sd">            TData: Data object.</span>
+</span><span id="BaseBlock-76"><a href="#BaseBlock-76"><span class="linenos"> 76</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseBlock-77"><a href="#BaseBlock-77"><span class="linenos"> 77</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+</span><span id="BaseBlock-78"><a href="#BaseBlock-78"><span class="linenos"> 78</span></a>
+</span><span id="BaseBlock-79"><a href="#BaseBlock-79"><span class="linenos"> 79</span></a>    <span class="nd">@property</span>
+</span><span id="BaseBlock-80"><a href="#BaseBlock-80"><span class="linenos"> 80</span></a>    <span class="k">def</span> <span class="nf">formatter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IBlockFormatter</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseBlock-81"><a href="#BaseBlock-81"><span class="linenos"> 81</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseBlock-82"><a href="#BaseBlock-82"><span class="linenos"> 82</span></a><span class="sd">        Get the formatter object used by the block.</span>
+</span><span id="BaseBlock-83"><a href="#BaseBlock-83"><span class="linenos"> 83</span></a>
+</span><span id="BaseBlock-84"><a href="#BaseBlock-84"><span class="linenos"> 84</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseBlock-85"><a href="#BaseBlock-85"><span class="linenos"> 85</span></a><span class="sd">            IBlockFormatter | None: Formatter object.</span>
+</span><span id="BaseBlock-86"><a href="#BaseBlock-86"><span class="linenos"> 86</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseBlock-87"><a href="#BaseBlock-87"><span class="linenos"> 87</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatter</span>
+</span><span id="BaseBlock-88"><a href="#BaseBlock-88"><span class="linenos"> 88</span></a>
+</span><span id="BaseBlock-89"><a href="#BaseBlock-89"><span class="linenos"> 89</span></a>    <span class="nd">@property</span>
+</span><span id="BaseBlock-90"><a href="#BaseBlock-90"><span class="linenos"> 90</span></a>    <span class="k">def</span> <span class="nf">renderer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IBlockRenderer</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseBlock-91"><a href="#BaseBlock-91"><span class="linenos"> 91</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseBlock-92"><a href="#BaseBlock-92"><span class="linenos"> 92</span></a><span class="sd">        Get the renderer object used by the block.</span>
+</span><span id="BaseBlock-93"><a href="#BaseBlock-93"><span class="linenos"> 93</span></a>
+</span><span id="BaseBlock-94"><a href="#BaseBlock-94"><span class="linenos"> 94</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseBlock-95"><a href="#BaseBlock-95"><span class="linenos"> 95</span></a><span class="sd">            IBlockRenderer | None: Renderer object.</span>
+</span><span id="BaseBlock-96"><a href="#BaseBlock-96"><span class="linenos"> 96</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseBlock-97"><a href="#BaseBlock-97"><span class="linenos"> 97</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_renderer</span>
+</span><span id="BaseBlock-98"><a href="#BaseBlock-98"><span class="linenos"> 98</span></a>
+</span><span id="BaseBlock-99"><a href="#BaseBlock-99"><span class="linenos"> 99</span></a>    <span class="nd">@property</span>
+</span><span id="BaseBlock-100"><a href="#BaseBlock-100"><span class="linenos">100</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="BaseBlock-101"><a href="#BaseBlock-101"><span class="linenos">101</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseBlock-102"><a href="#BaseBlock-102"><span class="linenos">102</span></a><span class="sd">        Get the block name.</span>
+</span><span id="BaseBlock-103"><a href="#BaseBlock-103"><span class="linenos">103</span></a>
+</span><span id="BaseBlock-104"><a href="#BaseBlock-104"><span class="linenos">104</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseBlock-105"><a href="#BaseBlock-105"><span class="linenos">105</span></a><span class="sd">            str: Block name.</span>
+</span><span id="BaseBlock-106"><a href="#BaseBlock-106"><span class="linenos">106</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseBlock-107"><a href="#BaseBlock-107"><span class="linenos">107</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+</span><span id="BaseBlock-108"><a href="#BaseBlock-108"><span class="linenos">108</span></a>
+</span><span id="BaseBlock-109"><a href="#BaseBlock-109"><span class="linenos">109</span></a>    <span class="nd">@classmethod</span>
+</span><span id="BaseBlock-110"><a href="#BaseBlock-110"><span class="linenos">110</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="BaseBlock-111"><a href="#BaseBlock-111"><span class="linenos">111</span></a>    <span class="k">def</span> <span class="nf">by_data</span><span class="p">(</span>
+</span><span id="BaseBlock-112"><a href="#BaseBlock-112"><span class="linenos">112</span></a>        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="BaseBlock-113"><a href="#BaseBlock-113"><span class="linenos">113</span></a>        <span class="o">*</span><span class="p">,</span>
+</span><span id="BaseBlock-114"><a href="#BaseBlock-114"><span class="linenos">114</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="BaseBlock-115"><a href="#BaseBlock-115"><span class="linenos">115</span></a>        <span class="n">formatter</span><span class="p">:</span> <span class="n">IBlockFormatter</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="BaseBlock-116"><a href="#BaseBlock-116"><span class="linenos">116</span></a>        <span class="n">renderer</span><span class="p">:</span> <span class="n">IBlockRenderer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="BaseBlock-117"><a href="#BaseBlock-117"><span class="linenos">117</span></a>        <span class="o">**</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>  <span class="c1"># noqa: ANN401</span>
+</span><span id="BaseBlock-118"><a href="#BaseBlock-118"><span class="linenos">118</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+</span><span id="BaseBlock-119"><a href="#BaseBlock-119"><span class="linenos">119</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseBlock-120"><a href="#BaseBlock-120"><span class="linenos">120</span></a><span class="sd">        Create a new block instance by providing the data object.</span>
+</span><span id="BaseBlock-121"><a href="#BaseBlock-121"><span class="linenos">121</span></a>
+</span><span id="BaseBlock-122"><a href="#BaseBlock-122"><span class="linenos">122</span></a><span class="sd">        Args:</span>
+</span><span id="BaseBlock-123"><a href="#BaseBlock-123"><span class="linenos">123</span></a><span class="sd">            name (str | None): Optional name of the block. Used to reference the block in the file. If None, the block</span>
+</span><span id="BaseBlock-124"><a href="#BaseBlock-124"><span class="linenos">124</span></a><span class="sd">                will generate it based on the class name and some randomized suffix.</span>
+</span><span id="BaseBlock-125"><a href="#BaseBlock-125"><span class="linenos">125</span></a><span class="sd">            formatter (IBlockFormatter): Formatter object to format the data object. If None, the block will</span>
+</span><span id="BaseBlock-126"><a href="#BaseBlock-126"><span class="linenos">126</span></a><span class="sd">                use the default formatter provided by the file formatter implementation.</span>
+</span><span id="BaseBlock-127"><a href="#BaseBlock-127"><span class="linenos">127</span></a><span class="sd">            renderer (IBlockRenderer | None): Renderer object to render the block into a specific format.</span>
+</span><span id="BaseBlock-128"><a href="#BaseBlock-128"><span class="linenos">128</span></a><span class="sd">                If None, the block will use the default renderer provided by the file renderer implementation.</span>
+</span><span id="BaseBlock-129"><a href="#BaseBlock-129"><span class="linenos">129</span></a><span class="sd">            data (Any): Arbitrary range of keyword arguments to initialize the data object.</span>
+</span><span id="BaseBlock-130"><a href="#BaseBlock-130"><span class="linenos">130</span></a>
+</span><span id="BaseBlock-131"><a href="#BaseBlock-131"><span class="linenos">131</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseBlock-132"><a href="#BaseBlock-132"><span class="linenos">132</span></a><span class="sd">            Self: New block instance.</span>
+</span><span id="BaseBlock-133"><a href="#BaseBlock-133"><span class="linenos">133</span></a>
+</span><span id="BaseBlock-134"><a href="#BaseBlock-134"><span class="linenos">134</span></a><span class="sd">        Raises:</span>
+</span><span id="BaseBlock-135"><a href="#BaseBlock-135"><span class="linenos">135</span></a><span class="sd">            DataIsMissingError: If information provided in `**data` is not enough to create data object.</span>
+</span><span id="BaseBlock-136"><a href="#BaseBlock-136"><span class="linenos">136</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Base class for all blocks in the simple text renderer.</p>
+
+<p>Idea of the block is to have a simple way to contain any arbitrary data and operate on it in abstract way. The best
+analogy for this is a simple paragraph in a text editor. It can contain any text, tables, images, etc. But you can
+move the paragraph around, change its style, etc. without knowing what is inside it.</p>
+
+<p>Each of blocks must contain a <code><a href="#Data">Data</a></code> object, which is a container for the arbitrary information that block can
+operate on. Specific data type must be defined in the inherited class.</p>
+
+<p>Each block has a name, which is used to reference the blocks in the application. It can be provided by the user on
+block creation, or it will be generated automatically.</p>
+
+<h6 id="each-block-can-follow-one-of-two-ways-to-format-or-render-the-data">Each block can follow one of two ways to format or render the data:</h6>
+
+<blockquote>
+  <p>a. It may specify a specific formatter or renderer object to use exclusively for this block.
+  b. Or, otherwise, it will use the default formatter or renderers provided by the downstream objects
+      implementation.</p>
+</blockquote>
+</div>
+
+
+                            <div id="BaseBlock.__init__" class="classattr">
+                                        <input id="BaseBlock.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">BaseBlock</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">data</span><span class="p">:</span> <span class="s1">&#39;TData&#39;</span>,</span><span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">formatter</span><span class="p">:</span> <span class="n"><a href="formatters/base.html#IBlockFormatter">simple_text_renderer.formatters.base.IBlockFormatter</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">renderer</span><span class="p">:</span> <span class="n"><a href="renderers/base.html#IBlockRenderer">simple_text_renderer.renderers.base.IBlockRenderer</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></span>)</span>
+
+                <label class="view-source-button" for="BaseBlock.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BaseBlock.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseBlock.__init__-44"><a href="#BaseBlock.__init__-44"><span class="linenos">44</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="BaseBlock.__init__-45"><a href="#BaseBlock.__init__-45"><span class="linenos">45</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="BaseBlock.__init__-46"><a href="#BaseBlock.__init__-46"><span class="linenos">46</span></a>        <span class="n">data</span><span class="p">:</span> <span class="n">TData</span><span class="p">,</span>
+</span><span id="BaseBlock.__init__-47"><a href="#BaseBlock.__init__-47"><span class="linenos">47</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="BaseBlock.__init__-48"><a href="#BaseBlock.__init__-48"><span class="linenos">48</span></a>        <span class="n">formatter</span><span class="p">:</span> <span class="n">IBlockFormatter</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="BaseBlock.__init__-49"><a href="#BaseBlock.__init__-49"><span class="linenos">49</span></a>        <span class="n">renderer</span><span class="p">:</span> <span class="n">IBlockRenderer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="BaseBlock.__init__-50"><a href="#BaseBlock.__init__-50"><span class="linenos">50</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseBlock.__init__-51"><a href="#BaseBlock.__init__-51"><span class="linenos">51</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseBlock.__init__-52"><a href="#BaseBlock.__init__-52"><span class="linenos">52</span></a><span class="sd">        Initialize the block object.</span>
+</span><span id="BaseBlock.__init__-53"><a href="#BaseBlock.__init__-53"><span class="linenos">53</span></a>
+</span><span id="BaseBlock.__init__-54"><a href="#BaseBlock.__init__-54"><span class="linenos">54</span></a><span class="sd">        Args:</span>
+</span><span id="BaseBlock.__init__-55"><a href="#BaseBlock.__init__-55"><span class="linenos">55</span></a><span class="sd">            data (TData): Data object containing any arbitrary data that block can operate on. Specific data type must</span>
+</span><span id="BaseBlock.__init__-56"><a href="#BaseBlock.__init__-56"><span class="linenos">56</span></a><span class="sd">                be defined in the inherited class.</span>
+</span><span id="BaseBlock.__init__-57"><a href="#BaseBlock.__init__-57"><span class="linenos">57</span></a><span class="sd">            name (str | None): Optional name of the block. Used to reference the block in the file. If None, the block</span>
+</span><span id="BaseBlock.__init__-58"><a href="#BaseBlock.__init__-58"><span class="linenos">58</span></a><span class="sd">                will generate it based on the class name and some randomized suffix.</span>
+</span><span id="BaseBlock.__init__-59"><a href="#BaseBlock.__init__-59"><span class="linenos">59</span></a><span class="sd">            formatter (IBlockFormatter): Formatter object to format the data object. If None, the block will</span>
+</span><span id="BaseBlock.__init__-60"><a href="#BaseBlock.__init__-60"><span class="linenos">60</span></a><span class="sd">                use the default formatter provided by the file formatter implementation.</span>
+</span><span id="BaseBlock.__init__-61"><a href="#BaseBlock.__init__-61"><span class="linenos">61</span></a><span class="sd">            renderer (IBlockRenderer | None): Renderer object to render the block into a specific format.</span>
+</span><span id="BaseBlock.__init__-62"><a href="#BaseBlock.__init__-62"><span class="linenos">62</span></a><span class="sd">                If None, the block will use the default renderer provided by the file renderer implementation.</span>
+</span><span id="BaseBlock.__init__-63"><a href="#BaseBlock.__init__-63"><span class="linenos">63</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseBlock.__init__-64"><a href="#BaseBlock.__init__-64"><span class="linenos">64</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+</span><span id="BaseBlock.__init__-65"><a href="#BaseBlock.__init__-65"><span class="linenos">65</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_formatter</span> <span class="o">=</span> <span class="n">formatter</span>
+</span><span id="BaseBlock.__init__-66"><a href="#BaseBlock.__init__-66"><span class="linenos">66</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_renderer</span> <span class="o">=</span> <span class="n">renderer</span>
+</span><span id="BaseBlock.__init__-67"><a href="#BaseBlock.__init__-67"><span class="linenos">67</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">random_string</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Initialize the block object.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>data (TData):</strong>  Data object containing any arbitrary data that block can operate on. Specific data type must
+be defined in the inherited class.</li>
+<li><strong>name (str | None):</strong>  Optional name of the block. Used to reference the block in the file. If None, the block
+will generate it based on the class name and some randomized suffix.</li>
+<li><strong>formatter (IBlockFormatter):</strong>  Formatter object to format the data object. If None, the block will
+use the default formatter provided by the file formatter implementation.</li>
+<li><strong>renderer (IBlockRenderer | None):</strong>  Renderer object to render the block into a specific format.
+If None, the block will use the default renderer provided by the file renderer implementation.</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <div id="BaseBlock.data" class="classattr">
+                                        <input id="BaseBlock.data-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">data</span><span class="annotation">: &#39;TData&#39;</span>
+
+                <label class="view-source-button" for="BaseBlock.data-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BaseBlock.data"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseBlock.data-69"><a href="#BaseBlock.data-69"><span class="linenos">69</span></a>    <span class="nd">@property</span>
+</span><span id="BaseBlock.data-70"><a href="#BaseBlock.data-70"><span class="linenos">70</span></a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TData</span><span class="p">:</span>
+</span><span id="BaseBlock.data-71"><a href="#BaseBlock.data-71"><span class="linenos">71</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseBlock.data-72"><a href="#BaseBlock.data-72"><span class="linenos">72</span></a><span class="sd">        Get the data object contained in the block.</span>
+</span><span id="BaseBlock.data-73"><a href="#BaseBlock.data-73"><span class="linenos">73</span></a>
+</span><span id="BaseBlock.data-74"><a href="#BaseBlock.data-74"><span class="linenos">74</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseBlock.data-75"><a href="#BaseBlock.data-75"><span class="linenos">75</span></a><span class="sd">            TData: Data object.</span>
+</span><span id="BaseBlock.data-76"><a href="#BaseBlock.data-76"><span class="linenos">76</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseBlock.data-77"><a href="#BaseBlock.data-77"><span class="linenos">77</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Get the data object contained in the block.</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>TData: Data object.</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="BaseBlock.formatter" class="classattr">
+                                        <input id="BaseBlock.formatter-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">formatter</span><span class="annotation">: <a href="formatters/base.html#IBlockFormatter">simple_text_renderer.formatters.base.IBlockFormatter</a> | None</span>
+
+                <label class="view-source-button" for="BaseBlock.formatter-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BaseBlock.formatter"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseBlock.formatter-79"><a href="#BaseBlock.formatter-79"><span class="linenos">79</span></a>    <span class="nd">@property</span>
+</span><span id="BaseBlock.formatter-80"><a href="#BaseBlock.formatter-80"><span class="linenos">80</span></a>    <span class="k">def</span> <span class="nf">formatter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IBlockFormatter</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseBlock.formatter-81"><a href="#BaseBlock.formatter-81"><span class="linenos">81</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseBlock.formatter-82"><a href="#BaseBlock.formatter-82"><span class="linenos">82</span></a><span class="sd">        Get the formatter object used by the block.</span>
+</span><span id="BaseBlock.formatter-83"><a href="#BaseBlock.formatter-83"><span class="linenos">83</span></a>
+</span><span id="BaseBlock.formatter-84"><a href="#BaseBlock.formatter-84"><span class="linenos">84</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseBlock.formatter-85"><a href="#BaseBlock.formatter-85"><span class="linenos">85</span></a><span class="sd">            IBlockFormatter | None: Formatter object.</span>
+</span><span id="BaseBlock.formatter-86"><a href="#BaseBlock.formatter-86"><span class="linenos">86</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseBlock.formatter-87"><a href="#BaseBlock.formatter-87"><span class="linenos">87</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatter</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Get the formatter object used by the block.</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>IBlockFormatter | None: Formatter object.</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="BaseBlock.renderer" class="classattr">
+                                        <input id="BaseBlock.renderer-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">renderer</span><span class="annotation">: <a href="renderers/base.html#IBlockRenderer">simple_text_renderer.renderers.base.IBlockRenderer</a> | None</span>
+
+                <label class="view-source-button" for="BaseBlock.renderer-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BaseBlock.renderer"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseBlock.renderer-89"><a href="#BaseBlock.renderer-89"><span class="linenos">89</span></a>    <span class="nd">@property</span>
+</span><span id="BaseBlock.renderer-90"><a href="#BaseBlock.renderer-90"><span class="linenos">90</span></a>    <span class="k">def</span> <span class="nf">renderer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IBlockRenderer</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseBlock.renderer-91"><a href="#BaseBlock.renderer-91"><span class="linenos">91</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseBlock.renderer-92"><a href="#BaseBlock.renderer-92"><span class="linenos">92</span></a><span class="sd">        Get the renderer object used by the block.</span>
+</span><span id="BaseBlock.renderer-93"><a href="#BaseBlock.renderer-93"><span class="linenos">93</span></a>
+</span><span id="BaseBlock.renderer-94"><a href="#BaseBlock.renderer-94"><span class="linenos">94</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseBlock.renderer-95"><a href="#BaseBlock.renderer-95"><span class="linenos">95</span></a><span class="sd">            IBlockRenderer | None: Renderer object.</span>
+</span><span id="BaseBlock.renderer-96"><a href="#BaseBlock.renderer-96"><span class="linenos">96</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseBlock.renderer-97"><a href="#BaseBlock.renderer-97"><span class="linenos">97</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_renderer</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Get the renderer object used by the block.</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>IBlockRenderer | None: Renderer object.</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="BaseBlock.name" class="classattr">
+                                        <input id="BaseBlock.name-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr variable">
+            <span class="name">name</span><span class="annotation">: str</span>
+
+                <label class="view-source-button" for="BaseBlock.name-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BaseBlock.name"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseBlock.name-99"><a href="#BaseBlock.name-99"><span class="linenos"> 99</span></a>    <span class="nd">@property</span>
+</span><span id="BaseBlock.name-100"><a href="#BaseBlock.name-100"><span class="linenos">100</span></a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="BaseBlock.name-101"><a href="#BaseBlock.name-101"><span class="linenos">101</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseBlock.name-102"><a href="#BaseBlock.name-102"><span class="linenos">102</span></a><span class="sd">        Get the block name.</span>
+</span><span id="BaseBlock.name-103"><a href="#BaseBlock.name-103"><span class="linenos">103</span></a>
+</span><span id="BaseBlock.name-104"><a href="#BaseBlock.name-104"><span class="linenos">104</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseBlock.name-105"><a href="#BaseBlock.name-105"><span class="linenos">105</span></a><span class="sd">            str: Block name.</span>
+</span><span id="BaseBlock.name-106"><a href="#BaseBlock.name-106"><span class="linenos">106</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseBlock.name-107"><a href="#BaseBlock.name-107"><span class="linenos">107</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Get the block name.</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>str: Block name.</p>
+</blockquote>
+</div>
+
+
+                            </div>
+                            <div id="BaseBlock.by_data" class="classattr">
+                                        <input id="BaseBlock.by_data-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-classmethod">@classmethod</div>
+        <div class="decorator decorator-abc.abstractmethod">@abc.abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">by_data</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">cls</span>,</span><span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">formatter</span><span class="p">:</span> <span class="n"><a href="formatters/base.html#IBlockFormatter">simple_text_renderer.formatters.base.IBlockFormatter</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">renderer</span><span class="p">:</span> <span class="n"><a href="renderers/base.html#IBlockRenderer">simple_text_renderer.renderers.base.IBlockRenderer</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="o">**</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span></span><span class="return-annotation">) -> <span class="n">Self</span>:</span></span>
+
+                <label class="view-source-button" for="BaseBlock.by_data-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BaseBlock.by_data"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseBlock.by_data-109"><a href="#BaseBlock.by_data-109"><span class="linenos">109</span></a>    <span class="nd">@classmethod</span>
+</span><span id="BaseBlock.by_data-110"><a href="#BaseBlock.by_data-110"><span class="linenos">110</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="BaseBlock.by_data-111"><a href="#BaseBlock.by_data-111"><span class="linenos">111</span></a>    <span class="k">def</span> <span class="nf">by_data</span><span class="p">(</span>
+</span><span id="BaseBlock.by_data-112"><a href="#BaseBlock.by_data-112"><span class="linenos">112</span></a>        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="BaseBlock.by_data-113"><a href="#BaseBlock.by_data-113"><span class="linenos">113</span></a>        <span class="o">*</span><span class="p">,</span>
+</span><span id="BaseBlock.by_data-114"><a href="#BaseBlock.by_data-114"><span class="linenos">114</span></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="BaseBlock.by_data-115"><a href="#BaseBlock.by_data-115"><span class="linenos">115</span></a>        <span class="n">formatter</span><span class="p">:</span> <span class="n">IBlockFormatter</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="BaseBlock.by_data-116"><a href="#BaseBlock.by_data-116"><span class="linenos">116</span></a>        <span class="n">renderer</span><span class="p">:</span> <span class="n">IBlockRenderer</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="BaseBlock.by_data-117"><a href="#BaseBlock.by_data-117"><span class="linenos">117</span></a>        <span class="o">**</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>  <span class="c1"># noqa: ANN401</span>
+</span><span id="BaseBlock.by_data-118"><a href="#BaseBlock.by_data-118"><span class="linenos">118</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+</span><span id="BaseBlock.by_data-119"><a href="#BaseBlock.by_data-119"><span class="linenos">119</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BaseBlock.by_data-120"><a href="#BaseBlock.by_data-120"><span class="linenos">120</span></a><span class="sd">        Create a new block instance by providing the data object.</span>
+</span><span id="BaseBlock.by_data-121"><a href="#BaseBlock.by_data-121"><span class="linenos">121</span></a>
+</span><span id="BaseBlock.by_data-122"><a href="#BaseBlock.by_data-122"><span class="linenos">122</span></a><span class="sd">        Args:</span>
+</span><span id="BaseBlock.by_data-123"><a href="#BaseBlock.by_data-123"><span class="linenos">123</span></a><span class="sd">            name (str | None): Optional name of the block. Used to reference the block in the file. If None, the block</span>
+</span><span id="BaseBlock.by_data-124"><a href="#BaseBlock.by_data-124"><span class="linenos">124</span></a><span class="sd">                will generate it based on the class name and some randomized suffix.</span>
+</span><span id="BaseBlock.by_data-125"><a href="#BaseBlock.by_data-125"><span class="linenos">125</span></a><span class="sd">            formatter (IBlockFormatter): Formatter object to format the data object. If None, the block will</span>
+</span><span id="BaseBlock.by_data-126"><a href="#BaseBlock.by_data-126"><span class="linenos">126</span></a><span class="sd">                use the default formatter provided by the file formatter implementation.</span>
+</span><span id="BaseBlock.by_data-127"><a href="#BaseBlock.by_data-127"><span class="linenos">127</span></a><span class="sd">            renderer (IBlockRenderer | None): Renderer object to render the block into a specific format.</span>
+</span><span id="BaseBlock.by_data-128"><a href="#BaseBlock.by_data-128"><span class="linenos">128</span></a><span class="sd">                If None, the block will use the default renderer provided by the file renderer implementation.</span>
+</span><span id="BaseBlock.by_data-129"><a href="#BaseBlock.by_data-129"><span class="linenos">129</span></a><span class="sd">            data (Any): Arbitrary range of keyword arguments to initialize the data object.</span>
+</span><span id="BaseBlock.by_data-130"><a href="#BaseBlock.by_data-130"><span class="linenos">130</span></a>
+</span><span id="BaseBlock.by_data-131"><a href="#BaseBlock.by_data-131"><span class="linenos">131</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseBlock.by_data-132"><a href="#BaseBlock.by_data-132"><span class="linenos">132</span></a><span class="sd">            Self: New block instance.</span>
+</span><span id="BaseBlock.by_data-133"><a href="#BaseBlock.by_data-133"><span class="linenos">133</span></a>
+</span><span id="BaseBlock.by_data-134"><a href="#BaseBlock.by_data-134"><span class="linenos">134</span></a><span class="sd">        Raises:</span>
+</span><span id="BaseBlock.by_data-135"><a href="#BaseBlock.by_data-135"><span class="linenos">135</span></a><span class="sd">            DataIsMissingError: If information provided in `**data` is not enough to create data object.</span>
+</span><span id="BaseBlock.by_data-136"><a href="#BaseBlock.by_data-136"><span class="linenos">136</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Create a new block instance by providing the data object.</p>
+
+<h6 id="arguments">Arguments:</h6>
+
+<ul>
+<li><strong>name (str | None):</strong>  Optional name of the block. Used to reference the block in the file. If None, the block
+will generate it based on the class name and some randomized suffix.</li>
+<li><strong>formatter (IBlockFormatter):</strong>  Formatter object to format the data object. If None, the block will
+use the default formatter provided by the file formatter implementation.</li>
+<li><strong>renderer (IBlockRenderer | None):</strong>  Renderer object to render the block into a specific format.
+If None, the block will use the default renderer provided by the file renderer implementation.</li>
+<li><strong>data (Any):</strong>  Arbitrary range of keyword arguments to initialize the data object.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>Self: New block instance.</p>
+</blockquote>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>DataIsMissingError:</strong>  If information provided in <code>**data</code> is not enough to create data object.</li>
+</ul>
+</div>
+
+
+                            </div>
+                </section>
+                <section id="Data">
+                            <input id="Data-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+                    <div class="decorator decorator-dataclasses.dataclass">@dataclasses.dataclass(slots=True)</div>
+
+    <span class="def">class</span>
+    <span class="name">Data</span>:
+
+                <label class="view-source-button" for="Data-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#Data"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Data-15"><a href="#Data-15"><span class="linenos">15</span></a><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="Data-16"><a href="#Data-16"><span class="linenos">16</span></a><span class="k">class</span> <span class="nc">Data</span><span class="p">:</span>
+</span><span id="Data-17"><a href="#Data-17"><span class="linenos">17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="Data-18"><a href="#Data-18"><span class="linenos">18</span></a><span class="sd">    Default label for data containing in the block to make operation on block more convenient.</span>
+</span><span id="Data-19"><a href="#Data-19"><span class="linenos">19</span></a>
+</span><span id="Data-20"><a href="#Data-20"><span class="linenos">20</span></a><span class="sd">    This class doesn&#39;t have any specific information, any specific Data type must be inherited from this class.</span>
+</span><span id="Data-21"><a href="#Data-21"><span class="linenos">21</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Default label for data containing in the block to make operation on block more convenient.</p>
+
+<p>This class doesn't have any specific information, any specific Data type must be inherited from this class.</p>
+</div>
+
+
+                </section>
     </main>
 <script>
     function escapeHTML(html) {

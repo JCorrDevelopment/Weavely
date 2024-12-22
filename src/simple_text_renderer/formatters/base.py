@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import abc
-import dataclasses
-from typing import Protocol
+from collections.abc import Iterator, MutableMapping
+from typing import Protocol, TypeIs
 
-from simple_text_renderer.blocks.base import Data, TData
+from simple_text_renderer.blocks.base import Data
 
 
 class IBlockFormatter(Protocol):
@@ -15,20 +15,20 @@ class IBlockFormatter(Protocol):
     this protocol may be useful to define a common function-based formatter interface.
     """
 
-    def __call__[TData: Data](self, data: TData) -> TData:
+    def __call__(self, data: Data) -> Data:
         """
         Format the block data according to the formatter rules.
 
         Args:
-            data (TData): Data object to format.
+            data (Data): Data object to format.
 
         Returns:
-            TData: new or modified data object.
+            Data: new or modified data object.
         """
         ...
 
 
-class BlockFormatterBase(IBlockFormatter, abc.ABC):
+class BlockFormatterBase[TData: Data](IBlockFormatter, abc.ABC):
     """
     Base class for all formatters in the simple text renderer.
 
@@ -39,38 +39,61 @@ class BlockFormatterBase(IBlockFormatter, abc.ABC):
     formatting process.
     """
 
-    @abc.abstractmethod
-    def __call__[TData: Data](self, data: TData) -> TData:
+    _SUPPORTED_DATA_TYPES: tuple[type[Data], ...] = ()
+
+    def __call__(self, data: Data) -> TData:
         """
         Format the block data according to the formatter rules.
-
-        Args:
-            data (TData): Data object to format.
-
-        Returns:
-            TData: new or modified data object.
-        """
-
-
-class Identity(BlockFormatterBase):
-    """Formatter that doesn't change the data object."""
-
-    def __call__[Data](self, data: Data) -> Data:
-        """
-        Returns the data object as is.
 
         Args:
             data (Data): Data object to format.
 
         Returns:
-            Data: The same data object as input.
+            Data: new or modified data object.
 
+        Raises:
+            TypeError: If the renderer cannot be applied to the provided data object.
         """
-        return data
+        if not self._can_be_applied(data):
+            msg = f"Renderer {self.__class__.__name__!r} cannot be applied to the data {data!r}."
+            raise TypeError(msg)
+        return self._format(data)
+
+    def _get_supported_data_types(self) -> tuple[type[Data], ...]:
+        """
+        Get the list of supported data types for the renderer.
+
+        Returns:
+            tuple[type[Data], ...]: List of supported data types.
+        """
+        return self._SUPPORTED_DATA_TYPES
+
+    def _can_be_applied(self, data: Data) -> TypeIs[TData]:
+        """
+        Check if the renderer can be applied to the provided data object.
+
+        Args:
+            data (Data): Data object to check.
+
+        Returns:
+            bool: True if the renderer can be applied to the provided data object, False otherwise.
+        """
+        return isinstance(data, self._SUPPORTED_DATA_TYPES)
+
+    @abc.abstractmethod
+    def _format(self, data: TData) -> TData:
+        """
+        Apply actual rendering logic of the provided data object.
+
+        Args:
+            data (Data): Data object to render. Is one of this renderer supported data types.
+
+        Returns:
+            Data: Block of the same type with formatted data.
+        """
 
 
-@dataclasses.dataclass(slots=True)
-class FileFormatter:
+class FileFormatter(MutableMapping[type[Data], IBlockFormatter]):
     """
     Base class to describe a file formatter.
 
@@ -79,12 +102,10 @@ class FileFormatter:
     Selecting of the formatter for specific block will be done in the following order:
         1. If block has a specific formatter object, it will be used.
         2. If it doesn't, file will try to find default formatter in corresponding file formatter instance.
-        3. If both are missing, the `Identity` formatter wil be used as a global fallback to any block.
+        3. If both are missing, the block will be kept as it is.
     """
 
-    formatters: dict[type[TData], IBlockFormatter] = dataclasses.field(
-        default_factory=dict[type[TData], IBlockFormatter]
-    )
+    formatters: dict[type[Data], IBlockFormatter]
     """
     Dictionary of default block formatters used by the `File` object.
 
@@ -92,3 +113,69 @@ class FileFormatter:
     `IBlockFormatter` protocol. So it may be a callable class inheriting from the `BlockFormatterBase` class, or any
     function that repeat IBlockFormatter protocol.
     """
+
+    def __init__(self, formatters: dict[type[Data], IBlockFormatter] | None = None) -> None:
+        """
+        Initialize the collection of default formatters.
+
+        Args:
+            formatters (dict[type[Data], IBlockFormatter]): Dictionary of default formatters
+            to initialize the collection with.
+        """
+        self._formatters: dict[type[Data], IBlockFormatter] = formatters or {}
+
+    def __setitem__(self, key: type[Data], value: IBlockFormatter, /) -> None:
+        """
+        Set or update the default formatter for the provided block data type.
+
+        Args:
+            key (type[Data]): Block data type to set the formatter for.
+            value (IBlockFormatter): Formatter object to set. Can be any object that implements
+                the `IBlockFormatter` protocol.
+        """
+        self._formatters[key] = value
+
+    def __delitem__(self, key: type[Data], /) -> None:
+        """
+        Remove the default formatter for the provided block data type.
+
+        Args:
+            key (type[Data]): Block data type to remove the formatter for.
+
+        Raises:
+            KeyError: If the formatter is not found for the provided block data type.
+        """  # noqa: DOC502
+        del self._formatters[key]
+
+    def __getitem__(self, key: type[Data], /) -> IBlockFormatter:
+        """
+        Get the default formatter for the provided block data type.
+
+        Args:
+            key (type[Data]): Block data type to get the formatter for.
+
+        Returns:
+            IBlockFormatter: Formatter object for the provided block data type.
+
+        Raises:
+            KeyError: If the formatter for the provided block data type is not found.
+        """  # noqa: DOC502
+        return self._formatters[key]
+
+    def __len__(self) -> int:
+        """
+        Get the number of formatters in the collection.
+
+        Returns:
+            int: Number of formatters in the collection.
+        """
+        return len(self._formatters)
+
+    def __iter__(self) -> Iterator[type[Data]]:
+        """
+        Iterate over the formatters in the collection.
+
+        Returns:
+            Iterator[type[Data]]: List of data types in the collection.
+        """
+        return self._formatters.__iter__()
