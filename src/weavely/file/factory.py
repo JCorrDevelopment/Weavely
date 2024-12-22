@@ -9,7 +9,7 @@ __all__ = [
     "get_txt_file",
 ]
 
-from simple_text_renderer.blocks.txt import PlainTextData
+from weavely.blocks.txt import PlainTextData
 
 from ..formatters.txt import TextWrapFormatter
 from ..renderers.txt import PlainTextRenderer

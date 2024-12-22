@@ -6,7 +6,7 @@ import abc
 from collections.abc import Iterator, MutableMapping
 from typing import Protocol, TypeIs
 
-from simple_text_renderer.blocks.base import Data
+from weavely.blocks.base import Data
 
 
 class IBlockRenderer(Protocol):

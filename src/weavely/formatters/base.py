@@ -4,12 +4,12 @@ import abc
 from collections.abc import Iterator, MutableMapping
 from typing import Protocol, TypeIs
 
-from simple_text_renderer.blocks.base import Data
+from weavely.blocks.base import Data
 
 
 class IBlockFormatter(Protocol):
     """
-    Protocol for formatters used by the simple text renderer.
+    Protocol for formatters used by the Weavely.
 
     Respecting the idea to have class-based formatters in general,
     this protocol may be useful to define a common function-based formatter interface.
@@ -30,7 +30,7 @@ class IBlockFormatter(Protocol):
 
 class BlockFormatterBase[TData: Data](IBlockFormatter, abc.ABC):
     """
-    Base class for all formatters in the simple text renderer.
+    Base class for all formatters in the Weavely.
 
     Idea is to unify ways of data objects formatting behind the single interface and decouple it from the
     block object itself.

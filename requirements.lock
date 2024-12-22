@@ -11,6 +11,6 @@
 
 -e file:.
 std-utils @ git+https://github.com/JCorrDevelopment/std-utils@31b1952b66e2e92e0bd16ea47bca22a03d5671dd
-    # via simple-text-renderer
+    # via weavely-document-writer
 typing-extensions==4.12.2
-    # via simple-text-renderer
+    # via weavely-document-writer

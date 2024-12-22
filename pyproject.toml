@@ -1,13 +1,33 @@
 [project]
-name = "simple-text-renderer"
+name = "weavely-document-writer"
 version = "0.0.1"
-description = "Simple template-based text document renderrer to hide target format complexity"
+description = "Simple template-based text document renderer to hide target format complexity"
+long-description = """Weavely Document Writer is a Python library that allows to generate text documents
+based on predefined templates. It abstracts the complexity of the target format and simplifies the creation
+of customized documents."""
+long-description-content-type = "text/markdown"
 dependencies = [
     "std-utils @ git+https://github.com/JCorrDevelopment/std-utils",
     "typing-extensions>=4.12.2",
 ]
 readme = "README.md"
-requires-python = ">= 3.13"
+requires-python = ">=3.13"
+
+license = { text = "BSD-3-Clause" }
+authors = [
+    { name = "Jaden Corr", email = "jadencorr88@gmail.com" },
+]
+keywords = ["Document Writer", "Document Templating", "TXT", "Weavely", "Weavely Document Writer"]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+]
+
+urls = { Homepage = "https://github.com/JCorrDevelopment/Weavely", Repository = "https://github.com/JCorrDevelopment/Weavely", IssueTracker = "https://github.com/JCorrDevelopment/Weavely/issues" }
 
 [build-system]
 requires = ["hatchling"]
@@ -16,6 +36,9 @@ build-backend = "hatchling.build"
 [tool.hatch.metadata]
 allow-direct-references = true
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/weavely"]
+
 [tool.rye]
 dev-dependencies = [
     "ruff>=0.8.2",
@@ -23,7 +46,6 @@ dev-dependencies = [
     "pytest>=8.3.4",
     # Required for pycharm because of a bug with RyeCharm plugin
     "pip>=24.3.1",
-    "pdoc3>=0.11.5",
     "pdoc>=15.0.1",
 ]
 
@@ -43,7 +65,7 @@ test = { chain = ["test:pytest"] }
 setup = { chain = ["setup:install"] }
 "setup:install" = "rye sync"
 docs = { chain = ["docs:pdoc"] }
-"docs:pdoc" = {cmd = "pdoc ./src/simple_text_renderer -o ./html/ --docformat google", env = {STD_UTILS__UNDEFINED__DOC_GENERATING = "1"}}
+"docs:pdoc" = {cmd = "pdoc ./src/weavely -o ./html/ --docformat google", env = {STD_UTILS__UNDEFINED__DOC_GENERATING = "1"}}
 
 [tool.ruff]
 line-length = 120

@@ -3,7 +3,7 @@ from __future__ import annotations
 __all__ = ["PlainTextRenderer"]
 
 
-from simple_text_renderer.blocks.txt import PlainTextData
+from weavely.blocks.txt import PlainTextData
 
 from .base import BlockRendererBase
 

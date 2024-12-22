@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from simple_text_renderer.blocks.txt import PlainText
+from weavely.blocks.txt import PlainText
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from simple_text_renderer.blocks.base import BaseBlock, Data
-    from simple_text_renderer.formatters.base import IBlockFormatter
-    from simple_text_renderer.renderers.base import IBlockRenderer
+    from weavely.blocks.base import BaseBlock, Data
+    from weavely.formatters.base import IBlockFormatter
+    from weavely.renderers.base import IBlockRenderer
 
 
 class Content:

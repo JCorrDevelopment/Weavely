@@ -4,13 +4,13 @@ from io import BytesIO, IOBase, StringIO
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, NoReturn, cast, overload
 
-from simple_text_renderer.content import Content
-from simple_text_renderer.errors import RendererIsUnknownError
-from simple_text_renderer.formatters.base import FileFormatter, IBlockFormatter
-from simple_text_renderer.renderers.base import FileRenderer, IBlockRenderer
+from weavely.content import Content
+from weavely.errors import RendererIsUnknownError
+from weavely.formatters.base import FileFormatter, IBlockFormatter
+from weavely.renderers.base import FileRenderer, IBlockRenderer
 
 if TYPE_CHECKING:
-    from simple_text_renderer.blocks import Data
+    from weavely.blocks import Data
 
 
 class SimpleFile:

@@ -3,12 +3,12 @@ from __future__ import annotations
 import dataclasses
 from typing import TYPE_CHECKING, Any, Self
 
-from simple_text_renderer.blocks import BaseBlock, Data
-from simple_text_renderer.errors import DataIsMissingError
+from weavely.blocks import BaseBlock, Data
+from weavely.errors import DataIsMissingError
 
 if TYPE_CHECKING:
-    from simple_text_renderer.formatters.base import IBlockFormatter
-    from simple_text_renderer.renderers.base import IBlockRenderer
+    from weavely.formatters.base import IBlockFormatter
+    from weavely.renderers.base import IBlockRenderer
 
 
 @dataclasses.dataclass(slots=True)

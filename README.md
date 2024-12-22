@@ -1,2 +1,32 @@
-# simple-text-renderer
-Simple template-based text document renderrer to hide target format complexity 
+# Weavely
+
+## Current status
+
+Project is in the early stages of development, so code may see significant changes. Even though the project base 
+functionality seems to be working, there are still many features are missing and proper testing is not yet implemented.
+Be aware that the project is not yet read for production use.
+
+## Description
+
+Weavely Document Writer is a Python library designed for developers who need flexible and dynamic generation of plain 
+text documents. Unlike existing solutions that often limit customization, Weavely empowers developers to create 
+text-based reports, documents, or any arbitrary content with full control over formatting and rendering. 
+Using a simple block-based approach, Weavely enables the creation of documents that are both well-structured and easy 
+to customize, addressing the frustrations of dealing with rigid and complex libraries. Whether you're generating 
+reports or formatting content for textual representation, Weavely offers a straightforward solution that adapts to your 
+needs without endless configuration.
+
+## Requirements:
+
+- Python 3.13 or higher
+- [rye](https://rye.astral.sh/) for managing most of the activities in the project.
+
+## Contributing
+
+Weavely is an open-source project, so any contributions are welcome. Provide your feedback, bug reports and feature
+requests in the [Issues](https://github.com/JCorrDevelopment/Weavely/issues) section. If you want to contribute to the
+project, you need to follow simple steps:
+
+a. Follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification for your commits.
+b. Ensure that your code is linted and formatted according to the project's standards. (Use `rye run pre-commit` to
+   check your code before committing)

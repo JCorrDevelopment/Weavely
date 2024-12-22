@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING, Any, Final, Self
 from std_utils.more_str.generators import random_string
 
 if TYPE_CHECKING:
-    from simple_text_renderer.formatters.base import IBlockFormatter
-    from simple_text_renderer.renderers.base import IBlockRenderer
+    from weavely.formatters.base import IBlockFormatter
+    from weavely.renderers.base import IBlockRenderer
 
 
 @dataclasses.dataclass(slots=True)
@@ -22,7 +22,7 @@ class Data:
 
 class BaseBlock[TData: Data](abc.ABC):
     """
-    Base class for all blocks in the simple text renderer.
+    Base class for all blocks in the Weavely.
 
     Idea of the block is to have a simple way to contain any arbitrary data and operate on it in abstract way. The best
     analogy for this is a simple paragraph in a text editor. It can contain any text, tables, images, etc. But you can
