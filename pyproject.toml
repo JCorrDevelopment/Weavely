@@ -65,7 +65,9 @@ test = { chain = ["test:pytest"] }
 setup = { chain = ["setup:install"] }
 "setup:install" = "rye sync"
 docs = { chain = ["docs:pdoc"] }
-"docs:pdoc" = {cmd = "pdoc ./src/weavely -o ./html/ --docformat google", env = {STD_UTILS__UNDEFINED__DOC_GENERATING = "1"}}
+"docs:pdoc" = {cmd = "pdoc ./src/weavely -o ./docs/ --docformat google", env = {STD_UTILS__UNDEFINED__DOC_GENERATING = "1"}}
+"docs:pdoc-server" = {cmd = "pdoc ./src/weavely ./docs/ --docformat google", env = {STD_UTILS__UNDEFINED__DOC_GENERATING = "1"}}
+
 
 [tool.ruff]
 line-length = 120
