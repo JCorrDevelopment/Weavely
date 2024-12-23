@@ -26,7 +26,7 @@ needs without endless configuration.
 
 You can find the documentation here: https://jcorrdevelopment.github.io/Weavely/weavely.html
 
-Documentation is generated using `pdoc` tool and is hosed as a GitHub page.
+Documentation is generated using `pdoc` tool and is hosted as a GitHub page.
 
 Alternatively, you can find the documentation locally under `docs` directory. To sync the documentation state with the
 latest changes, you can run the following command:
