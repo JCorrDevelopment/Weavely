@@ -72,10 +72,10 @@
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="s2">&quot;get_txt_file&quot;</span><span class="p">,</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="p">]</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span> <span class="nn">weavely.blocks.txt</span> <span class="kn">import</span> <span class="n">PlainTextData</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span> <span class="nn">weavely.blocks.txt</span> <span class="kn">import</span> <span class="n">PlainTextData</span><span class="p">,</span> <span class="n">TitleData</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">from</span> <span class="nn">..formatters.txt</span> <span class="kn">import</span> <span class="n">TextWrapFormatter</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">from</span> <span class="nn">..renderers.txt</span> <span class="kn">import</span> <span class="n">PlainTextRenderer</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">from</span> <span class="nn">..formatters.txt</span> <span class="kn">import</span> <span class="n">TextWrapFormatter</span><span class="p">,</span> <span class="n">TitleCapitalizationFormatter</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">from</span> <span class="nn">..renderers.txt</span> <span class="kn">import</span> <span class="n">PlainTextRenderer</span><span class="p">,</span> <span class="n">TitleRenderer</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span> <span class="nn">.file</span> <span class="kn">import</span> <span class="n">SimpleFile</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
@@ -101,7 +101,9 @@
 </span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="n">simple_file</span> <span class="o">=</span> <span class="n">SimpleFile</span><span class="p">()</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">PlainTextData</span><span class="p">,</span> <span class="n">PlainTextRenderer</span><span class="p">())</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_formatter</span><span class="p">(</span><span class="n">PlainTextData</span><span class="p">,</span> <span class="n">TextWrapFormatter</span><span class="p">())</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="k">return</span> <span class="n">simple_file</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">TitleData</span><span class="p">,</span> <span class="n">TitleRenderer</span><span class="p">())</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_formatter</span><span class="p">(</span><span class="n">TitleData</span><span class="p">,</span> <span class="n">TitleCapitalizationFormatter</span><span class="p">())</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="k">return</span> <span class="n">simple_file</span>
 </span></pre></div>
 
 
@@ -162,7 +164,9 @@
 </span><span id="get_txt_file-39"><a href="#get_txt_file-39"><span class="linenos">39</span></a>    <span class="n">simple_file</span> <span class="o">=</span> <span class="n">SimpleFile</span><span class="p">()</span>
 </span><span id="get_txt_file-40"><a href="#get_txt_file-40"><span class="linenos">40</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">PlainTextData</span><span class="p">,</span> <span class="n">PlainTextRenderer</span><span class="p">())</span>
 </span><span id="get_txt_file-41"><a href="#get_txt_file-41"><span class="linenos">41</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_formatter</span><span class="p">(</span><span class="n">PlainTextData</span><span class="p">,</span> <span class="n">TextWrapFormatter</span><span class="p">())</span>
-</span><span id="get_txt_file-42"><a href="#get_txt_file-42"><span class="linenos">42</span></a>    <span class="k">return</span> <span class="n">simple_file</span>
+</span><span id="get_txt_file-42"><a href="#get_txt_file-42"><span class="linenos">42</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">TitleData</span><span class="p">,</span> <span class="n">TitleRenderer</span><span class="p">())</span>
+</span><span id="get_txt_file-43"><a href="#get_txt_file-43"><span class="linenos">43</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_formatter</span><span class="p">(</span><span class="n">TitleData</span><span class="p">,</span> <span class="n">TitleCapitalizationFormatter</span><span class="p">())</span>
+</span><span id="get_txt_file-44"><a href="#get_txt_file-44"><span class="linenos">44</span></a>    <span class="k">return</span> <span class="n">simple_file</span>
 </span></pre></div>
 
 

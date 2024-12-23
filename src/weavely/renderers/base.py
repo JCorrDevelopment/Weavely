@@ -7,6 +7,7 @@ from collections.abc import Iterator, MutableMapping
 from typing import Protocol, TypeIs
 
 from weavely.blocks.base import Data
+from weavely.errors import CannotDeleteRendererError, RendererIsNotRegisteredError, WrongDataTypeError
 
 
 class IBlockRenderer(Protocol):
@@ -64,11 +65,11 @@ class BlockRendererBase[TData: Data](IBlockRenderer, abc.ABC):
             str: String representation of the block content.
 
         Raises:
-            TypeError: If the renderer cannot be applied to the provided data object.
+            WrongDataTypeError: If the renderer cannot be applied to the provided data object.
         """
         if not self._can_be_applied(data):
             msg = f"Renderer {self.__class__.__name__!r} cannot be applied to the data {data!r}."
-            raise TypeError(msg)
+            raise WrongDataTypeError(msg, data_type=type(data), expected_data_types=self._get_supported_data_types())
         return self._render(data)
 
     def _get_supported_data_types(self) -> tuple[type[Data], ...]:
@@ -153,9 +154,13 @@ class FileRenderer(MutableMapping[type[Data], IBlockRenderer]):
             key (type[Data]): Block data type to remove the renderer for.
 
         Raises:
-            KeyError: If the renderer is not found for the provided block data type.
-        """  # noqa: DOC502
-        del self._renderers[key]
+            CannotDeleteRendererError: If the renderer is not found for the provided block data type.
+        """
+        try:
+            del self._renderers[key]
+        except KeyError as e:
+            msg = f"Renderer for the {key!r} data type is not found."
+            raise CannotDeleteRendererError(msg) from e
 
     def __getitem__(self, key: type[Data], /) -> IBlockRenderer:
         """
@@ -168,9 +173,13 @@ class FileRenderer(MutableMapping[type[Data], IBlockRenderer]):
             IBlockRenderer: Renderer object for the provided block data type.
 
         Raises:
-            KeyError: If the renderer for the provided block data type is not found.
-        """  # noqa: DOC502
-        return self._renderers[key]
+            RendererIsNotRegisteredError: If the renderer for the provided block data type is not found.
+        """
+        try:
+            return self._renderers[key]
+        except KeyError as e:
+            msg = f"Renderer for the {key!r} data type is not found. Ensure that the renderer is registered."
+            raise RendererIsNotRegisteredError(msg) from e
 
     def __len__(self) -> int:
         """

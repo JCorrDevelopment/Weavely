@@ -85,180 +85,196 @@
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">TypeIs</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">from</span> <span class="nn">weavely.blocks.base</span> <span class="kn">import</span> <span class="n">Data</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="k">class</span> <span class="nc">IBlockFormatter</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="sd">    Protocol for formatters used by the Weavely.</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">weavely.errors</span> <span class="kn">import</span> <span class="p">(</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>    <span class="n">CannotDeleteFormatterError</span><span class="p">,</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>    <span class="n">FormatterIsNotRegisteredError</span><span class="p">,</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>    <span class="n">WrongDataTypeError</span><span class="p">,</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="p">)</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="sd">    Respecting the idea to have class-based formatters in general,</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="sd">    this protocol may be useful to define a common function-based formatter interface.</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">        Format the block data according to the formatter rules.</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">        Args:</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">            data (Data): Data object to format.</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">        Returns:</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="sd">            Data: new or modified data object.</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>        <span class="o">...</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="k">class</span> <span class="nc">IBlockFormatter</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="sd">    Protocol for formatters used by the Weavely.</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="sd">    Respecting the idea to have class-based formatters in general,</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">    this protocol may be useful to define a common function-based formatter interface.</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">        Format the block data according to the formatter rules.</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="sd">        Args:</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">            data (Data): Data object to format.</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="k">class</span> <span class="nc">BlockFormatterBase</span><span class="p">[</span><span class="n">TData</span><span class="p">:</span> <span class="n">Data</span><span class="p">](</span><span class="n">IBlockFormatter</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">    Base class for all formatters in the Weavely.</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="sd">        Returns:</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">            Data: new or modified data object.</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>        <span class="o">...</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">    Idea is to unify ways of data objects formatting behind the single interface and decouple it from the</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">    block object itself.</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">    Each of formatters may implement the `__init__` method to accept any additional parameters required for the</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">    formatting process.</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>    <span class="n">_SUPPORTED_DATA_TYPES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TData</span><span class="p">:</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">        Format the block data according to the formatter rules.</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">        Args:</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">            data (Data): Data object to format.</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">        Returns:</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">            Data: new or modified data object.</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">        Raises:</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">            TypeError: If the renderer cannot be applied to the provided data object.</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_can_be_applied</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Renderer </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> cannot be applied to the data </span><span class="si">{</span><span class="n">data</span><span class="si">!r}</span><span class="s2">.&quot;</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="k">def</span> <span class="nf">_get_supported_data_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">        Get the list of supported data types for the renderer.</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">        Returns:</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">            tuple[type[Data], ...]: List of supported data types.</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SUPPORTED_DATA_TYPES</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>    <span class="k">def</span> <span class="nf">_can_be_applied</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeIs</span><span class="p">[</span><span class="n">TData</span><span class="p">]:</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">        Check if the renderer can be applied to the provided data object.</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">        Args:</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">            data (Data): Data object to check.</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">        Returns:</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">            bool: True if the renderer can be applied to the provided data object, False otherwise.</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SUPPORTED_DATA_TYPES</span><span class="p">)</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="k">class</span> <span class="nc">BlockFormatterBase</span><span class="p">[</span><span class="n">TData</span><span class="p">:</span> <span class="n">Data</span><span class="p">](</span><span class="n">IBlockFormatter</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">    Base class for all formatters in the Weavely.</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">    Idea is to unify ways of data objects formatting behind the single interface and decouple it from the</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">    block object itself.</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">    Each of formatters may implement the `__init__` method to accept any additional parameters required for the</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">    formatting process.</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="n">_SUPPORTED_DATA_TYPES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TData</span><span class="p">:</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">        Format the block data according to the formatter rules.</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">        Args:</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">            data (Data): Data object to format.</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">        Returns:</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">            Data: new or modified data object.</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">        Raises:</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">            WrongDataTypeError: If the renderer cannot be applied to the provided data object.</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_can_be_applied</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>                <span class="sa">f</span><span class="s2">&quot;Renderer </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> cannot be applied to the data </span><span class="si">{</span><span class="n">data</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>                <span class="sa">f</span><span class="s2">&quot;Expected data types: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_supported_data_types</span><span class="p">()</span><span class="si">!r}</span><span class="s2">&quot;</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>            <span class="p">)</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>            <span class="k">raise</span> <span class="n">WrongDataTypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">expected_data_types</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_supported_data_types</span><span class="p">())</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="k">def</span> <span class="nf">_get_supported_data_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">        Get the list of supported data types for the renderer.</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">        Returns:</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">            tuple[type[Data], ...]: List of supported data types.</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SUPPORTED_DATA_TYPES</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="k">def</span> <span class="nf">_can_be_applied</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeIs</span><span class="p">[</span><span class="n">TData</span><span class="p">]:</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">        Check if the renderer can be applied to the provided data object.</span>
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">TData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TData</span><span class="p">:</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">        Apply actual rendering logic of the provided data object.</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">        Args:</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">            data (Data): Data object to render. Is one of this renderer supported data types.</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">        Args:</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">            data (Data): Data object to check.</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">        Returns:</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">            bool: True if the renderer can be applied to the provided data object, False otherwise.</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SUPPORTED_DATA_TYPES</span><span class="p">)</span>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">        Returns:</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">            Data: Block of the same type with formatted data.</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">TData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TData</span><span class="p">:</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">        Apply actual rendering logic of the provided data object.</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="k">class</span> <span class="nc">FileFormatter</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]):</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">    Base class to describe a file formatter.</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">    It used as a container class for default block formatter objects used by File object.</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">    Selecting of the formatter for specific block will be done in the following order:</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">        1. If block has a specific formatter object, it will be used.</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">        2. If it doesn&#39;t, file will try to find default formatter in corresponding file formatter instance.</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">        3. If both are missing, the block will be kept as it is.</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">        Args:</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">            data (Data): Data object to render. Is one of this renderer supported data types.</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">        Returns:</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">            Data: Block of the same type with formatted data.</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="k">class</span> <span class="nc">FileFormatter</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]):</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">    Base class to describe a file formatter.</span>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>    <span class="n">formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">    Dictionary of default block formatters used by the `File` object.</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">    Key is a block data type, value is a block formatter object. It may be any object that implements the</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">    `IBlockFormatter` protocol. So it may be a callable class inheriting from the `BlockFormatterBase` class, or any</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">    function that repeat IBlockFormatter protocol.</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">        Initialize the collection of default formatters.</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">        Args:</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">            formatters (dict[type[Data], IBlockFormatter]): Dictionary of default formatters</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">            to initialize the collection with.</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span> <span class="o">=</span> <span class="n">formatters</span> <span class="ow">or</span> <span class="p">{}</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">IBlockFormatter</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">        Set or update the default formatter for the provided block data type.</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">        Args:</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">            key (type[Data]): Block data type to set the formatter for.</span>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="sd">            value (IBlockFormatter): Formatter object to set. Can be any object that implements</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="sd">                the `IBlockFormatter` protocol.</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">        Remove the default formatter for the provided block data type.</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="sd">        Args:</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="sd">            key (type[Data]): Block data type to remove the formatter for.</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="sd">        Raises:</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="sd">            KeyError: If the formatter is not found for the provided block data type.</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa: DOC502</span>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">    It used as a container class for default block formatter objects used by File object.</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">    Selecting of the formatter for specific block will be done in the following order:</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        1. If block has a specific formatter object, it will be used.</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">        2. If it doesn&#39;t, file will try to find default formatter in corresponding file formatter instance.</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">        3. If both are missing, the block will be kept as it is.</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="n">formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">    Dictionary of default block formatters used by the `File` object.</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">    Key is a block data type, value is a block formatter object. It may be any object that implements the</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">    `IBlockFormatter` protocol. So it may be a callable class inheriting from the `BlockFormatterBase` class, or any</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">    function that repeat IBlockFormatter protocol.</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">        Initialize the collection of default formatters.</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">        Args:</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a><span class="sd">            formatters (dict[type[Data], IBlockFormatter]): Dictionary of default formatters</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a><span class="sd">            to initialize the collection with.</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span> <span class="o">=</span> <span class="n">formatters</span> <span class="ow">or</span> <span class="p">{}</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">IBlockFormatter</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a><span class="sd">        Set or update the default formatter for the provided block data type.</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="sd">        Args:</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">            key (type[Data]): Block data type to set the formatter for.</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">            value (IBlockFormatter): Formatter object to set. Can be any object that implements</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="sd">                the `IBlockFormatter` protocol.</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="sd">        Remove the default formatter for the provided block data type.</span>
 </span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IBlockFormatter</span><span class="p">:</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">        Get the default formatter for the provided block data type.</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">        Args:</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">            key (type[Data]): Block data type to get the formatter for.</span>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">        Returns:</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">            IBlockFormatter: Formatter object for the provided block data type.</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a><span class="sd">        Raises:</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="sd">            KeyError: If the formatter for the provided block data type is not found.</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa: DOC502</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">        Get the number of formatters in the collection.</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">        Args:</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a><span class="sd">            key (type[Data]): Block data type to remove the formatter for.</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">        Raises:</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">            CannotDeleteFormatterError: If the formatter is not found for the provided block data type.</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Formatter for the data type </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2"> cannot be deleted because it is not found.&quot;</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>            <span class="k">raise</span> <span class="n">CannotDeleteFormatterError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IBlockFormatter</span><span class="p">:</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="sd">        Get the default formatter for the provided block data type.</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">        Args:</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">            key (type[Data]): Block data type to get the formatter for.</span>
 </span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>
 </span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="sd">        Returns:</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="sd">            int: Number of formatters in the collection.</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">)</span>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">]]:</span>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">        Iterate over the formatters in the collection.</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a><span class="sd">        Returns:</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="sd">            Iterator[type[Data]]: List of data types in the collection.</span>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">()</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="sd">            IBlockFormatter: Formatter object for the provided block data type.</span>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="sd">        Raises:</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">            FormatterIsNotRegisteredError: If the formatter for the provided block data type is not found.</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Formatter for the data type </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2"> is not found. Ensure that it is registered in the collection.&quot;</span>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>            <span class="k">raise</span> <span class="n">FormatterIsNotRegisteredError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">        Get the number of formatters in the collection.</span>
+</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="sd">        Returns:</span>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="sd">            int: Number of formatters in the collection.</span>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">)</span>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">]]:</span>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a><span class="sd">        Iterate over the formatters in the collection.</span>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a><span class="sd">        Returns:</span>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="sd">            Iterator[type[Data]]: List of data types in the collection.</span>
+</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -274,25 +290,25 @@
 
     </div>
     <a class="headerlink" href="#IBlockFormatter"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="IBlockFormatter-11"><a href="#IBlockFormatter-11"><span class="linenos">11</span></a><span class="k">class</span> <span class="nc">IBlockFormatter</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="IBlockFormatter-12"><a href="#IBlockFormatter-12"><span class="linenos">12</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="IBlockFormatter-13"><a href="#IBlockFormatter-13"><span class="linenos">13</span></a><span class="sd">    Protocol for formatters used by the Weavely.</span>
-</span><span id="IBlockFormatter-14"><a href="#IBlockFormatter-14"><span class="linenos">14</span></a>
-</span><span id="IBlockFormatter-15"><a href="#IBlockFormatter-15"><span class="linenos">15</span></a><span class="sd">    Respecting the idea to have class-based formatters in general,</span>
-</span><span id="IBlockFormatter-16"><a href="#IBlockFormatter-16"><span class="linenos">16</span></a><span class="sd">    this protocol may be useful to define a common function-based formatter interface.</span>
-</span><span id="IBlockFormatter-17"><a href="#IBlockFormatter-17"><span class="linenos">17</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="IBlockFormatter-18"><a href="#IBlockFormatter-18"><span class="linenos">18</span></a>
-</span><span id="IBlockFormatter-19"><a href="#IBlockFormatter-19"><span class="linenos">19</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
-</span><span id="IBlockFormatter-20"><a href="#IBlockFormatter-20"><span class="linenos">20</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="IBlockFormatter-21"><a href="#IBlockFormatter-21"><span class="linenos">21</span></a><span class="sd">        Format the block data according to the formatter rules.</span>
-</span><span id="IBlockFormatter-22"><a href="#IBlockFormatter-22"><span class="linenos">22</span></a>
-</span><span id="IBlockFormatter-23"><a href="#IBlockFormatter-23"><span class="linenos">23</span></a><span class="sd">        Args:</span>
-</span><span id="IBlockFormatter-24"><a href="#IBlockFormatter-24"><span class="linenos">24</span></a><span class="sd">            data (Data): Data object to format.</span>
-</span><span id="IBlockFormatter-25"><a href="#IBlockFormatter-25"><span class="linenos">25</span></a>
-</span><span id="IBlockFormatter-26"><a href="#IBlockFormatter-26"><span class="linenos">26</span></a><span class="sd">        Returns:</span>
-</span><span id="IBlockFormatter-27"><a href="#IBlockFormatter-27"><span class="linenos">27</span></a><span class="sd">            Data: new or modified data object.</span>
-</span><span id="IBlockFormatter-28"><a href="#IBlockFormatter-28"><span class="linenos">28</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="IBlockFormatter-29"><a href="#IBlockFormatter-29"><span class="linenos">29</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="IBlockFormatter-16"><a href="#IBlockFormatter-16"><span class="linenos">16</span></a><span class="k">class</span> <span class="nc">IBlockFormatter</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="IBlockFormatter-17"><a href="#IBlockFormatter-17"><span class="linenos">17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="IBlockFormatter-18"><a href="#IBlockFormatter-18"><span class="linenos">18</span></a><span class="sd">    Protocol for formatters used by the Weavely.</span>
+</span><span id="IBlockFormatter-19"><a href="#IBlockFormatter-19"><span class="linenos">19</span></a>
+</span><span id="IBlockFormatter-20"><a href="#IBlockFormatter-20"><span class="linenos">20</span></a><span class="sd">    Respecting the idea to have class-based formatters in general,</span>
+</span><span id="IBlockFormatter-21"><a href="#IBlockFormatter-21"><span class="linenos">21</span></a><span class="sd">    this protocol may be useful to define a common function-based formatter interface.</span>
+</span><span id="IBlockFormatter-22"><a href="#IBlockFormatter-22"><span class="linenos">22</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="IBlockFormatter-23"><a href="#IBlockFormatter-23"><span class="linenos">23</span></a>
+</span><span id="IBlockFormatter-24"><a href="#IBlockFormatter-24"><span class="linenos">24</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+</span><span id="IBlockFormatter-25"><a href="#IBlockFormatter-25"><span class="linenos">25</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="IBlockFormatter-26"><a href="#IBlockFormatter-26"><span class="linenos">26</span></a><span class="sd">        Format the block data according to the formatter rules.</span>
+</span><span id="IBlockFormatter-27"><a href="#IBlockFormatter-27"><span class="linenos">27</span></a>
+</span><span id="IBlockFormatter-28"><a href="#IBlockFormatter-28"><span class="linenos">28</span></a><span class="sd">        Args:</span>
+</span><span id="IBlockFormatter-29"><a href="#IBlockFormatter-29"><span class="linenos">29</span></a><span class="sd">            data (Data): Data object to format.</span>
+</span><span id="IBlockFormatter-30"><a href="#IBlockFormatter-30"><span class="linenos">30</span></a>
+</span><span id="IBlockFormatter-31"><a href="#IBlockFormatter-31"><span class="linenos">31</span></a><span class="sd">        Returns:</span>
+</span><span id="IBlockFormatter-32"><a href="#IBlockFormatter-32"><span class="linenos">32</span></a><span class="sd">            Data: new or modified data object.</span>
+</span><span id="IBlockFormatter-33"><a href="#IBlockFormatter-33"><span class="linenos">33</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="IBlockFormatter-34"><a href="#IBlockFormatter-34"><span class="linenos">34</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -358,69 +374,72 @@ this protocol may be useful to define a common function-based formatter interfac
 
     </div>
     <a class="headerlink" href="#BlockFormatterBase"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BlockFormatterBase-32"><a href="#BlockFormatterBase-32"><span class="linenos">32</span></a><span class="k">class</span> <span class="nc">BlockFormatterBase</span><span class="p">[</span><span class="n">TData</span><span class="p">:</span> <span class="n">Data</span><span class="p">](</span><span class="n">IBlockFormatter</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
-</span><span id="BlockFormatterBase-33"><a href="#BlockFormatterBase-33"><span class="linenos">33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="BlockFormatterBase-34"><a href="#BlockFormatterBase-34"><span class="linenos">34</span></a><span class="sd">    Base class for all formatters in the Weavely.</span>
-</span><span id="BlockFormatterBase-35"><a href="#BlockFormatterBase-35"><span class="linenos">35</span></a>
-</span><span id="BlockFormatterBase-36"><a href="#BlockFormatterBase-36"><span class="linenos">36</span></a><span class="sd">    Idea is to unify ways of data objects formatting behind the single interface and decouple it from the</span>
-</span><span id="BlockFormatterBase-37"><a href="#BlockFormatterBase-37"><span class="linenos">37</span></a><span class="sd">    block object itself.</span>
-</span><span id="BlockFormatterBase-38"><a href="#BlockFormatterBase-38"><span class="linenos">38</span></a>
-</span><span id="BlockFormatterBase-39"><a href="#BlockFormatterBase-39"><span class="linenos">39</span></a><span class="sd">    Each of formatters may implement the `__init__` method to accept any additional parameters required for the</span>
-</span><span id="BlockFormatterBase-40"><a href="#BlockFormatterBase-40"><span class="linenos">40</span></a><span class="sd">    formatting process.</span>
-</span><span id="BlockFormatterBase-41"><a href="#BlockFormatterBase-41"><span class="linenos">41</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="BlockFormatterBase-42"><a href="#BlockFormatterBase-42"><span class="linenos">42</span></a>
-</span><span id="BlockFormatterBase-43"><a href="#BlockFormatterBase-43"><span class="linenos">43</span></a>    <span class="n">_SUPPORTED_DATA_TYPES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
-</span><span id="BlockFormatterBase-44"><a href="#BlockFormatterBase-44"><span class="linenos">44</span></a>
-</span><span id="BlockFormatterBase-45"><a href="#BlockFormatterBase-45"><span class="linenos">45</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TData</span><span class="p">:</span>
-</span><span id="BlockFormatterBase-46"><a href="#BlockFormatterBase-46"><span class="linenos">46</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="BlockFormatterBase-47"><a href="#BlockFormatterBase-47"><span class="linenos">47</span></a><span class="sd">        Format the block data according to the formatter rules.</span>
-</span><span id="BlockFormatterBase-48"><a href="#BlockFormatterBase-48"><span class="linenos">48</span></a>
-</span><span id="BlockFormatterBase-49"><a href="#BlockFormatterBase-49"><span class="linenos">49</span></a><span class="sd">        Args:</span>
-</span><span id="BlockFormatterBase-50"><a href="#BlockFormatterBase-50"><span class="linenos">50</span></a><span class="sd">            data (Data): Data object to format.</span>
-</span><span id="BlockFormatterBase-51"><a href="#BlockFormatterBase-51"><span class="linenos">51</span></a>
-</span><span id="BlockFormatterBase-52"><a href="#BlockFormatterBase-52"><span class="linenos">52</span></a><span class="sd">        Returns:</span>
-</span><span id="BlockFormatterBase-53"><a href="#BlockFormatterBase-53"><span class="linenos">53</span></a><span class="sd">            Data: new or modified data object.</span>
-</span><span id="BlockFormatterBase-54"><a href="#BlockFormatterBase-54"><span class="linenos">54</span></a>
-</span><span id="BlockFormatterBase-55"><a href="#BlockFormatterBase-55"><span class="linenos">55</span></a><span class="sd">        Raises:</span>
-</span><span id="BlockFormatterBase-56"><a href="#BlockFormatterBase-56"><span class="linenos">56</span></a><span class="sd">            TypeError: If the renderer cannot be applied to the provided data object.</span>
-</span><span id="BlockFormatterBase-57"><a href="#BlockFormatterBase-57"><span class="linenos">57</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BlockFormatterBase-58"><a href="#BlockFormatterBase-58"><span class="linenos">58</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_can_be_applied</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-</span><span id="BlockFormatterBase-59"><a href="#BlockFormatterBase-59"><span class="linenos">59</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Renderer </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> cannot be applied to the data </span><span class="si">{</span><span class="n">data</span><span class="si">!r}</span><span class="s2">.&quot;</span>
-</span><span id="BlockFormatterBase-60"><a href="#BlockFormatterBase-60"><span class="linenos">60</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="BlockFormatterBase-61"><a href="#BlockFormatterBase-61"><span class="linenos">61</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</span><span id="BlockFormatterBase-62"><a href="#BlockFormatterBase-62"><span class="linenos">62</span></a>
-</span><span id="BlockFormatterBase-63"><a href="#BlockFormatterBase-63"><span class="linenos">63</span></a>    <span class="k">def</span> <span class="nf">_get_supported_data_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
-</span><span id="BlockFormatterBase-64"><a href="#BlockFormatterBase-64"><span class="linenos">64</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="BlockFormatterBase-65"><a href="#BlockFormatterBase-65"><span class="linenos">65</span></a><span class="sd">        Get the list of supported data types for the renderer.</span>
-</span><span id="BlockFormatterBase-66"><a href="#BlockFormatterBase-66"><span class="linenos">66</span></a>
-</span><span id="BlockFormatterBase-67"><a href="#BlockFormatterBase-67"><span class="linenos">67</span></a><span class="sd">        Returns:</span>
-</span><span id="BlockFormatterBase-68"><a href="#BlockFormatterBase-68"><span class="linenos">68</span></a><span class="sd">            tuple[type[Data], ...]: List of supported data types.</span>
-</span><span id="BlockFormatterBase-69"><a href="#BlockFormatterBase-69"><span class="linenos">69</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BlockFormatterBase-70"><a href="#BlockFormatterBase-70"><span class="linenos">70</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SUPPORTED_DATA_TYPES</span>
-</span><span id="BlockFormatterBase-71"><a href="#BlockFormatterBase-71"><span class="linenos">71</span></a>
-</span><span id="BlockFormatterBase-72"><a href="#BlockFormatterBase-72"><span class="linenos">72</span></a>    <span class="k">def</span> <span class="nf">_can_be_applied</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeIs</span><span class="p">[</span><span class="n">TData</span><span class="p">]:</span>
-</span><span id="BlockFormatterBase-73"><a href="#BlockFormatterBase-73"><span class="linenos">73</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="BlockFormatterBase-74"><a href="#BlockFormatterBase-74"><span class="linenos">74</span></a><span class="sd">        Check if the renderer can be applied to the provided data object.</span>
-</span><span id="BlockFormatterBase-75"><a href="#BlockFormatterBase-75"><span class="linenos">75</span></a>
-</span><span id="BlockFormatterBase-76"><a href="#BlockFormatterBase-76"><span class="linenos">76</span></a><span class="sd">        Args:</span>
-</span><span id="BlockFormatterBase-77"><a href="#BlockFormatterBase-77"><span class="linenos">77</span></a><span class="sd">            data (Data): Data object to check.</span>
-</span><span id="BlockFormatterBase-78"><a href="#BlockFormatterBase-78"><span class="linenos">78</span></a>
-</span><span id="BlockFormatterBase-79"><a href="#BlockFormatterBase-79"><span class="linenos">79</span></a><span class="sd">        Returns:</span>
-</span><span id="BlockFormatterBase-80"><a href="#BlockFormatterBase-80"><span class="linenos">80</span></a><span class="sd">            bool: True if the renderer can be applied to the provided data object, False otherwise.</span>
-</span><span id="BlockFormatterBase-81"><a href="#BlockFormatterBase-81"><span class="linenos">81</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BlockFormatterBase-82"><a href="#BlockFormatterBase-82"><span class="linenos">82</span></a>        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SUPPORTED_DATA_TYPES</span><span class="p">)</span>
-</span><span id="BlockFormatterBase-83"><a href="#BlockFormatterBase-83"><span class="linenos">83</span></a>
-</span><span id="BlockFormatterBase-84"><a href="#BlockFormatterBase-84"><span class="linenos">84</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="BlockFormatterBase-85"><a href="#BlockFormatterBase-85"><span class="linenos">85</span></a>    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">TData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TData</span><span class="p">:</span>
-</span><span id="BlockFormatterBase-86"><a href="#BlockFormatterBase-86"><span class="linenos">86</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="BlockFormatterBase-87"><a href="#BlockFormatterBase-87"><span class="linenos">87</span></a><span class="sd">        Apply actual rendering logic of the provided data object.</span>
-</span><span id="BlockFormatterBase-88"><a href="#BlockFormatterBase-88"><span class="linenos">88</span></a>
-</span><span id="BlockFormatterBase-89"><a href="#BlockFormatterBase-89"><span class="linenos">89</span></a><span class="sd">        Args:</span>
-</span><span id="BlockFormatterBase-90"><a href="#BlockFormatterBase-90"><span class="linenos">90</span></a><span class="sd">            data (Data): Data object to render. Is one of this renderer supported data types.</span>
-</span><span id="BlockFormatterBase-91"><a href="#BlockFormatterBase-91"><span class="linenos">91</span></a>
-</span><span id="BlockFormatterBase-92"><a href="#BlockFormatterBase-92"><span class="linenos">92</span></a><span class="sd">        Returns:</span>
-</span><span id="BlockFormatterBase-93"><a href="#BlockFormatterBase-93"><span class="linenos">93</span></a><span class="sd">            Data: Block of the same type with formatted data.</span>
-</span><span id="BlockFormatterBase-94"><a href="#BlockFormatterBase-94"><span class="linenos">94</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BlockFormatterBase-37"><a href="#BlockFormatterBase-37"><span class="linenos"> 37</span></a><span class="k">class</span> <span class="nc">BlockFormatterBase</span><span class="p">[</span><span class="n">TData</span><span class="p">:</span> <span class="n">Data</span><span class="p">](</span><span class="n">IBlockFormatter</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="BlockFormatterBase-38"><a href="#BlockFormatterBase-38"><span class="linenos"> 38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BlockFormatterBase-39"><a href="#BlockFormatterBase-39"><span class="linenos"> 39</span></a><span class="sd">    Base class for all formatters in the Weavely.</span>
+</span><span id="BlockFormatterBase-40"><a href="#BlockFormatterBase-40"><span class="linenos"> 40</span></a>
+</span><span id="BlockFormatterBase-41"><a href="#BlockFormatterBase-41"><span class="linenos"> 41</span></a><span class="sd">    Idea is to unify ways of data objects formatting behind the single interface and decouple it from the</span>
+</span><span id="BlockFormatterBase-42"><a href="#BlockFormatterBase-42"><span class="linenos"> 42</span></a><span class="sd">    block object itself.</span>
+</span><span id="BlockFormatterBase-43"><a href="#BlockFormatterBase-43"><span class="linenos"> 43</span></a>
+</span><span id="BlockFormatterBase-44"><a href="#BlockFormatterBase-44"><span class="linenos"> 44</span></a><span class="sd">    Each of formatters may implement the `__init__` method to accept any additional parameters required for the</span>
+</span><span id="BlockFormatterBase-45"><a href="#BlockFormatterBase-45"><span class="linenos"> 45</span></a><span class="sd">    formatting process.</span>
+</span><span id="BlockFormatterBase-46"><a href="#BlockFormatterBase-46"><span class="linenos"> 46</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="BlockFormatterBase-47"><a href="#BlockFormatterBase-47"><span class="linenos"> 47</span></a>
+</span><span id="BlockFormatterBase-48"><a href="#BlockFormatterBase-48"><span class="linenos"> 48</span></a>    <span class="n">_SUPPORTED_DATA_TYPES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+</span><span id="BlockFormatterBase-49"><a href="#BlockFormatterBase-49"><span class="linenos"> 49</span></a>
+</span><span id="BlockFormatterBase-50"><a href="#BlockFormatterBase-50"><span class="linenos"> 50</span></a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TData</span><span class="p">:</span>
+</span><span id="BlockFormatterBase-51"><a href="#BlockFormatterBase-51"><span class="linenos"> 51</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BlockFormatterBase-52"><a href="#BlockFormatterBase-52"><span class="linenos"> 52</span></a><span class="sd">        Format the block data according to the formatter rules.</span>
+</span><span id="BlockFormatterBase-53"><a href="#BlockFormatterBase-53"><span class="linenos"> 53</span></a>
+</span><span id="BlockFormatterBase-54"><a href="#BlockFormatterBase-54"><span class="linenos"> 54</span></a><span class="sd">        Args:</span>
+</span><span id="BlockFormatterBase-55"><a href="#BlockFormatterBase-55"><span class="linenos"> 55</span></a><span class="sd">            data (Data): Data object to format.</span>
+</span><span id="BlockFormatterBase-56"><a href="#BlockFormatterBase-56"><span class="linenos"> 56</span></a>
+</span><span id="BlockFormatterBase-57"><a href="#BlockFormatterBase-57"><span class="linenos"> 57</span></a><span class="sd">        Returns:</span>
+</span><span id="BlockFormatterBase-58"><a href="#BlockFormatterBase-58"><span class="linenos"> 58</span></a><span class="sd">            Data: new or modified data object.</span>
+</span><span id="BlockFormatterBase-59"><a href="#BlockFormatterBase-59"><span class="linenos"> 59</span></a>
+</span><span id="BlockFormatterBase-60"><a href="#BlockFormatterBase-60"><span class="linenos"> 60</span></a><span class="sd">        Raises:</span>
+</span><span id="BlockFormatterBase-61"><a href="#BlockFormatterBase-61"><span class="linenos"> 61</span></a><span class="sd">            WrongDataTypeError: If the renderer cannot be applied to the provided data object.</span>
+</span><span id="BlockFormatterBase-62"><a href="#BlockFormatterBase-62"><span class="linenos"> 62</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BlockFormatterBase-63"><a href="#BlockFormatterBase-63"><span class="linenos"> 63</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_can_be_applied</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+</span><span id="BlockFormatterBase-64"><a href="#BlockFormatterBase-64"><span class="linenos"> 64</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="BlockFormatterBase-65"><a href="#BlockFormatterBase-65"><span class="linenos"> 65</span></a>                <span class="sa">f</span><span class="s2">&quot;Renderer </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">!r}</span><span class="s2"> cannot be applied to the data </span><span class="si">{</span><span class="n">data</span><span class="si">!r}</span><span class="s2">.&quot;</span>
+</span><span id="BlockFormatterBase-66"><a href="#BlockFormatterBase-66"><span class="linenos"> 66</span></a>                <span class="sa">f</span><span class="s2">&quot;Expected data types: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_supported_data_types</span><span class="p">()</span><span class="si">!r}</span><span class="s2">&quot;</span>
+</span><span id="BlockFormatterBase-67"><a href="#BlockFormatterBase-67"><span class="linenos"> 67</span></a>            <span class="p">)</span>
+</span><span id="BlockFormatterBase-68"><a href="#BlockFormatterBase-68"><span class="linenos"> 68</span></a>            <span class="k">raise</span> <span class="n">WrongDataTypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">expected_data_types</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_supported_data_types</span><span class="p">())</span>
+</span><span id="BlockFormatterBase-69"><a href="#BlockFormatterBase-69"><span class="linenos"> 69</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span id="BlockFormatterBase-70"><a href="#BlockFormatterBase-70"><span class="linenos"> 70</span></a>
+</span><span id="BlockFormatterBase-71"><a href="#BlockFormatterBase-71"><span class="linenos"> 71</span></a>    <span class="k">def</span> <span class="nf">_get_supported_data_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
+</span><span id="BlockFormatterBase-72"><a href="#BlockFormatterBase-72"><span class="linenos"> 72</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BlockFormatterBase-73"><a href="#BlockFormatterBase-73"><span class="linenos"> 73</span></a><span class="sd">        Get the list of supported data types for the renderer.</span>
+</span><span id="BlockFormatterBase-74"><a href="#BlockFormatterBase-74"><span class="linenos"> 74</span></a>
+</span><span id="BlockFormatterBase-75"><a href="#BlockFormatterBase-75"><span class="linenos"> 75</span></a><span class="sd">        Returns:</span>
+</span><span id="BlockFormatterBase-76"><a href="#BlockFormatterBase-76"><span class="linenos"> 76</span></a><span class="sd">            tuple[type[Data], ...]: List of supported data types.</span>
+</span><span id="BlockFormatterBase-77"><a href="#BlockFormatterBase-77"><span class="linenos"> 77</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BlockFormatterBase-78"><a href="#BlockFormatterBase-78"><span class="linenos"> 78</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SUPPORTED_DATA_TYPES</span>
+</span><span id="BlockFormatterBase-79"><a href="#BlockFormatterBase-79"><span class="linenos"> 79</span></a>
+</span><span id="BlockFormatterBase-80"><a href="#BlockFormatterBase-80"><span class="linenos"> 80</span></a>    <span class="k">def</span> <span class="nf">_can_be_applied</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeIs</span><span class="p">[</span><span class="n">TData</span><span class="p">]:</span>
+</span><span id="BlockFormatterBase-81"><a href="#BlockFormatterBase-81"><span class="linenos"> 81</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BlockFormatterBase-82"><a href="#BlockFormatterBase-82"><span class="linenos"> 82</span></a><span class="sd">        Check if the renderer can be applied to the provided data object.</span>
+</span><span id="BlockFormatterBase-83"><a href="#BlockFormatterBase-83"><span class="linenos"> 83</span></a>
+</span><span id="BlockFormatterBase-84"><a href="#BlockFormatterBase-84"><span class="linenos"> 84</span></a><span class="sd">        Args:</span>
+</span><span id="BlockFormatterBase-85"><a href="#BlockFormatterBase-85"><span class="linenos"> 85</span></a><span class="sd">            data (Data): Data object to check.</span>
+</span><span id="BlockFormatterBase-86"><a href="#BlockFormatterBase-86"><span class="linenos"> 86</span></a>
+</span><span id="BlockFormatterBase-87"><a href="#BlockFormatterBase-87"><span class="linenos"> 87</span></a><span class="sd">        Returns:</span>
+</span><span id="BlockFormatterBase-88"><a href="#BlockFormatterBase-88"><span class="linenos"> 88</span></a><span class="sd">            bool: True if the renderer can be applied to the provided data object, False otherwise.</span>
+</span><span id="BlockFormatterBase-89"><a href="#BlockFormatterBase-89"><span class="linenos"> 89</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BlockFormatterBase-90"><a href="#BlockFormatterBase-90"><span class="linenos"> 90</span></a>        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SUPPORTED_DATA_TYPES</span><span class="p">)</span>
+</span><span id="BlockFormatterBase-91"><a href="#BlockFormatterBase-91"><span class="linenos"> 91</span></a>
+</span><span id="BlockFormatterBase-92"><a href="#BlockFormatterBase-92"><span class="linenos"> 92</span></a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+</span><span id="BlockFormatterBase-93"><a href="#BlockFormatterBase-93"><span class="linenos"> 93</span></a>    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">TData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TData</span><span class="p">:</span>
+</span><span id="BlockFormatterBase-94"><a href="#BlockFormatterBase-94"><span class="linenos"> 94</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="BlockFormatterBase-95"><a href="#BlockFormatterBase-95"><span class="linenos"> 95</span></a><span class="sd">        Apply actual rendering logic of the provided data object.</span>
+</span><span id="BlockFormatterBase-96"><a href="#BlockFormatterBase-96"><span class="linenos"> 96</span></a>
+</span><span id="BlockFormatterBase-97"><a href="#BlockFormatterBase-97"><span class="linenos"> 97</span></a><span class="sd">        Args:</span>
+</span><span id="BlockFormatterBase-98"><a href="#BlockFormatterBase-98"><span class="linenos"> 98</span></a><span class="sd">            data (Data): Data object to render. Is one of this renderer supported data types.</span>
+</span><span id="BlockFormatterBase-99"><a href="#BlockFormatterBase-99"><span class="linenos"> 99</span></a>
+</span><span id="BlockFormatterBase-100"><a href="#BlockFormatterBase-100"><span class="linenos">100</span></a><span class="sd">        Returns:</span>
+</span><span id="BlockFormatterBase-101"><a href="#BlockFormatterBase-101"><span class="linenos">101</span></a><span class="sd">            Data: Block of the same type with formatted data.</span>
+</span><span id="BlockFormatterBase-102"><a href="#BlockFormatterBase-102"><span class="linenos">102</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -446,92 +465,100 @@ formatting process.</p>
 
     </div>
     <a class="headerlink" href="#FileFormatter"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FileFormatter-97"><a href="#FileFormatter-97"><span class="linenos"> 97</span></a><span class="k">class</span> <span class="nc">FileFormatter</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]):</span>
-</span><span id="FileFormatter-98"><a href="#FileFormatter-98"><span class="linenos"> 98</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FileFormatter-99"><a href="#FileFormatter-99"><span class="linenos"> 99</span></a><span class="sd">    Base class to describe a file formatter.</span>
-</span><span id="FileFormatter-100"><a href="#FileFormatter-100"><span class="linenos">100</span></a>
-</span><span id="FileFormatter-101"><a href="#FileFormatter-101"><span class="linenos">101</span></a><span class="sd">    It used as a container class for default block formatter objects used by File object.</span>
-</span><span id="FileFormatter-102"><a href="#FileFormatter-102"><span class="linenos">102</span></a>
-</span><span id="FileFormatter-103"><a href="#FileFormatter-103"><span class="linenos">103</span></a><span class="sd">    Selecting of the formatter for specific block will be done in the following order:</span>
-</span><span id="FileFormatter-104"><a href="#FileFormatter-104"><span class="linenos">104</span></a><span class="sd">        1. If block has a specific formatter object, it will be used.</span>
-</span><span id="FileFormatter-105"><a href="#FileFormatter-105"><span class="linenos">105</span></a><span class="sd">        2. If it doesn&#39;t, file will try to find default formatter in corresponding file formatter instance.</span>
-</span><span id="FileFormatter-106"><a href="#FileFormatter-106"><span class="linenos">106</span></a><span class="sd">        3. If both are missing, the block will be kept as it is.</span>
-</span><span id="FileFormatter-107"><a href="#FileFormatter-107"><span class="linenos">107</span></a><span class="sd">    &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileFormatter-105"><a href="#FileFormatter-105"><span class="linenos">105</span></a><span class="k">class</span> <span class="nc">FileFormatter</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]):</span>
+</span><span id="FileFormatter-106"><a href="#FileFormatter-106"><span class="linenos">106</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileFormatter-107"><a href="#FileFormatter-107"><span class="linenos">107</span></a><span class="sd">    Base class to describe a file formatter.</span>
 </span><span id="FileFormatter-108"><a href="#FileFormatter-108"><span class="linenos">108</span></a>
-</span><span id="FileFormatter-109"><a href="#FileFormatter-109"><span class="linenos">109</span></a>    <span class="n">formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span>
-</span><span id="FileFormatter-110"><a href="#FileFormatter-110"><span class="linenos">110</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FileFormatter-111"><a href="#FileFormatter-111"><span class="linenos">111</span></a><span class="sd">    Dictionary of default block formatters used by the `File` object.</span>
-</span><span id="FileFormatter-112"><a href="#FileFormatter-112"><span class="linenos">112</span></a>
-</span><span id="FileFormatter-113"><a href="#FileFormatter-113"><span class="linenos">113</span></a><span class="sd">    Key is a block data type, value is a block formatter object. It may be any object that implements the</span>
-</span><span id="FileFormatter-114"><a href="#FileFormatter-114"><span class="linenos">114</span></a><span class="sd">    `IBlockFormatter` protocol. So it may be a callable class inheriting from the `BlockFormatterBase` class, or any</span>
-</span><span id="FileFormatter-115"><a href="#FileFormatter-115"><span class="linenos">115</span></a><span class="sd">    function that repeat IBlockFormatter protocol.</span>
-</span><span id="FileFormatter-116"><a href="#FileFormatter-116"><span class="linenos">116</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="FileFormatter-117"><a href="#FileFormatter-117"><span class="linenos">117</span></a>
-</span><span id="FileFormatter-118"><a href="#FileFormatter-118"><span class="linenos">118</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="FileFormatter-119"><a href="#FileFormatter-119"><span class="linenos">119</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FileFormatter-120"><a href="#FileFormatter-120"><span class="linenos">120</span></a><span class="sd">        Initialize the collection of default formatters.</span>
-</span><span id="FileFormatter-121"><a href="#FileFormatter-121"><span class="linenos">121</span></a>
-</span><span id="FileFormatter-122"><a href="#FileFormatter-122"><span class="linenos">122</span></a><span class="sd">        Args:</span>
-</span><span id="FileFormatter-123"><a href="#FileFormatter-123"><span class="linenos">123</span></a><span class="sd">            formatters (dict[type[Data], IBlockFormatter]): Dictionary of default formatters</span>
-</span><span id="FileFormatter-124"><a href="#FileFormatter-124"><span class="linenos">124</span></a><span class="sd">            to initialize the collection with.</span>
-</span><span id="FileFormatter-125"><a href="#FileFormatter-125"><span class="linenos">125</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FileFormatter-126"><a href="#FileFormatter-126"><span class="linenos">126</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span> <span class="o">=</span> <span class="n">formatters</span> <span class="ow">or</span> <span class="p">{}</span>
-</span><span id="FileFormatter-127"><a href="#FileFormatter-127"><span class="linenos">127</span></a>
-</span><span id="FileFormatter-128"><a href="#FileFormatter-128"><span class="linenos">128</span></a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">IBlockFormatter</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="FileFormatter-129"><a href="#FileFormatter-129"><span class="linenos">129</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FileFormatter-130"><a href="#FileFormatter-130"><span class="linenos">130</span></a><span class="sd">        Set or update the default formatter for the provided block data type.</span>
-</span><span id="FileFormatter-131"><a href="#FileFormatter-131"><span class="linenos">131</span></a>
-</span><span id="FileFormatter-132"><a href="#FileFormatter-132"><span class="linenos">132</span></a><span class="sd">        Args:</span>
-</span><span id="FileFormatter-133"><a href="#FileFormatter-133"><span class="linenos">133</span></a><span class="sd">            key (type[Data]): Block data type to set the formatter for.</span>
-</span><span id="FileFormatter-134"><a href="#FileFormatter-134"><span class="linenos">134</span></a><span class="sd">            value (IBlockFormatter): Formatter object to set. Can be any object that implements</span>
-</span><span id="FileFormatter-135"><a href="#FileFormatter-135"><span class="linenos">135</span></a><span class="sd">                the `IBlockFormatter` protocol.</span>
-</span><span id="FileFormatter-136"><a href="#FileFormatter-136"><span class="linenos">136</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FileFormatter-137"><a href="#FileFormatter-137"><span class="linenos">137</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-</span><span id="FileFormatter-138"><a href="#FileFormatter-138"><span class="linenos">138</span></a>
-</span><span id="FileFormatter-139"><a href="#FileFormatter-139"><span class="linenos">139</span></a>    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="FileFormatter-140"><a href="#FileFormatter-140"><span class="linenos">140</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FileFormatter-141"><a href="#FileFormatter-141"><span class="linenos">141</span></a><span class="sd">        Remove the default formatter for the provided block data type.</span>
-</span><span id="FileFormatter-142"><a href="#FileFormatter-142"><span class="linenos">142</span></a>
-</span><span id="FileFormatter-143"><a href="#FileFormatter-143"><span class="linenos">143</span></a><span class="sd">        Args:</span>
-</span><span id="FileFormatter-144"><a href="#FileFormatter-144"><span class="linenos">144</span></a><span class="sd">            key (type[Data]): Block data type to remove the formatter for.</span>
-</span><span id="FileFormatter-145"><a href="#FileFormatter-145"><span class="linenos">145</span></a>
-</span><span id="FileFormatter-146"><a href="#FileFormatter-146"><span class="linenos">146</span></a><span class="sd">        Raises:</span>
-</span><span id="FileFormatter-147"><a href="#FileFormatter-147"><span class="linenos">147</span></a><span class="sd">            KeyError: If the formatter is not found for the provided block data type.</span>
-</span><span id="FileFormatter-148"><a href="#FileFormatter-148"><span class="linenos">148</span></a><span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa: DOC502</span>
-</span><span id="FileFormatter-149"><a href="#FileFormatter-149"><span class="linenos">149</span></a>        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+</span><span id="FileFormatter-109"><a href="#FileFormatter-109"><span class="linenos">109</span></a><span class="sd">    It used as a container class for default block formatter objects used by File object.</span>
+</span><span id="FileFormatter-110"><a href="#FileFormatter-110"><span class="linenos">110</span></a>
+</span><span id="FileFormatter-111"><a href="#FileFormatter-111"><span class="linenos">111</span></a><span class="sd">    Selecting of the formatter for specific block will be done in the following order:</span>
+</span><span id="FileFormatter-112"><a href="#FileFormatter-112"><span class="linenos">112</span></a><span class="sd">        1. If block has a specific formatter object, it will be used.</span>
+</span><span id="FileFormatter-113"><a href="#FileFormatter-113"><span class="linenos">113</span></a><span class="sd">        2. If it doesn&#39;t, file will try to find default formatter in corresponding file formatter instance.</span>
+</span><span id="FileFormatter-114"><a href="#FileFormatter-114"><span class="linenos">114</span></a><span class="sd">        3. If both are missing, the block will be kept as it is.</span>
+</span><span id="FileFormatter-115"><a href="#FileFormatter-115"><span class="linenos">115</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="FileFormatter-116"><a href="#FileFormatter-116"><span class="linenos">116</span></a>
+</span><span id="FileFormatter-117"><a href="#FileFormatter-117"><span class="linenos">117</span></a>    <span class="n">formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span>
+</span><span id="FileFormatter-118"><a href="#FileFormatter-118"><span class="linenos">118</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileFormatter-119"><a href="#FileFormatter-119"><span class="linenos">119</span></a><span class="sd">    Dictionary of default block formatters used by the `File` object.</span>
+</span><span id="FileFormatter-120"><a href="#FileFormatter-120"><span class="linenos">120</span></a>
+</span><span id="FileFormatter-121"><a href="#FileFormatter-121"><span class="linenos">121</span></a><span class="sd">    Key is a block data type, value is a block formatter object. It may be any object that implements the</span>
+</span><span id="FileFormatter-122"><a href="#FileFormatter-122"><span class="linenos">122</span></a><span class="sd">    `IBlockFormatter` protocol. So it may be a callable class inheriting from the `BlockFormatterBase` class, or any</span>
+</span><span id="FileFormatter-123"><a href="#FileFormatter-123"><span class="linenos">123</span></a><span class="sd">    function that repeat IBlockFormatter protocol.</span>
+</span><span id="FileFormatter-124"><a href="#FileFormatter-124"><span class="linenos">124</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="FileFormatter-125"><a href="#FileFormatter-125"><span class="linenos">125</span></a>
+</span><span id="FileFormatter-126"><a href="#FileFormatter-126"><span class="linenos">126</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="FileFormatter-127"><a href="#FileFormatter-127"><span class="linenos">127</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileFormatter-128"><a href="#FileFormatter-128"><span class="linenos">128</span></a><span class="sd">        Initialize the collection of default formatters.</span>
+</span><span id="FileFormatter-129"><a href="#FileFormatter-129"><span class="linenos">129</span></a>
+</span><span id="FileFormatter-130"><a href="#FileFormatter-130"><span class="linenos">130</span></a><span class="sd">        Args:</span>
+</span><span id="FileFormatter-131"><a href="#FileFormatter-131"><span class="linenos">131</span></a><span class="sd">            formatters (dict[type[Data], IBlockFormatter]): Dictionary of default formatters</span>
+</span><span id="FileFormatter-132"><a href="#FileFormatter-132"><span class="linenos">132</span></a><span class="sd">            to initialize the collection with.</span>
+</span><span id="FileFormatter-133"><a href="#FileFormatter-133"><span class="linenos">133</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileFormatter-134"><a href="#FileFormatter-134"><span class="linenos">134</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span> <span class="o">=</span> <span class="n">formatters</span> <span class="ow">or</span> <span class="p">{}</span>
+</span><span id="FileFormatter-135"><a href="#FileFormatter-135"><span class="linenos">135</span></a>
+</span><span id="FileFormatter-136"><a href="#FileFormatter-136"><span class="linenos">136</span></a>    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">IBlockFormatter</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="FileFormatter-137"><a href="#FileFormatter-137"><span class="linenos">137</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileFormatter-138"><a href="#FileFormatter-138"><span class="linenos">138</span></a><span class="sd">        Set or update the default formatter for the provided block data type.</span>
+</span><span id="FileFormatter-139"><a href="#FileFormatter-139"><span class="linenos">139</span></a>
+</span><span id="FileFormatter-140"><a href="#FileFormatter-140"><span class="linenos">140</span></a><span class="sd">        Args:</span>
+</span><span id="FileFormatter-141"><a href="#FileFormatter-141"><span class="linenos">141</span></a><span class="sd">            key (type[Data]): Block data type to set the formatter for.</span>
+</span><span id="FileFormatter-142"><a href="#FileFormatter-142"><span class="linenos">142</span></a><span class="sd">            value (IBlockFormatter): Formatter object to set. Can be any object that implements</span>
+</span><span id="FileFormatter-143"><a href="#FileFormatter-143"><span class="linenos">143</span></a><span class="sd">                the `IBlockFormatter` protocol.</span>
+</span><span id="FileFormatter-144"><a href="#FileFormatter-144"><span class="linenos">144</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileFormatter-145"><a href="#FileFormatter-145"><span class="linenos">145</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</span><span id="FileFormatter-146"><a href="#FileFormatter-146"><span class="linenos">146</span></a>
+</span><span id="FileFormatter-147"><a href="#FileFormatter-147"><span class="linenos">147</span></a>    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="FileFormatter-148"><a href="#FileFormatter-148"><span class="linenos">148</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileFormatter-149"><a href="#FileFormatter-149"><span class="linenos">149</span></a><span class="sd">        Remove the default formatter for the provided block data type.</span>
 </span><span id="FileFormatter-150"><a href="#FileFormatter-150"><span class="linenos">150</span></a>
-</span><span id="FileFormatter-151"><a href="#FileFormatter-151"><span class="linenos">151</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IBlockFormatter</span><span class="p">:</span>
-</span><span id="FileFormatter-152"><a href="#FileFormatter-152"><span class="linenos">152</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FileFormatter-153"><a href="#FileFormatter-153"><span class="linenos">153</span></a><span class="sd">        Get the default formatter for the provided block data type.</span>
-</span><span id="FileFormatter-154"><a href="#FileFormatter-154"><span class="linenos">154</span></a>
-</span><span id="FileFormatter-155"><a href="#FileFormatter-155"><span class="linenos">155</span></a><span class="sd">        Args:</span>
-</span><span id="FileFormatter-156"><a href="#FileFormatter-156"><span class="linenos">156</span></a><span class="sd">            key (type[Data]): Block data type to get the formatter for.</span>
-</span><span id="FileFormatter-157"><a href="#FileFormatter-157"><span class="linenos">157</span></a>
-</span><span id="FileFormatter-158"><a href="#FileFormatter-158"><span class="linenos">158</span></a><span class="sd">        Returns:</span>
-</span><span id="FileFormatter-159"><a href="#FileFormatter-159"><span class="linenos">159</span></a><span class="sd">            IBlockFormatter: Formatter object for the provided block data type.</span>
-</span><span id="FileFormatter-160"><a href="#FileFormatter-160"><span class="linenos">160</span></a>
-</span><span id="FileFormatter-161"><a href="#FileFormatter-161"><span class="linenos">161</span></a><span class="sd">        Raises:</span>
-</span><span id="FileFormatter-162"><a href="#FileFormatter-162"><span class="linenos">162</span></a><span class="sd">            KeyError: If the formatter for the provided block data type is not found.</span>
-</span><span id="FileFormatter-163"><a href="#FileFormatter-163"><span class="linenos">163</span></a><span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa: DOC502</span>
-</span><span id="FileFormatter-164"><a href="#FileFormatter-164"><span class="linenos">164</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-</span><span id="FileFormatter-165"><a href="#FileFormatter-165"><span class="linenos">165</span></a>
-</span><span id="FileFormatter-166"><a href="#FileFormatter-166"><span class="linenos">166</span></a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="FileFormatter-167"><a href="#FileFormatter-167"><span class="linenos">167</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FileFormatter-168"><a href="#FileFormatter-168"><span class="linenos">168</span></a><span class="sd">        Get the number of formatters in the collection.</span>
+</span><span id="FileFormatter-151"><a href="#FileFormatter-151"><span class="linenos">151</span></a><span class="sd">        Args:</span>
+</span><span id="FileFormatter-152"><a href="#FileFormatter-152"><span class="linenos">152</span></a><span class="sd">            key (type[Data]): Block data type to remove the formatter for.</span>
+</span><span id="FileFormatter-153"><a href="#FileFormatter-153"><span class="linenos">153</span></a>
+</span><span id="FileFormatter-154"><a href="#FileFormatter-154"><span class="linenos">154</span></a><span class="sd">        Raises:</span>
+</span><span id="FileFormatter-155"><a href="#FileFormatter-155"><span class="linenos">155</span></a><span class="sd">            CannotDeleteFormatterError: If the formatter is not found for the provided block data type.</span>
+</span><span id="FileFormatter-156"><a href="#FileFormatter-156"><span class="linenos">156</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileFormatter-157"><a href="#FileFormatter-157"><span class="linenos">157</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="FileFormatter-158"><a href="#FileFormatter-158"><span class="linenos">158</span></a>            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+</span><span id="FileFormatter-159"><a href="#FileFormatter-159"><span class="linenos">159</span></a>        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="FileFormatter-160"><a href="#FileFormatter-160"><span class="linenos">160</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Formatter for the data type </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2"> cannot be deleted because it is not found.&quot;</span>
+</span><span id="FileFormatter-161"><a href="#FileFormatter-161"><span class="linenos">161</span></a>            <span class="k">raise</span> <span class="n">CannotDeleteFormatterError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+</span><span id="FileFormatter-162"><a href="#FileFormatter-162"><span class="linenos">162</span></a>
+</span><span id="FileFormatter-163"><a href="#FileFormatter-163"><span class="linenos">163</span></a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IBlockFormatter</span><span class="p">:</span>
+</span><span id="FileFormatter-164"><a href="#FileFormatter-164"><span class="linenos">164</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileFormatter-165"><a href="#FileFormatter-165"><span class="linenos">165</span></a><span class="sd">        Get the default formatter for the provided block data type.</span>
+</span><span id="FileFormatter-166"><a href="#FileFormatter-166"><span class="linenos">166</span></a>
+</span><span id="FileFormatter-167"><a href="#FileFormatter-167"><span class="linenos">167</span></a><span class="sd">        Args:</span>
+</span><span id="FileFormatter-168"><a href="#FileFormatter-168"><span class="linenos">168</span></a><span class="sd">            key (type[Data]): Block data type to get the formatter for.</span>
 </span><span id="FileFormatter-169"><a href="#FileFormatter-169"><span class="linenos">169</span></a>
 </span><span id="FileFormatter-170"><a href="#FileFormatter-170"><span class="linenos">170</span></a><span class="sd">        Returns:</span>
-</span><span id="FileFormatter-171"><a href="#FileFormatter-171"><span class="linenos">171</span></a><span class="sd">            int: Number of formatters in the collection.</span>
-</span><span id="FileFormatter-172"><a href="#FileFormatter-172"><span class="linenos">172</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FileFormatter-173"><a href="#FileFormatter-173"><span class="linenos">173</span></a>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">)</span>
-</span><span id="FileFormatter-174"><a href="#FileFormatter-174"><span class="linenos">174</span></a>
-</span><span id="FileFormatter-175"><a href="#FileFormatter-175"><span class="linenos">175</span></a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">]]:</span>
-</span><span id="FileFormatter-176"><a href="#FileFormatter-176"><span class="linenos">176</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FileFormatter-177"><a href="#FileFormatter-177"><span class="linenos">177</span></a><span class="sd">        Iterate over the formatters in the collection.</span>
-</span><span id="FileFormatter-178"><a href="#FileFormatter-178"><span class="linenos">178</span></a>
-</span><span id="FileFormatter-179"><a href="#FileFormatter-179"><span class="linenos">179</span></a><span class="sd">        Returns:</span>
-</span><span id="FileFormatter-180"><a href="#FileFormatter-180"><span class="linenos">180</span></a><span class="sd">            Iterator[type[Data]]: List of data types in the collection.</span>
-</span><span id="FileFormatter-181"><a href="#FileFormatter-181"><span class="linenos">181</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FileFormatter-182"><a href="#FileFormatter-182"><span class="linenos">182</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">()</span>
+</span><span id="FileFormatter-171"><a href="#FileFormatter-171"><span class="linenos">171</span></a><span class="sd">            IBlockFormatter: Formatter object for the provided block data type.</span>
+</span><span id="FileFormatter-172"><a href="#FileFormatter-172"><span class="linenos">172</span></a>
+</span><span id="FileFormatter-173"><a href="#FileFormatter-173"><span class="linenos">173</span></a><span class="sd">        Raises:</span>
+</span><span id="FileFormatter-174"><a href="#FileFormatter-174"><span class="linenos">174</span></a><span class="sd">            FormatterIsNotRegisteredError: If the formatter for the provided block data type is not found.</span>
+</span><span id="FileFormatter-175"><a href="#FileFormatter-175"><span class="linenos">175</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileFormatter-176"><a href="#FileFormatter-176"><span class="linenos">176</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="FileFormatter-177"><a href="#FileFormatter-177"><span class="linenos">177</span></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+</span><span id="FileFormatter-178"><a href="#FileFormatter-178"><span class="linenos">178</span></a>        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="FileFormatter-179"><a href="#FileFormatter-179"><span class="linenos">179</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Formatter for the data type </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2"> is not found. Ensure that it is registered in the collection.&quot;</span>
+</span><span id="FileFormatter-180"><a href="#FileFormatter-180"><span class="linenos">180</span></a>            <span class="k">raise</span> <span class="n">FormatterIsNotRegisteredError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+</span><span id="FileFormatter-181"><a href="#FileFormatter-181"><span class="linenos">181</span></a>
+</span><span id="FileFormatter-182"><a href="#FileFormatter-182"><span class="linenos">182</span></a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="FileFormatter-183"><a href="#FileFormatter-183"><span class="linenos">183</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileFormatter-184"><a href="#FileFormatter-184"><span class="linenos">184</span></a><span class="sd">        Get the number of formatters in the collection.</span>
+</span><span id="FileFormatter-185"><a href="#FileFormatter-185"><span class="linenos">185</span></a>
+</span><span id="FileFormatter-186"><a href="#FileFormatter-186"><span class="linenos">186</span></a><span class="sd">        Returns:</span>
+</span><span id="FileFormatter-187"><a href="#FileFormatter-187"><span class="linenos">187</span></a><span class="sd">            int: Number of formatters in the collection.</span>
+</span><span id="FileFormatter-188"><a href="#FileFormatter-188"><span class="linenos">188</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileFormatter-189"><a href="#FileFormatter-189"><span class="linenos">189</span></a>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">)</span>
+</span><span id="FileFormatter-190"><a href="#FileFormatter-190"><span class="linenos">190</span></a>
+</span><span id="FileFormatter-191"><a href="#FileFormatter-191"><span class="linenos">191</span></a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">]]:</span>
+</span><span id="FileFormatter-192"><a href="#FileFormatter-192"><span class="linenos">192</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileFormatter-193"><a href="#FileFormatter-193"><span class="linenos">193</span></a><span class="sd">        Iterate over the formatters in the collection.</span>
+</span><span id="FileFormatter-194"><a href="#FileFormatter-194"><span class="linenos">194</span></a>
+</span><span id="FileFormatter-195"><a href="#FileFormatter-195"><span class="linenos">195</span></a><span class="sd">        Returns:</span>
+</span><span id="FileFormatter-196"><a href="#FileFormatter-196"><span class="linenos">196</span></a><span class="sd">            Iterator[type[Data]]: List of data types in the collection.</span>
+</span><span id="FileFormatter-197"><a href="#FileFormatter-197"><span class="linenos">197</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileFormatter-198"><a href="#FileFormatter-198"><span class="linenos">198</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -561,15 +588,15 @@ formatting process.</p>
 
     </div>
     <a class="headerlink" href="#FileFormatter.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FileFormatter.__init__-118"><a href="#FileFormatter.__init__-118"><span class="linenos">118</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="FileFormatter.__init__-119"><a href="#FileFormatter.__init__-119"><span class="linenos">119</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FileFormatter.__init__-120"><a href="#FileFormatter.__init__-120"><span class="linenos">120</span></a><span class="sd">        Initialize the collection of default formatters.</span>
-</span><span id="FileFormatter.__init__-121"><a href="#FileFormatter.__init__-121"><span class="linenos">121</span></a>
-</span><span id="FileFormatter.__init__-122"><a href="#FileFormatter.__init__-122"><span class="linenos">122</span></a><span class="sd">        Args:</span>
-</span><span id="FileFormatter.__init__-123"><a href="#FileFormatter.__init__-123"><span class="linenos">123</span></a><span class="sd">            formatters (dict[type[Data], IBlockFormatter]): Dictionary of default formatters</span>
-</span><span id="FileFormatter.__init__-124"><a href="#FileFormatter.__init__-124"><span class="linenos">124</span></a><span class="sd">            to initialize the collection with.</span>
-</span><span id="FileFormatter.__init__-125"><a href="#FileFormatter.__init__-125"><span class="linenos">125</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FileFormatter.__init__-126"><a href="#FileFormatter.__init__-126"><span class="linenos">126</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span> <span class="o">=</span> <span class="n">formatters</span> <span class="ow">or</span> <span class="p">{}</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FileFormatter.__init__-126"><a href="#FileFormatter.__init__-126"><span class="linenos">126</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="FileFormatter.__init__-127"><a href="#FileFormatter.__init__-127"><span class="linenos">127</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="FileFormatter.__init__-128"><a href="#FileFormatter.__init__-128"><span class="linenos">128</span></a><span class="sd">        Initialize the collection of default formatters.</span>
+</span><span id="FileFormatter.__init__-129"><a href="#FileFormatter.__init__-129"><span class="linenos">129</span></a>
+</span><span id="FileFormatter.__init__-130"><a href="#FileFormatter.__init__-130"><span class="linenos">130</span></a><span class="sd">        Args:</span>
+</span><span id="FileFormatter.__init__-131"><a href="#FileFormatter.__init__-131"><span class="linenos">131</span></a><span class="sd">            formatters (dict[type[Data], IBlockFormatter]): Dictionary of default formatters</span>
+</span><span id="FileFormatter.__init__-132"><a href="#FileFormatter.__init__-132"><span class="linenos">132</span></a><span class="sd">            to initialize the collection with.</span>
+</span><span id="FileFormatter.__init__-133"><a href="#FileFormatter.__init__-133"><span class="linenos">133</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FileFormatter.__init__-134"><a href="#FileFormatter.__init__-134"><span class="linenos">134</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_formatters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">IBlockFormatter</span><span class="p">]</span> <span class="o">=</span> <span class="n">formatters</span> <span class="ow">or</span> <span class="p">{}</span>
 </span></pre></div>
 
 

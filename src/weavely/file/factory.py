@@ -9,10 +9,10 @@ __all__ = [
     "get_txt_file",
 ]
 
-from weavely.blocks.txt import PlainTextData
+from weavely.blocks.txt import PlainTextData, TitleData
 
-from ..formatters.txt import TextWrapFormatter
-from ..renderers.txt import PlainTextRenderer
+from ..formatters.txt import TextWrapFormatter, TitleCapitalizationFormatter
+from ..renderers.txt import PlainTextRenderer, TitleRenderer
 from .file import SimpleFile
 
 
@@ -38,4 +38,6 @@ def get_txt_file() -> SimpleFile:
     simple_file = SimpleFile()
     simple_file.set_renderer(PlainTextData, PlainTextRenderer())
     simple_file.set_formatter(PlainTextData, TextWrapFormatter())
+    simple_file.set_renderer(TitleData, TitleRenderer())
+    simple_file.set_formatter(TitleData, TitleCapitalizationFormatter())
     return simple_file

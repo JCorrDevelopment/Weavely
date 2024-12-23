@@ -31,7 +31,25 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#RendererIsUnknownError">RendererIsUnknownError</a>
+                    <a class="class" href="#CannotDeleteFormatterError">CannotDeleteFormatterError</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#CannotDeleteRendererError">CannotDeleteRendererError</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#CannotReplaceFormatterError">CannotReplaceFormatterError</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#CannotReplaceRendererError">CannotReplaceRendererError</a>
                             <ul class="memberlist">
                 </ul>
 
@@ -39,6 +57,78 @@
             <li>
                     <a class="class" href="#DataIsMissingError">DataIsMissingError</a>
                             <ul class="memberlist">
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#FormatterIsNotRegisteredError">FormatterIsNotRegisteredError</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#NotAStreamError">NotAStreamError</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#RendererIsNotRegisteredError">RendererIsNotRegisteredError</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#RendererIsUnknownError">RendererIsUnknownError</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#TitleIsEmptyError">TitleIsEmptyError</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#TitleLevelIsInvalidError">TitleLevelIsInvalidError</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#UnsupportedStreamTypeError">UnsupportedStreamTypeError</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#UnsupportedStreamTypeError.__init__">UnsupportedStreamTypeError</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#UnsupportedStreamTypeError.stream_type">stream_type</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#UnsupportedStreamTypeError.method">method</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#WeavelyError">WeavelyError</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#WrongDataTypeError">WrongDataTypeError</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#WrongDataTypeError.__init__">WrongDataTypeError</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#WrongDataTypeError.data_type">data_type</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#WrongDataTypeError.expected_data_types">expected_data_types</a>
+                        </li>
                 </ul>
 
             </li>
@@ -63,33 +153,183 @@
 
                         <label class="view-source-button" for="mod-errors-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="k">class</span> <span class="nc">RendererIsUnknownError</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case any renderer is not found for a provided block item.&quot;&quot;&quot;</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">5</span></a><span class="k">class</span> <span class="nc">DataIsMissingError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">6</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case user do not specify enough information to create a data object for a block.&quot;&quot;&quot;</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>    <span class="s2">&quot;CannotDeleteFormatterError&quot;</span><span class="p">,</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a>    <span class="s2">&quot;CannotDeleteRendererError&quot;</span><span class="p">,</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>    <span class="s2">&quot;CannotReplaceFormatterError&quot;</span><span class="p">,</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>    <span class="s2">&quot;CannotReplaceRendererError&quot;</span><span class="p">,</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>    <span class="s2">&quot;DataIsMissingError&quot;</span><span class="p">,</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="s2">&quot;FormatterIsNotRegisteredError&quot;</span><span class="p">,</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="s2">&quot;NotAStreamError&quot;</span><span class="p">,</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="s2">&quot;RendererIsNotRegisteredError&quot;</span><span class="p">,</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="s2">&quot;RendererIsUnknownError&quot;</span><span class="p">,</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="s2">&quot;TitleIsEmptyError&quot;</span><span class="p">,</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="s2">&quot;TitleIsEmptyError&quot;</span><span class="p">,</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="s2">&quot;TitleLevelIsInvalidError&quot;</span><span class="p">,</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="s2">&quot;UnsupportedStreamTypeError&quot;</span><span class="p">,</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="s2">&quot;WeavelyError&quot;</span><span class="p">,</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="s2">&quot;WrongDataTypeError&quot;</span><span class="p">,</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="p">]</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="kn">import</span> <span class="nn">abc</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">IOBase</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>    <span class="kn">from</span> <span class="nn">weavely.blocks</span> <span class="kn">import</span> <span class="n">Data</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="k">class</span> <span class="nc">WeavelyError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all exceptions raised by Weavely.&quot;&quot;&quot;</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="k">class</span> <span class="nc">UnsupportedStreamTypeError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">NotImplementedError</span><span class="p">):</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a stream type is not supported by the Weavely.&quot;&quot;&quot;</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">stream_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">IOBase</span><span class="p">],</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">stream_type</span> <span class="o">=</span> <span class="n">stream_type</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="k">class</span> <span class="nc">WrongDataTypeError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a wrong data type provided to a Renderer or Formatter.&quot;&quot;&quot;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">expected_data_types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">expected_data_types</span> <span class="o">=</span> <span class="n">expected_data_types</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="k">class</span> <span class="nc">CannotReplaceRendererError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a renderer cannot be replaced.&quot;&quot;&quot;</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="k">class</span> <span class="nc">CannotReplaceFormatterError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a formatter cannot be replaced.&quot;&quot;&quot;</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="k">class</span> <span class="nc">CannotDeleteFormatterError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a formatter cannot be deleted.&quot;&quot;&quot;</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="k">class</span> <span class="nc">CannotDeleteRendererError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a renderer cannot be deleted.&quot;&quot;&quot;</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="k">class</span> <span class="nc">RendererIsNotRegisteredError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a renderer is not registered in the renderer collection.&quot;&quot;&quot;</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="k">class</span> <span class="nc">FormatterIsNotRegisteredError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a formatter is not registered in the formatter collection.&quot;&quot;&quot;</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a><span class="k">class</span> <span class="nc">NotAStreamError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a provided object is not a stream.&quot;&quot;&quot;</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a><span class="k">class</span> <span class="nc">RendererIsUnknownError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case any renderer is not found for a provided block item.&quot;&quot;&quot;</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a><span class="k">class</span> <span class="nc">DataIsMissingError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case user do not specify enough information to create a data object for a block.&quot;&quot;&quot;</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a><span class="k">class</span> <span class="nc">TitleIsEmptyError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case the title is empty.&quot;&quot;&quot;</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>
+</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>
+</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a><span class="k">class</span> <span class="nc">TitleLevelIsInvalidError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case the title level is invalid.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
             </section>
-                <section id="RendererIsUnknownError">
-                            <input id="RendererIsUnknownError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="CannotDeleteFormatterError">
+                            <input id="CannotDeleteFormatterError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">RendererIsUnknownError</span><wbr>(<span class="base">builtins.TypeError</span>):
+    <span class="name">CannotDeleteFormatterError</span><wbr>(<span class="base"><a href="#WeavelyError">WeavelyError</a></span>, <span class="base">builtins.KeyError</span>):
 
-                <label class="view-source-button" for="RendererIsUnknownError-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="CannotDeleteFormatterError-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#RendererIsUnknownError"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RendererIsUnknownError-2"><a href="#RendererIsUnknownError-2"><span class="linenos">2</span></a><span class="k">class</span> <span class="nc">RendererIsUnknownError</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
-</span><span id="RendererIsUnknownError-3"><a href="#RendererIsUnknownError-3"><span class="linenos">3</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case any renderer is not found for a provided block item.&quot;&quot;&quot;</span>
+    <a class="headerlink" href="#CannotDeleteFormatterError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CannotDeleteFormatterError-61"><a href="#CannotDeleteFormatterError-61"><span class="linenos">61</span></a><span class="k">class</span> <span class="nc">CannotDeleteFormatterError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+</span><span id="CannotDeleteFormatterError-62"><a href="#CannotDeleteFormatterError-62"><span class="linenos">62</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a formatter cannot be deleted.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Raised in case any renderer is not found for a provided block item.</p>
+            <div class="docstring"><p>Raised in case a formatter cannot be deleted.</p>
+</div>
+
+
+                </section>
+                <section id="CannotDeleteRendererError">
+                            <input id="CannotDeleteRendererError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">CannotDeleteRendererError</span><wbr>(<span class="base"><a href="#WeavelyError">WeavelyError</a></span>, <span class="base">builtins.KeyError</span>):
+
+                <label class="view-source-button" for="CannotDeleteRendererError-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#CannotDeleteRendererError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CannotDeleteRendererError-65"><a href="#CannotDeleteRendererError-65"><span class="linenos">65</span></a><span class="k">class</span> <span class="nc">CannotDeleteRendererError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+</span><span id="CannotDeleteRendererError-66"><a href="#CannotDeleteRendererError-66"><span class="linenos">66</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a renderer cannot be deleted.&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Raised in case a renderer cannot be deleted.</p>
+</div>
+
+
+                </section>
+                <section id="CannotReplaceFormatterError">
+                            <input id="CannotReplaceFormatterError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">CannotReplaceFormatterError</span><wbr>(<span class="base"><a href="#WeavelyError">WeavelyError</a></span>, <span class="base">builtins.KeyError</span>):
+
+                <label class="view-source-button" for="CannotReplaceFormatterError-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#CannotReplaceFormatterError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CannotReplaceFormatterError-57"><a href="#CannotReplaceFormatterError-57"><span class="linenos">57</span></a><span class="k">class</span> <span class="nc">CannotReplaceFormatterError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+</span><span id="CannotReplaceFormatterError-58"><a href="#CannotReplaceFormatterError-58"><span class="linenos">58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a formatter cannot be replaced.&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Raised in case a formatter cannot be replaced.</p>
+</div>
+
+
+                </section>
+                <section id="CannotReplaceRendererError">
+                            <input id="CannotReplaceRendererError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">CannotReplaceRendererError</span><wbr>(<span class="base"><a href="#WeavelyError">WeavelyError</a></span>, <span class="base">builtins.KeyError</span>):
+
+                <label class="view-source-button" for="CannotReplaceRendererError-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#CannotReplaceRendererError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CannotReplaceRendererError-53"><a href="#CannotReplaceRendererError-53"><span class="linenos">53</span></a><span class="k">class</span> <span class="nc">CannotReplaceRendererError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+</span><span id="CannotReplaceRendererError-54"><a href="#CannotReplaceRendererError-54"><span class="linenos">54</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a renderer cannot be replaced.&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Raised in case a renderer cannot be replaced.</p>
 </div>
 
 
@@ -99,14 +339,14 @@
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">DataIsMissingError</span><wbr>(<span class="base">builtins.ValueError</span>):
+    <span class="name">DataIsMissingError</span><wbr>(<span class="base"><a href="#WeavelyError">WeavelyError</a></span>, <span class="base">builtins.ValueError</span>):
 
                 <label class="view-source-button" for="DataIsMissingError-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#DataIsMissingError"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DataIsMissingError-6"><a href="#DataIsMissingError-6"><span class="linenos">6</span></a><span class="k">class</span> <span class="nc">DataIsMissingError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
-</span><span id="DataIsMissingError-7"><a href="#DataIsMissingError-7"><span class="linenos">7</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case user do not specify enough information to create a data object for a block.&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DataIsMissingError-85"><a href="#DataIsMissingError-85"><span class="linenos">85</span></a><span class="k">class</span> <span class="nc">DataIsMissingError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+</span><span id="DataIsMissingError-86"><a href="#DataIsMissingError-86"><span class="linenos">86</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case user do not specify enough information to create a data object for a block.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -114,6 +354,289 @@
 </div>
 
 
+                </section>
+                <section id="FormatterIsNotRegisteredError">
+                            <input id="FormatterIsNotRegisteredError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">FormatterIsNotRegisteredError</span><wbr>(<span class="base"><a href="#WeavelyError">WeavelyError</a></span>, <span class="base">builtins.KeyError</span>):
+
+                <label class="view-source-button" for="FormatterIsNotRegisteredError-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#FormatterIsNotRegisteredError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FormatterIsNotRegisteredError-73"><a href="#FormatterIsNotRegisteredError-73"><span class="linenos">73</span></a><span class="k">class</span> <span class="nc">FormatterIsNotRegisteredError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+</span><span id="FormatterIsNotRegisteredError-74"><a href="#FormatterIsNotRegisteredError-74"><span class="linenos">74</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a formatter is not registered in the formatter collection.&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Raised in case a formatter is not registered in the formatter collection.</p>
+</div>
+
+
+                </section>
+                <section id="NotAStreamError">
+                            <input id="NotAStreamError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">NotAStreamError</span><wbr>(<span class="base"><a href="#WeavelyError">WeavelyError</a></span>, <span class="base">builtins.TypeError</span>):
+
+                <label class="view-source-button" for="NotAStreamError-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#NotAStreamError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="NotAStreamError-77"><a href="#NotAStreamError-77"><span class="linenos">77</span></a><span class="k">class</span> <span class="nc">NotAStreamError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+</span><span id="NotAStreamError-78"><a href="#NotAStreamError-78"><span class="linenos">78</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a provided object is not a stream.&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Raised in case a provided object is not a stream.</p>
+</div>
+
+
+                </section>
+                <section id="RendererIsNotRegisteredError">
+                            <input id="RendererIsNotRegisteredError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">RendererIsNotRegisteredError</span><wbr>(<span class="base"><a href="#WeavelyError">WeavelyError</a></span>, <span class="base">builtins.KeyError</span>):
+
+                <label class="view-source-button" for="RendererIsNotRegisteredError-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#RendererIsNotRegisteredError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RendererIsNotRegisteredError-69"><a href="#RendererIsNotRegisteredError-69"><span class="linenos">69</span></a><span class="k">class</span> <span class="nc">RendererIsNotRegisteredError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+</span><span id="RendererIsNotRegisteredError-70"><a href="#RendererIsNotRegisteredError-70"><span class="linenos">70</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a renderer is not registered in the renderer collection.&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Raised in case a renderer is not registered in the renderer collection.</p>
+</div>
+
+
+                </section>
+                <section id="RendererIsUnknownError">
+                            <input id="RendererIsUnknownError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">RendererIsUnknownError</span><wbr>(<span class="base"><a href="#WeavelyError">WeavelyError</a></span>, <span class="base">builtins.TypeError</span>):
+
+                <label class="view-source-button" for="RendererIsUnknownError-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#RendererIsUnknownError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RendererIsUnknownError-81"><a href="#RendererIsUnknownError-81"><span class="linenos">81</span></a><span class="k">class</span> <span class="nc">RendererIsUnknownError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+</span><span id="RendererIsUnknownError-82"><a href="#RendererIsUnknownError-82"><span class="linenos">82</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case any renderer is not found for a provided block item.&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Raised in case any renderer is not found for a provided block item.</p>
+</div>
+
+
+                </section>
+                <section id="TitleIsEmptyError">
+                            <input id="TitleIsEmptyError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">TitleIsEmptyError</span><wbr>(<span class="base"><a href="#WeavelyError">WeavelyError</a></span>, <span class="base">builtins.ValueError</span>):
+
+                <label class="view-source-button" for="TitleIsEmptyError-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#TitleIsEmptyError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TitleIsEmptyError-89"><a href="#TitleIsEmptyError-89"><span class="linenos">89</span></a><span class="k">class</span> <span class="nc">TitleIsEmptyError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+</span><span id="TitleIsEmptyError-90"><a href="#TitleIsEmptyError-90"><span class="linenos">90</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case the title is empty.&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Raised in case the title is empty.</p>
+</div>
+
+
+                </section>
+                <section id="TitleLevelIsInvalidError">
+                            <input id="TitleLevelIsInvalidError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">TitleLevelIsInvalidError</span><wbr>(<span class="base"><a href="#WeavelyError">WeavelyError</a></span>, <span class="base">builtins.ValueError</span>):
+
+                <label class="view-source-button" for="TitleLevelIsInvalidError-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#TitleLevelIsInvalidError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TitleLevelIsInvalidError-93"><a href="#TitleLevelIsInvalidError-93"><span class="linenos">93</span></a><span class="k">class</span> <span class="nc">TitleLevelIsInvalidError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+</span><span id="TitleLevelIsInvalidError-94"><a href="#TitleLevelIsInvalidError-94"><span class="linenos">94</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case the title level is invalid.&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Raised in case the title level is invalid.</p>
+</div>
+
+
+                </section>
+                <section id="UnsupportedStreamTypeError">
+                            <input id="UnsupportedStreamTypeError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">UnsupportedStreamTypeError</span><wbr>(<span class="base"><a href="#WeavelyError">WeavelyError</a></span>, <span class="base">builtins.NotImplementedError</span>):
+
+                <label class="view-source-button" for="UnsupportedStreamTypeError-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#UnsupportedStreamTypeError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UnsupportedStreamTypeError-35"><a href="#UnsupportedStreamTypeError-35"><span class="linenos">35</span></a><span class="k">class</span> <span class="nc">UnsupportedStreamTypeError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">NotImplementedError</span><span class="p">):</span>
+</span><span id="UnsupportedStreamTypeError-36"><a href="#UnsupportedStreamTypeError-36"><span class="linenos">36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a stream type is not supported by the Weavely.&quot;&quot;&quot;</span>
+</span><span id="UnsupportedStreamTypeError-37"><a href="#UnsupportedStreamTypeError-37"><span class="linenos">37</span></a>
+</span><span id="UnsupportedStreamTypeError-38"><a href="#UnsupportedStreamTypeError-38"><span class="linenos">38</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">stream_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">IOBase</span><span class="p">],</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
+</span><span id="UnsupportedStreamTypeError-39"><a href="#UnsupportedStreamTypeError-39"><span class="linenos">39</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span id="UnsupportedStreamTypeError-40"><a href="#UnsupportedStreamTypeError-40"><span class="linenos">40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">stream_type</span> <span class="o">=</span> <span class="n">stream_type</span>
+</span><span id="UnsupportedStreamTypeError-41"><a href="#UnsupportedStreamTypeError-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Raised in case a stream type is not supported by the Weavely.</p>
+</div>
+
+
+                            <div id="UnsupportedStreamTypeError.__init__" class="classattr">
+                                        <input id="UnsupportedStreamTypeError.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">UnsupportedStreamTypeError</span><span class="signature pdoc-code condensed">(<span class="param"><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span>, </span><span class="param"><span class="n">stream_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">]</span>, </span><span class="param"><span class="n">method</span><span class="p">:</span> <span class="nb">str</span></span>)</span>
+
+                <label class="view-source-button" for="UnsupportedStreamTypeError.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#UnsupportedStreamTypeError.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UnsupportedStreamTypeError.__init__-38"><a href="#UnsupportedStreamTypeError.__init__-38"><span class="linenos">38</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">stream_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">IOBase</span><span class="p">],</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
+</span><span id="UnsupportedStreamTypeError.__init__-39"><a href="#UnsupportedStreamTypeError.__init__-39"><span class="linenos">39</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span id="UnsupportedStreamTypeError.__init__-40"><a href="#UnsupportedStreamTypeError.__init__-40"><span class="linenos">40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">stream_type</span> <span class="o">=</span> <span class="n">stream_type</span>
+</span><span id="UnsupportedStreamTypeError.__init__-41"><a href="#UnsupportedStreamTypeError.__init__-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="UnsupportedStreamTypeError.stream_type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">stream_type</span>
+
+        
+    </div>
+    <a class="headerlink" href="#UnsupportedStreamTypeError.stream_type"></a>
+    
+    
+
+                            </div>
+                            <div id="UnsupportedStreamTypeError.method" class="classattr">
+                                <div class="attr variable">
+            <span class="name">method</span>
+
+        
+    </div>
+    <a class="headerlink" href="#UnsupportedStreamTypeError.method"></a>
+    
+    
+
+                            </div>
+                </section>
+                <section id="WeavelyError">
+                            <input id="WeavelyError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">WeavelyError</span><wbr>(<span class="base">builtins.Exception</span>, <span class="base">abc.ABC</span>):
+
+                <label class="view-source-button" for="WeavelyError-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#WeavelyError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WeavelyError-31"><a href="#WeavelyError-31"><span class="linenos">31</span></a><span class="k">class</span> <span class="nc">WeavelyError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="WeavelyError-32"><a href="#WeavelyError-32"><span class="linenos">32</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all exceptions raised by Weavely.&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Base class for all exceptions raised by Weavely.</p>
+</div>
+
+
+                </section>
+                <section id="WrongDataTypeError">
+                            <input id="WrongDataTypeError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">WrongDataTypeError</span><wbr>(<span class="base"><a href="#WeavelyError">WeavelyError</a></span>, <span class="base">builtins.TypeError</span>):
+
+                <label class="view-source-button" for="WrongDataTypeError-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#WrongDataTypeError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WrongDataTypeError-44"><a href="#WrongDataTypeError-44"><span class="linenos">44</span></a><span class="k">class</span> <span class="nc">WrongDataTypeError</span><span class="p">(</span><span class="n">WeavelyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+</span><span id="WrongDataTypeError-45"><a href="#WrongDataTypeError-45"><span class="linenos">45</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised in case a wrong data type provided to a Renderer or Formatter.&quot;&quot;&quot;</span>
+</span><span id="WrongDataTypeError-46"><a href="#WrongDataTypeError-46"><span class="linenos">46</span></a>
+</span><span id="WrongDataTypeError-47"><a href="#WrongDataTypeError-47"><span class="linenos">47</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">expected_data_types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
+</span><span id="WrongDataTypeError-48"><a href="#WrongDataTypeError-48"><span class="linenos">48</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span id="WrongDataTypeError-49"><a href="#WrongDataTypeError-49"><span class="linenos">49</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type</span>
+</span><span id="WrongDataTypeError-50"><a href="#WrongDataTypeError-50"><span class="linenos">50</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">expected_data_types</span> <span class="o">=</span> <span class="n">expected_data_types</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Raised in case a wrong data type provided to a Renderer or Formatter.</p>
+</div>
+
+
+                            <div id="WrongDataTypeError.__init__" class="classattr">
+                                        <input id="WrongDataTypeError.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">WrongDataTypeError</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span>,</span><span class="param">	<span class="n">data_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n"><a href="blocks.html#Data">weavely.blocks.Data</a></span><span class="p">]</span>,</span><span class="param">	<span class="n">expected_data_types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n"><a href="blocks.html#Data">weavely.blocks.Data</a></span><span class="p">],</span> <span class="o">...</span><span class="p">]</span></span>)</span>
+
+                <label class="view-source-button" for="WrongDataTypeError.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#WrongDataTypeError.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="WrongDataTypeError.__init__-47"><a href="#WrongDataTypeError.__init__-47"><span class="linenos">47</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">expected_data_types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: ANN401</span>
+</span><span id="WrongDataTypeError.__init__-48"><a href="#WrongDataTypeError.__init__-48"><span class="linenos">48</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span id="WrongDataTypeError.__init__-49"><a href="#WrongDataTypeError.__init__-49"><span class="linenos">49</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type</span>
+</span><span id="WrongDataTypeError.__init__-50"><a href="#WrongDataTypeError.__init__-50"><span class="linenos">50</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">expected_data_types</span> <span class="o">=</span> <span class="n">expected_data_types</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="WrongDataTypeError.data_type" class="classattr">
+                                <div class="attr variable">
+            <span class="name">data_type</span>
+
+        
+    </div>
+    <a class="headerlink" href="#WrongDataTypeError.data_type"></a>
+    
+    
+
+                            </div>
+                            <div id="WrongDataTypeError.expected_data_types" class="classattr">
+                                <div class="attr variable">
+            <span class="name">expected_data_types</span>
+
+        
+    </div>
+    <a class="headerlink" href="#WrongDataTypeError.expected_data_types"></a>
+    
+    
+
+                            </div>
                 </section>
     </main>
 <script>

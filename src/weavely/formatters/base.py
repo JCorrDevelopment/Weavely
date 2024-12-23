@@ -5,6 +5,11 @@ from collections.abc import Iterator, MutableMapping
 from typing import Protocol, TypeIs
 
 from weavely.blocks.base import Data
+from weavely.errors import (
+    CannotDeleteFormatterError,
+    FormatterIsNotRegisteredError,
+    WrongDataTypeError,
+)
 
 
 class IBlockFormatter(Protocol):
@@ -52,11 +57,14 @@ class BlockFormatterBase[TData: Data](IBlockFormatter, abc.ABC):
             Data: new or modified data object.
 
         Raises:
-            TypeError: If the renderer cannot be applied to the provided data object.
+            WrongDataTypeError: If the renderer cannot be applied to the provided data object.
         """
         if not self._can_be_applied(data):
-            msg = f"Renderer {self.__class__.__name__!r} cannot be applied to the data {data!r}."
-            raise TypeError(msg)
+            msg = (
+                f"Renderer {self.__class__.__name__!r} cannot be applied to the data {data!r}."
+                f"Expected data types: {self._get_supported_data_types()!r}"
+            )
+            raise WrongDataTypeError(msg, data_type=type(data), expected_data_types=self._get_supported_data_types())
         return self._format(data)
 
     def _get_supported_data_types(self) -> tuple[type[Data], ...]:
@@ -143,9 +151,13 @@ class FileFormatter(MutableMapping[type[Data], IBlockFormatter]):
             key (type[Data]): Block data type to remove the formatter for.
 
         Raises:
-            KeyError: If the formatter is not found for the provided block data type.
-        """  # noqa: DOC502
-        del self._formatters[key]
+            CannotDeleteFormatterError: If the formatter is not found for the provided block data type.
+        """
+        try:
+            del self._formatters[key]
+        except KeyError as e:
+            msg = f"Formatter for the data type {key!r} cannot be deleted because it is not found."
+            raise CannotDeleteFormatterError(msg) from e
 
     def __getitem__(self, key: type[Data], /) -> IBlockFormatter:
         """
@@ -158,9 +170,13 @@ class FileFormatter(MutableMapping[type[Data], IBlockFormatter]):
             IBlockFormatter: Formatter object for the provided block data type.
 
         Raises:
-            KeyError: If the formatter for the provided block data type is not found.
-        """  # noqa: DOC502
-        return self._formatters[key]
+            FormatterIsNotRegisteredError: If the formatter for the provided block data type is not found.
+        """
+        try:
+            return self._formatters[key]
+        except KeyError as e:
+            msg = f"Formatter for the data type {key!r} is not found. Ensure that it is registered in the collection."
+            raise FormatterIsNotRegisteredError(msg) from e
 
     def __len__(self) -> int:
         """

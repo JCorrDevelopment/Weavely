@@ -5,7 +5,13 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, NoReturn, cast, overload
 
 from weavely.content import Content
-from weavely.errors import RendererIsUnknownError
+from weavely.errors import (
+    CannotReplaceFormatterError,
+    CannotReplaceRendererError,
+    NotAStreamError,
+    RendererIsUnknownError,
+    UnsupportedStreamTypeError,
+)
 from weavely.formatters.base import FileFormatter, IBlockFormatter
 from weavely.renderers.base import FileRenderer, IBlockRenderer
 
@@ -55,14 +61,14 @@ class SimpleFile:
             replace (bool): Flag to replace the existing renderer if it is already set. Default is False.
 
         Raises:
-            KeyError: If the renderer is already set and the `replace` flag is not set.
+            CannotReplaceRendererError: If the renderer is already set and the `replace` flag is not set.
         """
         if data_type in self._renderer and not replace:
             msg = (
                 f"Renderer for data type {data_type.__name__!r} is already set. Use `replace=True` if you want "
                 f"to replace it intentionally."
             )
-            raise KeyError(msg)
+            raise CannotReplaceRendererError(msg)
         self._renderer[data_type] = renderer
 
     def set_formatter(self, data_type: type[Data], formatter: IBlockFormatter, *, replace: bool = False) -> None:
@@ -75,14 +81,14 @@ class SimpleFile:
             replace (bool): Flag to replace the existing formatter if it is already set. Default is False.
 
         Raises:
-            KeyError: If the formatter is already set and the `replace` flag is not set.
+            CannotReplaceFormatterError: If the formatter is already set and the `replace` flag is not set.
         """
         if data_type in self._formatter and not replace:
             msg = (
                 f"Formatter for data type {data_type.__name__!r} is already set. Use `replace=True` if you want "
                 f"to replace it intentionally."
             )
-            raise KeyError(msg)
+            raise CannotReplaceFormatterError(msg)
         self._formatter[data_type] = formatter
 
     def get_renderer(self, data_type: type[Data]) -> IBlockRenderer | None:
@@ -193,8 +199,8 @@ class SimpleFile:
             IOBase: Stream with the rendered file content written.
 
         Raises:
-            NotImplementedError: If the stream type is not supported.
-            TypeError: If the stream is not of type IOBase.
+            UnsupportedStreamTypeError: If the stream type is not supported.
+            NotAStreamError: If the stream is not of type IOBase.
 
         """  # noqa: DOC502
         match stream:
@@ -232,8 +238,8 @@ class SimpleFile:
             IOBase: Stream with the rendered block content written.
 
         Raises:
-            NotImplementedError: If the stream type is not supported.
-            TypeError: If the stream is not of type IOBase.
+            UnsupportedStreamTypeError: If the stream type is not supported.
+            NotAStreamError: If the stream is not of type IOBase.
         """  # noqa: DOC502
         match stream:
             case StringIO():
@@ -259,11 +265,11 @@ class SimpleFile:
             f"consider inheriting the SimpleFile class and implementing {method!r} method.\n"
             f"Supported stream types: {", ".join(f"{item.__name__}" for item in supported_types)}"
         )
-        raise NotImplementedError(msg)
+        raise UnsupportedStreamTypeError(msg, stream_type=type(stream), method=method)
 
     def _raise_not_a_stream(self, value: Any) -> NoReturn:  # noqa: ANN401
         msg = f"The `stream` expected to be of type {IOBase.__name__}, got type {type(value).__name__}."
-        raise TypeError(msg)
+        raise NotAStreamError(msg)
 
     def to_file(self, path: Path | str) -> Path:
         """
