@@ -63,7 +63,7 @@ b. Ensure that your code is linted and formatted according to the project's stan
 
 ## Ideas for development
 
-[ ] - Support for Weavely general template language for customizable document rendering
-[ ] - Paragraph type combined by several composite parts
-[ ] - Container block
-[ ] - Chained formatter to combine several existing formatters into a single object
+- [ ] - Support for Weavely general template language for customizable document rendering
+- [ ] - Paragraph type combined by several composite parts
+- [ ] - Container block
+- [ ] - Chained formatter to combine several existing formatters into a single object
