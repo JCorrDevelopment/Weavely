@@ -19,8 +19,10 @@ needs without endless configuration.
 ## Requirements:
 
 - Python 3.13 or higher
-- [rye](https://rye.astral.sh/) for managing most of the activities in the project.
 
+### Development requirements:
+
+- [rye](https://rye.astral.sh/) for managing most of the activities in the project.
 
 ## Documentation
 
@@ -60,6 +62,12 @@ project, you need to follow simple steps:
 a. Follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification for your commits.
 b. Ensure that your code is linted and formatted according to the project's standards. (Use `rye run pre-commit` to
    check your code before committing)
+
+## Target before the first PyPi release
+
+- [ ] - Add basic markdown support
+- [ ] - Add basic plain text support
+- [ ] - Improve basic documentation and use cases
 
 ## Ideas for development
 
