@@ -60,3 +60,10 @@ project, you need to follow simple steps:
 a. Follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification for your commits.
 b. Ensure that your code is linted and formatted according to the project's standards. (Use `rye run pre-commit` to
    check your code before committing)
+
+## Ideas for development
+
+[ ] - Support for Weavely general template language for customizable document rendering
+[ ] - Paragraph type combined by several composite parts
+[ ] - Container block
+[ ] - Chained formatter to combine several existing formatters into a single object
