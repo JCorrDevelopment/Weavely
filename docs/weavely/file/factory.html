@@ -34,6 +34,9 @@
                     <a class="function" href="#get_empty_file">get_empty_file</a>
             </li>
             <li>
+                    <a class="function" href="#get_markdown_file">get_markdown_file</a>
+            </li>
+            <li>
                     <a class="function" href="#get_txt_file">get_txt_file</a>
             </li>
     </ul>
@@ -69,41 +72,54 @@
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>    <span class="s2">&quot;get_empty_file&quot;</span><span class="p">,</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="s2">&quot;get_txt_file&quot;</span><span class="p">,</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="p">]</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span> <span class="nn">weavely.blocks.txt</span> <span class="kn">import</span> <span class="n">PlainTextData</span><span class="p">,</span> <span class="n">TitleData</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>    <span class="s2">&quot;get_markdown_file&quot;</span><span class="p">,</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="s2">&quot;get_txt_file&quot;</span><span class="p">,</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="p">]</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">from</span> <span class="nn">..formatters.txt</span> <span class="kn">import</span> <span class="n">TextWrapFormatter</span><span class="p">,</span> <span class="n">TitleCapitalizationFormatter</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">from</span> <span class="nn">..renderers.txt</span> <span class="kn">import</span> <span class="n">PlainTextRenderer</span><span class="p">,</span> <span class="n">TitleRenderer</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span> <span class="nn">.file</span> <span class="kn">import</span> <span class="n">SimpleFile</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="k">def</span> <span class="nf">get_empty_file</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">SimpleFile</span><span class="p">:</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">    Get an empty SimpleFile object.</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    Returns:</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">        SimpleFile: Empty file object.</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="k">return</span> <span class="n">SimpleFile</span><span class="p">()</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="k">def</span> <span class="nf">get_txt_file</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">SimpleFile</span><span class="p">:</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">    Get an SimpleFile object useful for writing of plain text files.</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">    It contains standard formatters and renderers for text data representation.</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">from</span> <span class="nn">..blocks.heading</span> <span class="kn">import</span> <span class="n">Heading</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">from</span> <span class="nn">..blocks.paragraph</span> <span class="kn">import</span> <span class="n">Paragraph</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span> <span class="nn">..renderers.heading</span> <span class="kn">import</span> <span class="n">HeadingMarkdownRenderer</span><span class="p">,</span> <span class="n">HeadingPlainTextRenderer</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="kn">from</span> <span class="nn">..renderers.paragraph</span> <span class="kn">import</span> <span class="n">WrappedParagraphRenderer</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="kn">from</span> <span class="nn">.file</span> <span class="kn">import</span> <span class="n">SimpleFile</span><span class="p">,</span> <span class="n">WeavelyFile</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="k">def</span> <span class="nf">get_empty_file</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">SimpleFile</span><span class="p">:</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    Get an empty WeavelyFile object.</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">    Returns:</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">        WeavelyFile: Empty file object.</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="k">return</span> <span class="n">SimpleFile</span><span class="p">()</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="k">def</span> <span class="nf">get_markdown_file</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">WeavelyFile</span><span class="p">:</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">    Get an WeavelyFile object useful for writing of Markdown files.</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">    Returns:</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">        SimpleFile: SimpleFile object with text data support.</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">        WeavelyFile: WeavelyFile object with Markdown data support.</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="n">simple_file</span> <span class="o">=</span> <span class="n">SimpleFile</span><span class="p">()</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">PlainTextData</span><span class="p">,</span> <span class="n">PlainTextRenderer</span><span class="p">())</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_formatter</span><span class="p">(</span><span class="n">PlainTextData</span><span class="p">,</span> <span class="n">TextWrapFormatter</span><span class="p">())</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">TitleData</span><span class="p">,</span> <span class="n">TitleRenderer</span><span class="p">())</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_formatter</span><span class="p">(</span><span class="n">TitleData</span><span class="p">,</span> <span class="n">TitleCapitalizationFormatter</span><span class="p">())</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="k">return</span> <span class="n">simple_file</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="n">simple_file</span> <span class="o">=</span> <span class="n">WeavelyFile</span><span class="p">()</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">Heading</span><span class="p">,</span> <span class="n">HeadingMarkdownRenderer</span><span class="p">())</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">Paragraph</span><span class="p">,</span> <span class="n">WrappedParagraphRenderer</span><span class="p">())</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="k">return</span> <span class="n">simple_file</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="k">def</span> <span class="nf">get_txt_file</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">WeavelyFile</span><span class="p">:</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">    Get an WeavelyFile object useful for writing of plain text files.</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="sd">    It contains standard formatters and renderers for text data representation.</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">    Returns:</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="sd">        WeavelyFile: WeavelyFile object with text data support.</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="n">simple_file</span> <span class="o">=</span> <span class="n">WeavelyFile</span><span class="p">()</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">Heading</span><span class="p">,</span> <span class="n">HeadingPlainTextRenderer</span><span class="p">())</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">Paragraph</span><span class="p">,</span> <span class="n">WrappedParagraphRenderer</span><span class="p">())</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>    <span class="k">return</span> <span class="n">simple_file</span>
 </span></pre></div>
 
 
@@ -119,23 +135,59 @@
 
     </div>
     <a class="headerlink" href="#get_empty_file"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_empty_file-20"><a href="#get_empty_file-20"><span class="linenos">20</span></a><span class="k">def</span> <span class="nf">get_empty_file</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">SimpleFile</span><span class="p">:</span>
-</span><span id="get_empty_file-21"><a href="#get_empty_file-21"><span class="linenos">21</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="get_empty_file-22"><a href="#get_empty_file-22"><span class="linenos">22</span></a><span class="sd">    Get an empty SimpleFile object.</span>
-</span><span id="get_empty_file-23"><a href="#get_empty_file-23"><span class="linenos">23</span></a>
-</span><span id="get_empty_file-24"><a href="#get_empty_file-24"><span class="linenos">24</span></a><span class="sd">    Returns:</span>
-</span><span id="get_empty_file-25"><a href="#get_empty_file-25"><span class="linenos">25</span></a><span class="sd">        SimpleFile: Empty file object.</span>
-</span><span id="get_empty_file-26"><a href="#get_empty_file-26"><span class="linenos">26</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="get_empty_file-27"><a href="#get_empty_file-27"><span class="linenos">27</span></a>    <span class="k">return</span> <span class="n">SimpleFile</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_empty_file-22"><a href="#get_empty_file-22"><span class="linenos">22</span></a><span class="k">def</span> <span class="nf">get_empty_file</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">SimpleFile</span><span class="p">:</span>
+</span><span id="get_empty_file-23"><a href="#get_empty_file-23"><span class="linenos">23</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_empty_file-24"><a href="#get_empty_file-24"><span class="linenos">24</span></a><span class="sd">    Get an empty WeavelyFile object.</span>
+</span><span id="get_empty_file-25"><a href="#get_empty_file-25"><span class="linenos">25</span></a>
+</span><span id="get_empty_file-26"><a href="#get_empty_file-26"><span class="linenos">26</span></a><span class="sd">    Returns:</span>
+</span><span id="get_empty_file-27"><a href="#get_empty_file-27"><span class="linenos">27</span></a><span class="sd">        WeavelyFile: Empty file object.</span>
+</span><span id="get_empty_file-28"><a href="#get_empty_file-28"><span class="linenos">28</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="get_empty_file-29"><a href="#get_empty_file-29"><span class="linenos">29</span></a>    <span class="k">return</span> <span class="n">SimpleFile</span><span class="p">()</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Get an empty SimpleFile object.</p>
+            <div class="docstring"><p>Get an empty WeavelyFile object.</p>
 
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>SimpleFile: Empty file object.</p>
+  <p>WeavelyFile: Empty file object.</p>
+</blockquote>
+</div>
+
+
+                </section>
+                <section id="get_markdown_file">
+                            <input id="get_markdown_file-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_markdown_file</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="n"><a href="file.html#WeavelyFile">weavely.file.file.WeavelyFile</a></span>:</span></span>
+
+                <label class="view-source-button" for="get_markdown_file-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#get_markdown_file"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_markdown_file-32"><a href="#get_markdown_file-32"><span class="linenos">32</span></a><span class="k">def</span> <span class="nf">get_markdown_file</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">WeavelyFile</span><span class="p">:</span>
+</span><span id="get_markdown_file-33"><a href="#get_markdown_file-33"><span class="linenos">33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_markdown_file-34"><a href="#get_markdown_file-34"><span class="linenos">34</span></a><span class="sd">    Get an WeavelyFile object useful for writing of Markdown files.</span>
+</span><span id="get_markdown_file-35"><a href="#get_markdown_file-35"><span class="linenos">35</span></a>
+</span><span id="get_markdown_file-36"><a href="#get_markdown_file-36"><span class="linenos">36</span></a><span class="sd">    Returns:</span>
+</span><span id="get_markdown_file-37"><a href="#get_markdown_file-37"><span class="linenos">37</span></a><span class="sd">        WeavelyFile: WeavelyFile object with Markdown data support.</span>
+</span><span id="get_markdown_file-38"><a href="#get_markdown_file-38"><span class="linenos">38</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="get_markdown_file-39"><a href="#get_markdown_file-39"><span class="linenos">39</span></a>    <span class="n">simple_file</span> <span class="o">=</span> <span class="n">WeavelyFile</span><span class="p">()</span>
+</span><span id="get_markdown_file-40"><a href="#get_markdown_file-40"><span class="linenos">40</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">Heading</span><span class="p">,</span> <span class="n">HeadingMarkdownRenderer</span><span class="p">())</span>
+</span><span id="get_markdown_file-41"><a href="#get_markdown_file-41"><span class="linenos">41</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">Paragraph</span><span class="p">,</span> <span class="n">WrappedParagraphRenderer</span><span class="p">())</span>
+</span><span id="get_markdown_file-42"><a href="#get_markdown_file-42"><span class="linenos">42</span></a>    <span class="k">return</span> <span class="n">simple_file</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Get an WeavelyFile object useful for writing of Markdown files.</p>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>WeavelyFile: WeavelyFile object with Markdown data support.</p>
 </blockquote>
 </div>
 
@@ -146,38 +198,36 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_txt_file</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="n"><a href="file.html#SimpleFile">weavely.file.file.SimpleFile</a></span>:</span></span>
+        <span class="name">get_txt_file</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="n"><a href="file.html#WeavelyFile">weavely.file.file.WeavelyFile</a></span>:</span></span>
 
                 <label class="view-source-button" for="get_txt_file-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#get_txt_file"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_txt_file-30"><a href="#get_txt_file-30"><span class="linenos">30</span></a><span class="k">def</span> <span class="nf">get_txt_file</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">SimpleFile</span><span class="p">:</span>
-</span><span id="get_txt_file-31"><a href="#get_txt_file-31"><span class="linenos">31</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="get_txt_file-32"><a href="#get_txt_file-32"><span class="linenos">32</span></a><span class="sd">    Get an SimpleFile object useful for writing of plain text files.</span>
-</span><span id="get_txt_file-33"><a href="#get_txt_file-33"><span class="linenos">33</span></a>
-</span><span id="get_txt_file-34"><a href="#get_txt_file-34"><span class="linenos">34</span></a><span class="sd">    It contains standard formatters and renderers for text data representation.</span>
-</span><span id="get_txt_file-35"><a href="#get_txt_file-35"><span class="linenos">35</span></a>
-</span><span id="get_txt_file-36"><a href="#get_txt_file-36"><span class="linenos">36</span></a><span class="sd">    Returns:</span>
-</span><span id="get_txt_file-37"><a href="#get_txt_file-37"><span class="linenos">37</span></a><span class="sd">        SimpleFile: SimpleFile object with text data support.</span>
-</span><span id="get_txt_file-38"><a href="#get_txt_file-38"><span class="linenos">38</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="get_txt_file-39"><a href="#get_txt_file-39"><span class="linenos">39</span></a>    <span class="n">simple_file</span> <span class="o">=</span> <span class="n">SimpleFile</span><span class="p">()</span>
-</span><span id="get_txt_file-40"><a href="#get_txt_file-40"><span class="linenos">40</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">PlainTextData</span><span class="p">,</span> <span class="n">PlainTextRenderer</span><span class="p">())</span>
-</span><span id="get_txt_file-41"><a href="#get_txt_file-41"><span class="linenos">41</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_formatter</span><span class="p">(</span><span class="n">PlainTextData</span><span class="p">,</span> <span class="n">TextWrapFormatter</span><span class="p">())</span>
-</span><span id="get_txt_file-42"><a href="#get_txt_file-42"><span class="linenos">42</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">TitleData</span><span class="p">,</span> <span class="n">TitleRenderer</span><span class="p">())</span>
-</span><span id="get_txt_file-43"><a href="#get_txt_file-43"><span class="linenos">43</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_formatter</span><span class="p">(</span><span class="n">TitleData</span><span class="p">,</span> <span class="n">TitleCapitalizationFormatter</span><span class="p">())</span>
-</span><span id="get_txt_file-44"><a href="#get_txt_file-44"><span class="linenos">44</span></a>    <span class="k">return</span> <span class="n">simple_file</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_txt_file-45"><a href="#get_txt_file-45"><span class="linenos">45</span></a><span class="k">def</span> <span class="nf">get_txt_file</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">WeavelyFile</span><span class="p">:</span>
+</span><span id="get_txt_file-46"><a href="#get_txt_file-46"><span class="linenos">46</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_txt_file-47"><a href="#get_txt_file-47"><span class="linenos">47</span></a><span class="sd">    Get an WeavelyFile object useful for writing of plain text files.</span>
+</span><span id="get_txt_file-48"><a href="#get_txt_file-48"><span class="linenos">48</span></a>
+</span><span id="get_txt_file-49"><a href="#get_txt_file-49"><span class="linenos">49</span></a><span class="sd">    It contains standard formatters and renderers for text data representation.</span>
+</span><span id="get_txt_file-50"><a href="#get_txt_file-50"><span class="linenos">50</span></a>
+</span><span id="get_txt_file-51"><a href="#get_txt_file-51"><span class="linenos">51</span></a><span class="sd">    Returns:</span>
+</span><span id="get_txt_file-52"><a href="#get_txt_file-52"><span class="linenos">52</span></a><span class="sd">        WeavelyFile: WeavelyFile object with text data support.</span>
+</span><span id="get_txt_file-53"><a href="#get_txt_file-53"><span class="linenos">53</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="get_txt_file-54"><a href="#get_txt_file-54"><span class="linenos">54</span></a>    <span class="n">simple_file</span> <span class="o">=</span> <span class="n">WeavelyFile</span><span class="p">()</span>
+</span><span id="get_txt_file-55"><a href="#get_txt_file-55"><span class="linenos">55</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">Heading</span><span class="p">,</span> <span class="n">HeadingPlainTextRenderer</span><span class="p">())</span>
+</span><span id="get_txt_file-56"><a href="#get_txt_file-56"><span class="linenos">56</span></a>    <span class="n">simple_file</span><span class="o">.</span><span class="n">set_renderer</span><span class="p">(</span><span class="n">Paragraph</span><span class="p">,</span> <span class="n">WrappedParagraphRenderer</span><span class="p">())</span>
+</span><span id="get_txt_file-57"><a href="#get_txt_file-57"><span class="linenos">57</span></a>    <span class="k">return</span> <span class="n">simple_file</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Get an SimpleFile object useful for writing of plain text files.</p>
+            <div class="docstring"><p>Get an WeavelyFile object useful for writing of plain text files.</p>
 
 <p>It contains standard formatters and renderers for text data representation.</p>
 
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>SimpleFile: SimpleFile object with text data support.</p>
+  <p>WeavelyFile: WeavelyFile object with text data support.</p>
 </blockquote>
 </div>
 

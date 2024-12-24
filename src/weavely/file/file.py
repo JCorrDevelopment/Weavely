@@ -12,11 +12,12 @@ from weavely.errors import (
     RendererIsUnknownError,
     UnsupportedStreamTypeError,
 )
+from weavely.file.mixins import WithHeading, WithParagraph
 from weavely.formatters.base import FileFormatter, IBlockFormatter
 from weavely.renderers.base import FileRenderer, IBlockRenderer
 
 if TYPE_CHECKING:
-    from weavely.blocks import Data
+    from weavely.blocks import BaseBlock, Data
 
 
 class SimpleFile:
@@ -282,10 +283,22 @@ class SimpleFile:
             path = Path(path)
 
         with path.open("wb") as file:
-            file.write(self.as_stream().read())
+            file.write(self.as_stream().getvalue())
             file.seek(0)
 
         return path
+
+    def add_block(self, block: BaseBlock[Data]) -> str:
+        """
+        Add a new block to the file content.
+
+        Args:
+            block (BaseBlock): Block object to add.
+
+        Returns:
+            str: Name of the added block.
+        """
+        return self._content.add_block(block)
 
     def _format(self, data: Data, formatter: IBlockFormatter | None) -> Data:
         """
@@ -329,3 +342,12 @@ class SimpleFile:
             f"not have a renderer for specified data type."
         )
         raise RendererIsUnknownError(msg)
+
+
+class WeavelyFile(SimpleFile, WithHeading, WithParagraph):
+    """
+    Useful weavely file class with additional methods assigned to it as traits.
+
+    This class fully repeat basic logic of parent object, just adding shortcuts for some most common data types,
+    such as Paragraph, Heading, List, etc.
+    """

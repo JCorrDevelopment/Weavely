@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import abc
 import dataclasses
-from typing import TYPE_CHECKING, Any, Final, Self
+from typing import TYPE_CHECKING, Final, Self, TypedDict, Unpack
 
 from std_utils.more_str.generators import random_string
 
@@ -17,6 +17,17 @@ class Data:
     Default label for data containing in the block to make operation on block more convenient.
 
     This class doesn't have any specific information, any specific Data type must be inherited from this class.
+    """
+
+
+class DataKwargs(TypedDict):
+    """
+    Type hint for the arbitrary keyword arguments to initialize the data object in the block.
+
+    Should be inherited in the specific block class to provide the correct code completion.
+
+    NOTE: Using of this kwargs is going a bit against static typing, but it's a trade-off to make
+    the block creation more convenient and readable.
     """
 
 
@@ -113,7 +124,7 @@ class BaseBlock[TData: Data](abc.ABC):
         name: str | None = None,
         formatter: IBlockFormatter | None = None,
         renderer: IBlockRenderer | None = None,
-        **data: Any,  # noqa: ANN401
+        **data: Unpack[DataKwargs],
     ) -> Self:
         """
         Create a new block instance by providing the data object.
@@ -125,7 +136,8 @@ class BaseBlock[TData: Data](abc.ABC):
                 use the default formatter provided by the file formatter implementation.
             renderer (IBlockRenderer | None): Renderer object to render the block into a specific format.
                 If None, the block will use the default renderer provided by the file renderer implementation.
-            data (Any): Arbitrary range of keyword arguments to initialize the data object.
+            data (DataKwargs): Arbitrary range of keyword arguments to initialize the data object.
+                Must be specified by the specific block class.
 
         Returns:
             Self: New block instance.

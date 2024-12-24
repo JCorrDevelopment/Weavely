@@ -6,38 +6,51 @@ You may use those items instead of populating everything on you own from scratch
 
 __all__ = [
     "get_empty_file",
+    "get_markdown_file",
     "get_txt_file",
 ]
 
-from weavely.blocks.txt import PlainTextData, TitleData
 
-from ..formatters.txt import TextWrapFormatter, TitleCapitalizationFormatter
-from ..renderers.txt import PlainTextRenderer, TitleRenderer
-from .file import SimpleFile
+from ..blocks.heading import Heading
+from ..blocks.paragraph import Paragraph
+from ..renderers.heading import HeadingMarkdownRenderer, HeadingPlainTextRenderer
+from ..renderers.paragraph import WrappedParagraphRenderer
+from .file import SimpleFile, WeavelyFile
 
 
 def get_empty_file() -> SimpleFile:
     """
-    Get an empty SimpleFile object.
+    Get an empty WeavelyFile object.
 
     Returns:
-        SimpleFile: Empty file object.
+        WeavelyFile: Empty file object.
     """
     return SimpleFile()
 
 
-def get_txt_file() -> SimpleFile:
+def get_markdown_file() -> WeavelyFile:
     """
-    Get an SimpleFile object useful for writing of plain text files.
+    Get an WeavelyFile object useful for writing of Markdown files.
+
+    Returns:
+        WeavelyFile: WeavelyFile object with Markdown data support.
+    """
+    simple_file = WeavelyFile()
+    simple_file.set_renderer(Heading, HeadingMarkdownRenderer())
+    simple_file.set_renderer(Paragraph, WrappedParagraphRenderer())
+    return simple_file
+
+
+def get_txt_file() -> WeavelyFile:
+    """
+    Get an WeavelyFile object useful for writing of plain text files.
 
     It contains standard formatters and renderers for text data representation.
 
     Returns:
-        SimpleFile: SimpleFile object with text data support.
+        WeavelyFile: WeavelyFile object with text data support.
     """
-    simple_file = SimpleFile()
-    simple_file.set_renderer(PlainTextData, PlainTextRenderer())
-    simple_file.set_formatter(PlainTextData, TextWrapFormatter())
-    simple_file.set_renderer(TitleData, TitleRenderer())
-    simple_file.set_formatter(TitleData, TitleCapitalizationFormatter())
+    simple_file = WeavelyFile()
+    simple_file.set_renderer(Heading, HeadingPlainTextRenderer())
+    simple_file.set_renderer(Paragraph, WrappedParagraphRenderer())
     return simple_file

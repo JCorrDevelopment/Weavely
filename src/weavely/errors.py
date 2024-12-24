@@ -1,23 +1,5 @@
 from __future__ import annotations
 
-__all__ = [
-    "CannotDeleteFormatterError",
-    "CannotDeleteRendererError",
-    "CannotReplaceFormatterError",
-    "CannotReplaceRendererError",
-    "DataIsMissingError",
-    "FormatterIsNotRegisteredError",
-    "NotAStreamError",
-    "RendererIsNotRegisteredError",
-    "RendererIsUnknownError",
-    "TitleIsEmptyError",
-    "TitleIsEmptyError",
-    "TitleLevelIsInvalidError",
-    "UnsupportedStreamTypeError",
-    "WeavelyError",
-    "WrongDataTypeError",
-]
-
 import abc
 from typing import TYPE_CHECKING, Any
 
@@ -84,10 +66,21 @@ class RendererIsUnknownError(WeavelyError, TypeError):
 class DataIsMissingError(WeavelyError, ValueError):
     """Raised in case user do not specify enough information to create a data object for a block."""
 
+    def __init__(self, *args: Any, data_type: type[Data], field: str, message: str | None = None) -> None:  # noqa: ANN401
+        if not message:
+            message = f"Field {field!r} is required for the data object {data_type!r}."
+        super().__init__(message, *args)
+        self.field = field
+        self.data_type = data_type
 
-class TitleIsEmptyError(WeavelyError, ValueError):
-    """Raised in case the title is empty."""
 
+class DataIsInvalidError(WeavelyError, ValueError):
+    """Raised in case user provide invalid information to create a data object for a block."""
 
-class TitleLevelIsInvalidError(WeavelyError, ValueError):
-    """Raised in case the title level is invalid."""
+    def __init__(self, *args: Any, data_type: type[Data], field: str, reason: str, message: str | None = None) -> None:  # noqa: ANN401
+        if not message:
+            message = f"Field {field!r} is invalid for the data object {data_type!r}. Reason: {reason!r}"
+        super().__init__(message, *args)
+        self.field = field
+        self.data_type = data_type
+        self.reason = reason
